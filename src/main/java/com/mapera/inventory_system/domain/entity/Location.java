@@ -1,22 +1,18 @@
 package com.mapera.inventory_system.domain.entity;
 
-public class Subcategory {
+public class Location {
     private final int id;
-    private final Category category;
     private String name;
+    private String address;
 
-    public Subcategory(int id, Category category, String name) {
+    public Location(int id, String name, String address) {
         this.id = id;
-        this.category = category;
         this.name = name;
+        this.address = address;
     }
 
     public int getId() {
         return this.id;
-    }
-
-    public Category getCategory() {
-        return this.category;
     }
 
     public String getName() {
@@ -27,12 +23,20 @@ public class Subcategory {
         this.name = name;
     }
 
+    public String getAddress() {
+        return this.address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     @Override
     public String toString() {
         return "{" +
                 " id='" + getId() + "'" +
-                ", category='" + getCategory() + "'" +
                 ", name='" + getName() + "'" +
+                ", address='" + getAddress() + "'" +
                 "}";
     }
 
