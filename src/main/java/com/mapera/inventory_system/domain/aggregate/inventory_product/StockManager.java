@@ -1,10 +1,9 @@
 package com.mapera.inventory_system.domain.aggregate.inventory_product;
 
-import java.util.Iterator;
 import java.util.List;
+import java.util.Iterator;
 import java.util.Optional;
 
-import com.mapera.inventory_system.domain.entity.Location;
 import com.mapera.inventory_system.domain.entity.Stock;
 
 public class StockManager {
@@ -14,17 +13,33 @@ public class StockManager {
         this.stockList = stockList;
     }
 
-    public void addStock(int id, Location location, int quantity, int maximumStorage) {
-        Stock stock = new Stock(id, location, quantity, maximumStorage);
+    public int getTotalStock() {
+        int stock = 0;
+        for (int i = 0; i < this.stockList.size(); i++) {
+            stock += this.stockList.get(i).getQuantity();
+        }
+        return stock;
+    }
+
+    private void validateStockAddition(Optional<Stock> stockFound, Optional<Stock> locationFound) {
+        String errMsgStock = "Cannot add a new stock to stocklist if stocklist contains a stock with the same id";
+        String errMsgLocation = "Cannot add a new stock to stocklist if stocklist contains a stock with the same location";
+        if (stockFound.isPresent()) {
+            throw new IllegalArgumentException(errMsgStock);
+        }
+        if (locationFound.isPresent()) {
+            throw new IllegalArgumentException(errMsgLocation);
+        }
+    }
+
+    public void addStock(Stock stock) {
+        Optional<Stock> stockFound = findStockById(stock.getId());
+        Optional<Stock> locationFound = findStockInLocation(stock.getLocation().getId());
+        validateStockAddition(stockFound, locationFound);
         this.stockList.add(stock);
     }
 
-    public void addStock(int id, Location location, int quantity) {
-        Stock stock = new Stock(id, location, quantity);
-        this.stockList.add(stock);
-    }
-
-    public boolean removeStock(int id, Location location) {
+    public boolean removeStock(int id) {
         Iterator<Stock> iterator = this.stockList.iterator();
         while (iterator.hasNext()) {
             Stock stock = iterator.next();
@@ -36,10 +51,20 @@ public class StockManager {
         return false;
     }
 
-    public Stock getStockInLocation(int locationId) {
-        Optional<Stock> found = this.stockList.stream()
+    public Optional<Stock> findStockById(int stockId) {
+        return this.stockList.stream()
+                .filter(stock -> stock.getId() == stockId)
+                .findFirst();
+    }
+
+    public Optional<Stock> findStockInLocation(int locationId) {
+        return this.stockList.stream()
                 .filter(stock -> stock.getLocation().getId() == locationId)
                 .findFirst();
+    }
+
+    public Stock getStockInLocation(int locationId) {
+        Optional<Stock> found = findStockInLocation(locationId);
         if (!found.isPresent()) {
             throw new IllegalArgumentException("Stock not found");
         }

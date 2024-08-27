@@ -5,24 +5,23 @@ import java.time.ZonedDateTime;
 import com.mapera.inventory_system.domain.aggregate.inventory_product.InventoryProduct;
 import com.mapera.inventory_system.domain.entity.Location;
 import com.mapera.inventory_system.domain.valueobject.Cost;
+import com.mapera.inventory_system.domain.valueobject.EntryType;
 
 public class EntryMovement extends Movement {
     private Location Location;
     private Cost cost;
 
     public EntryMovement(int id, InventoryProduct product,
-            ZonedDateTime time, String reason, int quantity,
+            ZonedDateTime time, EntryType subtype, String reason, int quantity,
             String comment, Location location, Cost cost) {
-        super(id, product, time, "entry", null, reason, quantity, comment);
-        this.subtype = cost.getType().toString();
+        super(id, product, time, "entry", subtype, reason, quantity, comment);
         this.Location = location;
         this.cost = cost;
     }
 
     public EntryMovement(int id, InventoryProduct product,
-            ZonedDateTime time, String reason, int quantity, Location location, Cost cost) {
-        super(id, product, time, "entry", null, reason, quantity, null);
-        this.subtype = cost.getType().toString();
+            ZonedDateTime time, EntryType subtype, String reason, int quantity, Location location, Cost cost) {
+        super(id, product, time, "entry", subtype, reason, quantity, null);
         this.Location = location;
         this.cost = cost;
     }

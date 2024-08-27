@@ -1,6 +1,8 @@
 package com.mapera.inventory_system.domain.aggregate.inventory_product;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import com.mapera.inventory_system.domain.entity.Supplier;
 import com.mapera.inventory_system.infrastructure.util.FindInList;
@@ -12,13 +14,27 @@ public class SupplierManager {
         this.suppliers = suppliers;
     }
 
-    public void addSupplier(int id, String name) {
-        Supplier supplier = new Supplier(id, name);
+    public int getSuppliers() {
+        int number = 0;
+        Iterator<Supplier> iterator = this.suppliers.iterator();
+        while (iterator.hasNext()) {
+            iterator.next();
+            number++;
+        }
+        return number;
+    }
+
+    public void addSupplier(Supplier supplier) {
+        Optional<Supplier> found = FindInList.findById(this.suppliers, supplier.getId());
+        if (found.isPresent()) {
+            throw new IllegalArgumentException(
+                    "Cannot add a new supplier to supplier list if supplier list contains a supplier with the same id");
+        }
         this.suppliers.add(supplier);
     }
 
     public Supplier getSupplier(int id) {
-        Supplier supplier = FindInList.findById(this.suppliers, id, "Supplier");
+        Supplier supplier = FindInList.getById(this.suppliers, id, "Supplier");
         return supplier;
     }
 

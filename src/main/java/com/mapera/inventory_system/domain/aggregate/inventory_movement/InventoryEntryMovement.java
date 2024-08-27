@@ -4,20 +4,21 @@ import java.time.ZonedDateTime;
 
 import com.mapera.inventory_system.domain.aggregate.inventory_product.InventoryProduct;
 import com.mapera.inventory_system.domain.valueobject.Cost;
+import com.mapera.inventory_system.domain.valueobject.EntryType;
 import com.mapera.inventory_system.domain.entity.Location;
 
 public class InventoryEntryMovement extends EntryMovement {
 
     public InventoryEntryMovement(int id, InventoryProduct product,
-            ZonedDateTime time, String reason, int quantity, String comment,
+            ZonedDateTime time, EntryType subtype, String reason, int quantity, String comment,
             Location location, Cost cost) {
-        super(id, product, time, reason, quantity, comment, location, cost);
+        super(id, product, time, subtype, reason, quantity, comment, location, cost);
     }
 
     public InventoryEntryMovement(int id, InventoryProduct product,
-            ZonedDateTime time, String reason, int quantity, Location location,
+            ZonedDateTime time, EntryType subtype, String reason, int quantity, Location location,
             Cost cost) {
-        super(id, product, time, reason, quantity, location, cost);
+        super(id, product, time, subtype, reason, quantity, location, cost);
     }
 
     public boolean execute() {

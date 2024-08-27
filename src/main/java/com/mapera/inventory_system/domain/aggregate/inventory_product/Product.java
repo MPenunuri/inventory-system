@@ -85,15 +85,20 @@ public class Product {
                 return this.minimumStock;
         }
 
-        public void setMinimumStock(MinimumStock minimumStock) {
-                this.minimumStock = minimumStock;
+        public void setMinimumStock() {
+                this.minimumStock = new MinimumStock();
+        }
+
+        public void setMinimumStock(int minimumStock) {
+                this.minimumStock = new MinimumStock(minimumStock);
         }
 
         public SellingPrice getSellingPrice() {
                 return this.sellingPrice;
         }
 
-        public void setSellingPrice(SellingPrice sellingPrice) {
+        public void setSellingPrice(double retail, double wholesale, String currency) {
+                SellingPrice sellingPrice = new SellingPrice(retail, wholesale, currency);
                 this.sellingPrice = sellingPrice;
         }
 
