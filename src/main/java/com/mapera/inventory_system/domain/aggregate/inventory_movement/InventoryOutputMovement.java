@@ -6,7 +6,6 @@ import com.mapera.inventory_system.domain.aggregate.inventory_product.InventoryP
 import com.mapera.inventory_system.domain.entity.Location;
 import com.mapera.inventory_system.domain.valueobject.OutputType;
 import com.mapera.inventory_system.domain.valueobject.Sell;
-import com.mapera.inventory_system.domain.valueobject.SellType;
 
 public class InventoryOutputMovement extends OutputMovement {
 
