@@ -9,7 +9,7 @@ import lombok.Data;
 @Table(name = "subcategories")
 public class SubcategoryEntity {
     @Id
-    private final Long id;
-    private final Long category;
+    private Long id;
+    private Long category_id;
     private String name;
 }

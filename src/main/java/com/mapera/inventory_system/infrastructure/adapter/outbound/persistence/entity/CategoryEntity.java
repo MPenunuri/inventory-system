@@ -9,6 +9,6 @@ import lombok.Data;
 @Table(name = "categories")
 public class CategoryEntity {
     @Id
-    private final Long id;
+    private Long id;
     private String name;
 }
