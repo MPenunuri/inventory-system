@@ -4,6 +4,7 @@ import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.ProductEntity;
+import com.mapera.inventory_system.presentation.dto.MinimumStockProductDTO;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -15,15 +16,15 @@ public interface ProductRepository extends ReactiveCrudRepository<ProductEntity,
                         "JOIN categories c ON s.category_id = c.id ";
 
         String fullQuery = standardQuery +
-                        "JOIN stock_list sl ON sl.product_id = p.id" +
-                        "JOIN locations l ON l.id = sl.location_id" +
-                        "JOIN product_supplier ps ON ps.product_id = p.id " +
-                        "JOIN suppliers su ON su.id = ps.supplier_id ";
+                        "LEFT JOIN stock_list sl ON sl.product_id = p.id " +
+                        "LEFT JOIN locations l ON l.id = sl.location_id " +
+                        "LEFT JOIN product_supplier ps ON ps.product_id = p.id " +
+                        "LEFT JOIN suppliers su ON su.id = ps.supplier_id ";
 
         @Query(standardQuery)
         Flux<ProductEntity> findAllProducts();
 
-        @Query(fullQuery + "WHERE products.id = :productId")
+        @Query(fullQuery + "WHERE p.id = :productId")
         Mono<ProductEntity> findProductById(Long productId);
 
         @Query(standardQuery + "WHERE c.id = :categoryId")
@@ -32,13 +33,13 @@ public interface ProductRepository extends ReactiveCrudRepository<ProductEntity,
         @Query(standardQuery + "WHERE s.id = :subcategoryId")
         Flux<ProductEntity> findProductsBySubcategoryId(Long subcategoryId);
 
-        @Query(standardQuery + "JOIN product_supplier ps ON ps.product_id = p.id " +
-                        "JOIN suppliers su ON su.id = ps.supplier_id " +
+        @Query(standardQuery + "LEFT JOIN product_supplier ps ON ps.product_id = p.id " +
+                        "LEFT JOIN suppliers su ON su.id = ps.supplier_id " +
                         "WHERE su.id = :supplierId")
         Flux<ProductEntity> findProductsBySupplierId(Long supplierId);
 
-        @Query(standardQuery + "JOIN stock_list sl ON sl.product_id = p.id" +
-                        "JOIN locations l ON l.id = sl.location_id"
+        @Query(standardQuery + "LEFT JOIN stock_list sl ON sl.product_id = p.id" +
+                        "LEFT JOIN locations l ON l.id = sl.location_id"
                         + "WHERE l.id = :locationId")
         Flux<ProductEntity> findProductsByLocationid(Long locationId);
 
@@ -48,6 +49,6 @@ public interface ProductRepository extends ReactiveCrudRepository<ProductEntity,
                         "JOIN stock_list sl ON sl.product_id = p.id " +
                         "GROUP BY p.id " +
                         "HAVING SUM(sl.quantity) < p.minimum_stock")
-        Flux<ProductEntity> findProductsWithMinimumStock();
+        Flux<MinimumStockProductDTO> findProductsWithMinimumStock();
 
 }
