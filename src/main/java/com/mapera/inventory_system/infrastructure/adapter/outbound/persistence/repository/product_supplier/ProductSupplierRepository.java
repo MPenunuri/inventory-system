@@ -1,4 +1,4 @@
-package com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository;
+package com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product_supplier;
 
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 

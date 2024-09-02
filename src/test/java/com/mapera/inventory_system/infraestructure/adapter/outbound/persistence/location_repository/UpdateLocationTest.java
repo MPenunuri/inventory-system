@@ -8,8 +8,8 @@ import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.LocationEntity;
-import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.StockRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.location.*;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.stock.StockRepository;
 
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;

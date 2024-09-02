@@ -9,7 +9,7 @@ import lombok.Data;
 @Table(name = "locations")
 public class LocationEntity {
     @Id
-    private final Long id;
+    private Long id;
     private String name;
     private String address;
 }

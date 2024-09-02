@@ -9,9 +9,9 @@ import lombok.Data;
 @Table(name = "stock_list")
 public class StockEntity {
     @Id
-    private final Long id;
-    private final Long location_id;
-    private final Long product_id;
+    private Long id;
+    private Long location_id;
+    private Long product_id;
     private int quantity;
     private int maximumStorage;
 }
