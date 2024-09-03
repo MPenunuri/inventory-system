@@ -16,8 +16,10 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.e
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.category.CategoryRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.location.LocationRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product.ProductRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product_supplier.ProductSupplierRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.stock.StockRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.subcategory.SubcategoryRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.supplier.SupplierRepository;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -42,13 +44,27 @@ public class FindProductsWithMinimumStock {
         @Autowired
         private StockRepository stockRepository;
 
+        @Autowired
+        private SupplierRepository supplierRepository;
+
+        @Autowired
+        private ProductSupplierRepository productSupplierRepository;
+
         @BeforeEach
         void setUp() {
+                Mono<Void> deleteProductSupplier = productSupplierRepository.deleteAll();
+                Mono<Void> deleteSuppliers = supplierRepository.deleteAll();
+                Mono<Void> deleteStocklist = stockRepository.deleteAll();
+                Mono<Void> deleteLocations = locationRepository.deleteAll();
                 Mono<Void> deleteProducts = productRepository.deleteAll();
                 Mono<Void> deleteSubcategories = subcategoryRepository.deleteAll();
                 Mono<Void> deleteCategories = categoryRepository.deleteAll();
 
-                Mono<Void> setup = deleteProducts
+                Mono<Void> setup = deleteProductSupplier
+                                .then(deleteSuppliers)
+                                .then(deleteStocklist)
+                                .then(deleteLocations)
+                                .then(deleteProducts)
                                 .then(deleteSubcategories)
                                 .then(deleteCategories);
 
