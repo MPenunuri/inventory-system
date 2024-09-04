@@ -8,21 +8,23 @@ public class ProductQuery {
                         "p.product_presentation AS productPresentation, " +
                         "p.minimum_stock AS minimumStock, " +
                         "p.retail_price AS retailPrice, " +
-                        "p.wholesale_price AS wholesalePrice, " +
-                        "p.price_currency AS priceCurrency, ";
+                        "p.wholesale_price AS wholesalePrice, ";
 
         public static final String STANDARD_QUERY = PRODUCT_ATTRIBUTES_SELECTION +
                         "s.name AS subcategoryName, " +
                         "c.id AS categoryId, " +
-                        "c.name AS categoryName " +
+                        "c.name AS categoryName, " +
+                        "pc.name AS priceCurrency " +
                         "FROM products p " +
                         "JOIN subcategories s ON p.subcategory_id = s.id " +
-                        "JOIN categories c ON s.category_id = c.id ";
+                        "JOIN categories c ON s.category_id = c.id " +
+                        "LEFT JOIN currencies pc ON pc.id = p.price_currency_id ";
 
         public static final String FULL_QUERY = PRODUCT_ATTRIBUTES_SELECTION +
                         "s.name AS subcategoryName, " +
                         "c.id AS categoryId, " +
                         "c.name AS categoryName, " +
+                        "pc.name AS priceCurrency, " +
                         "l.id AS stockLocationId, " +
                         "l.name AS stockLocationName, " +
                         "l.address AS stockLocationAddress, " +
@@ -36,24 +38,28 @@ public class ProductQuery {
                         "LEFT JOIN stock_list sl ON sl.product_id = p.id " +
                         "LEFT JOIN locations l ON l.id = sl.location_id " +
                         "LEFT JOIN product_supplier ps ON ps.product_id = p.id " +
-                        "LEFT JOIN suppliers su ON su.id = ps.supplier_id ";
+                        "LEFT JOIN suppliers su ON su.id = ps.supplier_id " +
+                        "LEFT JOIN currencies pc ON pc.id = p.price_currency_id ";
 
         public static final String SUPPLIER_QUERY = PRODUCT_ATTRIBUTES_SELECTION +
                         "s.name AS subcategoryName, " +
                         "c.id AS categoryId, " +
                         "c.name AS categoryName, " +
+                        "pc.name AS priceCurrency, " +
                         "su.id AS supplierId, " +
                         "su.name AS supplierName, " +
                         "FROM products p " +
                         "JOIN subcategories s ON p.subcategory_id = s.id " +
                         "JOIN categories c ON s.category_id = c.id  " +
                         "LEFT JOIN product_supplier ps ON ps.product_id = p.id " +
-                        "LEFT JOIN suppliers su ON su.id = ps.supplier_id ";
+                        "LEFT JOIN suppliers su ON su.id = ps.supplier_id " +
+                        "LEFT JOIN currencies pc ON pc.id = p.price_currency_id ";
 
         public static final String LOCATION_QUERY = PRODUCT_ATTRIBUTES_SELECTION +
                         "s.name AS subcategoryName, " +
                         "c.id AS categoryId, " +
                         "c.name AS categoryName, " +
+                        "pc.name AS priceCurrency, " +
                         "l.id AS stockLocationId, " +
                         "l.name AS stockLocationName, " +
                         "l.address AS stockLocationAddress, " +
@@ -63,7 +69,8 @@ public class ProductQuery {
                         "JOIN subcategories s ON p.subcategory_id = s.id " +
                         "JOIN categories c ON s.category_id = c.id " +
                         "LEFT JOIN stock_list sl ON sl.product_id = p.id " +
-                        "LEFT JOIN locations l ON l.id = sl.location_id ";
+                        "LEFT JOIN locations l ON l.id = sl.location_id " +
+                        "LEFT JOIN currencies pc ON pc.id = p.price_currency_id ";
 
         public static final String STOCK_QUERY = "SELECT p.id, p.name, p.product_presentation, p.minimum_stock, " +
                         "SUM(sl.quantity) AS total_stock " +

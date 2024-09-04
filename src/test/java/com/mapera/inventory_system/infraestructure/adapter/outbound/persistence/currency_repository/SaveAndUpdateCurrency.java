@@ -16,7 +16,7 @@ import reactor.test.StepVerifier;
 public class SaveAndUpdateCurrency {
 
     @Autowired
-    CurrencyRepository currencyRepository;
+    private CurrencyRepository currencyRepository;
 
     @Test
     public void test() {

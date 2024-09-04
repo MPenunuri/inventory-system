@@ -10,6 +10,10 @@ CREATE TABLE IF NOT EXISTS subcategories(
     FOREIGN KEY (category_id) REFERENCES categories(id)
 );
 
+CREATE TABLE IF NOT EXISTS currencies(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(10) NOT NULL
+);
 
 CREATE TABLE IF NOT EXISTS products (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -19,8 +23,9 @@ CREATE TABLE IF NOT EXISTS products (
     minimum_stock INT,
     retail_price DECIMAL(20, 2) CHECK (retail_price >= 0),
     wholesale_price DECIMAL(20, 2) CHECK (wholesale_price >= 0),
-    price_currency VARCHAR(10) DEFAULT 'USD',
-    FOREIGN KEY (subcategory_id) REFERENCES subcategories(id)
+    price_currency_id INT,
+    FOREIGN KEY (subcategory_id) REFERENCES subcategories(id),
+    FOREIGN KEY (price_currency_id) REFERENCES currencies(id)
 );
 
 CREATE TABLE IF NOT EXISTS locations (
@@ -51,8 +56,3 @@ CREATE TABLE IF NOT EXISTS product_supplier (
     FOREIGN KEY (product_id) REFERENCES products(id),
     FOREIGN KEY (supplier_id) REFERENCES suppliers(id)
 );
-
-CREATE TABLE IF NOT EXISTS currencies(
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(10) NOT NULL
-)

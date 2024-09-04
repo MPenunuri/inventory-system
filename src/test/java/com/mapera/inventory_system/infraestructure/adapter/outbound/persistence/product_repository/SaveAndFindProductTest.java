@@ -60,7 +60,6 @@ public class SaveAndFindProductTest {
                         foundProduct.getMinimumStock() == 20 &&
                         foundProduct.getRetail_price() == 1 &&
                         foundProduct.getWholesale_price() == 0.75 &&
-                        foundProduct.getPrice_currency().equals("USD") &&
                         foundProduct.getProductPresentation().equals("Glass container 600 ml"))
                 .verifyComplete();
     }

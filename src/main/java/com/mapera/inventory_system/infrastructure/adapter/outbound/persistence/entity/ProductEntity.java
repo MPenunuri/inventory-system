@@ -16,5 +16,5 @@ public class ProductEntity {
     private int minimumStock;
     private double retail_price;
     private double wholesale_price;
-    private String price_currency;
+    private Long price_currency_id;
 }

@@ -16,7 +16,7 @@ import reactor.test.StepVerifier;
 public class UpdateSupplier {
 
     @Autowired
-    SupplierRepository supplierRepository;
+    private SupplierRepository supplierRepository;
 
     @Test
     public void test() {

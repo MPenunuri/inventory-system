@@ -24,7 +24,6 @@ public class Samples {
         product.setMinimumStock(20);
         product.setRetail_price(1);
         product.setWholesale_price(.75);
-        product.setPrice_currency("USD");
         return product;
     }
 }

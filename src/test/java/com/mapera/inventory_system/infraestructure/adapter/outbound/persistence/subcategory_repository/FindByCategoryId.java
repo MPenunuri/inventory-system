@@ -21,13 +21,13 @@ import reactor.test.StepVerifier;
 public class FindByCategoryId {
 
     @Autowired
-    ProductRepository productRepository;
+    private ProductRepository productRepository;
 
     @Autowired
-    SubcategoryRepository subcategoryRepository;
+    private SubcategoryRepository subcategoryRepository;
 
     @Autowired
-    CategoryRepository categoryRepository;
+    private CategoryRepository categoryRepository;
 
     @BeforeEach
     public void setup() {

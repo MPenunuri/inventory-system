@@ -66,10 +66,10 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     }
 
     @Override
-    public Mono<ProductEntity> updatePriceCurrency(Long productId, String priceCurrency) {
+    public Mono<ProductEntity> updatePriceCurrency(Long productId, Long priceCurrencyId) {
         return productCrudRepository.findById(productId)
                 .flatMap(product -> {
-                    product.setPrice_currency(priceCurrency);
+                    product.setPrice_currency_id(priceCurrencyId);
                     return productCrudRepository.save(product);
                 });
     }

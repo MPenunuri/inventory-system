@@ -9,9 +9,11 @@ import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.CategoryEntity;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.CurrencyEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.ProductEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SubcategoryEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.category.CategoryRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.currency.CurrencyRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product.ProductRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.subcategory.SubcategoryRepository;
 
@@ -32,15 +34,31 @@ public class UpdateProduct {
     @Autowired
     private SubcategoryRepository subcategoryRepository;
 
+    @Autowired
+    private CurrencyRepository currencyRepository;
+
     @Test
     public void test() {
         Samples samples = new Samples();
-        AtomicReference<Long> nexSubcategoryIdRef = new AtomicReference<>();
+        AtomicReference<Long> nextSubcategoryIdRef = new AtomicReference<>();
         CategoryEntity category = samples.category();
         SubcategoryEntity prevSubcategory = samples.subcategory();
         SubcategoryEntity nextSubcategory = samples.subcategory();
         nextSubcategory.setName("Light soda");
         ProductEntity product = samples.product();
+
+        AtomicReference<Long> prevCurrencyIdRef = new AtomicReference<>();
+        CurrencyEntity currency1 = new CurrencyEntity();
+        currency1.setName("USD");
+        AtomicReference<Long> nextCurrencyIdRef = new AtomicReference<>();
+        CurrencyEntity currency2 = new CurrencyEntity();
+        currency2.setName("MXN");
+
+        Mono<Void> savedPrevCurrency = currencyRepository.save(currency1)
+                .doOnNext(c -> prevCurrencyIdRef.set(c.getId())).then();
+
+        Mono<Void> savedNextCurrency = currencyRepository.save(currency2)
+                .doOnNext(c -> nextCurrencyIdRef.set(c.getId())).then();
 
         Mono<Long> savedPrevSubcategoryId = categoryRepository.save(category)
                 .flatMap(savedCategory -> {
@@ -48,7 +66,7 @@ public class UpdateProduct {
                     prevSubcategory.setCategory_id(savedCategory.getId());
                     return subcategoryRepository.save(nextSubcategory)
                             .flatMap(savedSubcategory -> {
-                                nexSubcategoryIdRef.set(savedSubcategory.getId());
+                                nextSubcategoryIdRef.set(savedSubcategory.getId());
                                 return subcategoryRepository.save(prevSubcategory)
                                         .map(savedPrevSubcategory -> savedPrevSubcategory.getId());
                             });
@@ -58,6 +76,7 @@ public class UpdateProduct {
         Mono<Long> savedProductId = savedPrevSubcategoryId.flatMap(
                 subcategoryId -> {
                     product.setSubcategory_id(subcategoryId);
+                    product.setPrice_currency_id(prevCurrencyIdRef.get());
                     return productRepository.save(product).map(prod -> {
                         return prod.getId();
                     });
@@ -69,7 +88,7 @@ public class UpdateProduct {
                             .thenReturn(productId);
                 })
                 .flatMap(productId -> {
-                    return productRepository.updateSubcategory(productId, nexSubcategoryIdRef.get())
+                    return productRepository.updateSubcategory(productId, nextSubcategoryIdRef.get())
                             .thenReturn(productId);
                 })
                 .flatMap(productId -> {
@@ -86,17 +105,20 @@ public class UpdateProduct {
                     return productRepository.updateWholesalePrice(productId, 1.00).thenReturn(productId);
                 })
                 .flatMap(productId -> {
-                    return productRepository.updatePriceCurrency(productId, "CAD");
+                    return productRepository.updatePriceCurrency(productId, nextCurrencyIdRef.get());
                 });
 
-        StepVerifier.create(updatedProduct).expectNextMatches(
-                p -> p.getName().equals("Fanta light") &&
-                        p.getSubcategory_id() == nexSubcategoryIdRef.get() &&
-                        p.getProductPresentation().equals("Plastic bottle 600ml") &&
-                        p.getMinimumStock() == 30 &&
-                        p.getRetail_price() == 1.25 &&
-                        p.getWholesale_price() == 1.00 &&
-                        p.getPrice_currency().equals("CAD"))
+        Mono<ProductEntity> updated = savedPrevCurrency.then(savedNextCurrency).then(updatedProduct);
+
+        StepVerifier.create(
+                updated).expectNextMatches(
+                        p -> p.getName().equals("Fanta light") &&
+                                p.getSubcategory_id() == nextSubcategoryIdRef.get() &&
+                                p.getProductPresentation().equals("Plastic bottle 600ml") &&
+                                p.getMinimumStock() == 30 &&
+                                p.getRetail_price() == 1.25 &&
+                                p.getWholesale_price() == 1.00 &&
+                                p.getPrice_currency_id() == nextCurrencyIdRef.get())
                 .verifyComplete();
 
     }

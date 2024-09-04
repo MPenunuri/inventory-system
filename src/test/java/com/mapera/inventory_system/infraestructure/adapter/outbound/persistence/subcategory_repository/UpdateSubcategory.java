@@ -21,10 +21,10 @@ import reactor.test.StepVerifier;
 public class UpdateSubcategory {
 
         @Autowired
-        CategoryRepository categoryRepository;
+        private CategoryRepository categoryRepository;
 
         @Autowired
-        SubcategoryRepository subcategoryRepository;
+        private SubcategoryRepository subcategoryRepository;
 
         @Test
         public void test() {

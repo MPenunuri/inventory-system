@@ -17,6 +17,6 @@ public interface ProductRepositoryCustom {
 
     Mono<ProductEntity> updateWholesalePrice(Long productId, Double price);
 
-    Mono<ProductEntity> updatePriceCurrency(Long productId, String priceCurrency);
+    Mono<ProductEntity> updatePriceCurrency(Long productId, Long priceCurrencyId);
 
 }

@@ -34,4 +34,12 @@ public interface ProductRepository
         @Query(ProductQuery.STOCK_QUERY + "HAVING SUM(sl.quantity) < p.minimum_stock")
         Flux<MinimumStockProductDTO> findProductsWithMinimumStock();
 
+        @Query(ProductQuery.STANDARD_QUERY + "WHERE p.price_currency_id = :currencyId AND " +
+                        "p.retail_price >= :min AND p.retail_price <= :max")
+        Flux<StandardProductDTO> findProductsBySellingRetailPrice(Long currencyId, Double min, Double max);
+
+        @Query(ProductQuery.STANDARD_QUERY + "WHERE p.price_currency_id = :currencyId AND " +
+                        "p.wholesale_price >= :min AND p.wholesale_price <= :max")
+        Flux<StandardProductDTO> findProductsBySellingWholesalePrice(Long currencyId, Double min, Double max);
+
 }
