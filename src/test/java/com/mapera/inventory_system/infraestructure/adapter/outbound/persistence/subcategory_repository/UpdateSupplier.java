@@ -1,0 +1,34 @@
+package com.mapera.inventory_system.infraestructure.adapter.outbound.persistence.subcategory_repository;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
+import org.springframework.test.context.ActiveProfiles;
+
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SupplierEntity;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.supplier.SupplierRepository;
+
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+@ActiveProfiles("test")
+@DataR2dbcTest
+public class UpdateSupplier {
+
+    @Autowired
+    SupplierRepository supplierRepository;
+
+    @Test
+    public void test() {
+        SupplierEntity supplierEntity = new SupplierEntity();
+        supplierEntity.setName("International company");
+
+        Mono<Long> savedSupplierId = supplierRepository.save(supplierEntity).map(s -> s.getId());
+
+        Mono<SupplierEntity> updatedSupplier = savedSupplierId
+                .flatMap(id -> supplierRepository.renameSupplier(id, "Local company"));
+
+        StepVerifier.create(updatedSupplier).expectNextMatches(s -> s.getName().equals("Local company"))
+                .verifyComplete();
+    }
+}
