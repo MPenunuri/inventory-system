@@ -51,3 +51,8 @@ CREATE TABLE IF NOT EXISTS product_supplier (
     FOREIGN KEY (product_id) REFERENCES products(id),
     FOREIGN KEY (supplier_id) REFERENCES suppliers(id)
 );
+
+CREATE TABLE IF NOT EXISTS currencies(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(10) NOT NULL
+)
