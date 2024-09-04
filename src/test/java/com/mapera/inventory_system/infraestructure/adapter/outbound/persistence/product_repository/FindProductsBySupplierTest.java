@@ -124,9 +124,9 @@ public class FindProductsBySupplierTest {
 
                 StepVerifier.create(saveProductsMono).verifyComplete();
 
-                Flux<SupplierProductDTO> founded = productRepository.findProductsBySupplierId(supplierIdRef.get());
+                Flux<SupplierProductDTO> found = productRepository.findProductsBySupplierId(supplierIdRef.get());
 
-                StepVerifier.create(founded)
+                StepVerifier.create(found)
                                 .expectNextCount(3)
                                 .verifyComplete();
 

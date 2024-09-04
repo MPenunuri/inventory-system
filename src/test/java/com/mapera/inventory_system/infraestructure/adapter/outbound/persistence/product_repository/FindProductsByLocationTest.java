@@ -114,9 +114,9 @@ public class FindProductsByLocationTest {
 
                 StepVerifier.create(saveProductsMono).verifyComplete();
 
-                Flux<LocationProductDTO> founded = productRepository.findProductsByLocationid(locationIdRef.get());
+                Flux<LocationProductDTO> found = productRepository.findProductsByLocationid(locationIdRef.get());
 
-                StepVerifier.create(founded)
+                StepVerifier.create(found)
                                 .expectNextCount(3)
                                 .verifyComplete();
         }

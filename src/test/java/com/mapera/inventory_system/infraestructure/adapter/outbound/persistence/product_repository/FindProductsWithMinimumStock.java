@@ -126,9 +126,9 @@ public class FindProductsWithMinimumStock {
 
                 StepVerifier.create(saveProductsMono).verifyComplete();
 
-                Flux<MinimumStockProductDTO> founded = productRepository.findProductsWithMinimumStock();
+                Flux<MinimumStockProductDTO> found = productRepository.findProductsWithMinimumStock();
 
-                StepVerifier.create(founded)
+                StepVerifier.create(found)
                                 .expectNextCount(2)
                                 .verifyComplete();
         }
