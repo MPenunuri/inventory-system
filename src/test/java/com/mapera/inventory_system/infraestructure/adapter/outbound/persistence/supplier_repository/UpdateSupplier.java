@@ -1,4 +1,4 @@
-package com.mapera.inventory_system.infraestructure.adapter.outbound.persistence.subcategory_repository;
+package com.mapera.inventory_system.infraestructure.adapter.outbound.persistence.supplier_repository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

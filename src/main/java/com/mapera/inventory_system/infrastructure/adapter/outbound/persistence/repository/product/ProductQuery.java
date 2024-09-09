@@ -3,35 +3,35 @@ package com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.
 public class ProductQuery {
 
         public static final String PRODUCT_ATTRIBUTES_SELECTION = "SELECT p.id AS product_id, " +
-                        "p.name AS productName, " +
-                        "p.subcategory_id AS subcategoryId, " +
-                        "p.product_presentation AS productPresentation, " +
-                        "p.minimum_stock AS minimumStock, " +
-                        "p.retail_price AS retailPrice, " +
-                        "p.wholesale_price AS wholesalePrice, ";
+                        "p.name AS product_name, " +
+                        "p.subcategory_id AS subcategory_id, " +
+                        "p.product_presentation AS product_presentation, " +
+                        "p.minimum_stock AS minimum_stock, " +
+                        "p.retail_price AS retail_price, " +
+                        "p.wholesale_price AS wholesale_price, ";
 
         public static final String STANDARD_QUERY = PRODUCT_ATTRIBUTES_SELECTION +
-                        "s.name AS subcategoryName, " +
-                        "c.id AS categoryId, " +
-                        "c.name AS categoryName, " +
-                        "pc.name AS priceCurrency " +
+                        "s.name AS subcategory_name, " +
+                        "c.id AS category_id, " +
+                        "c.name AS category_name, " +
+                        "pc.name AS price_currency " +
                         "FROM products p " +
                         "JOIN subcategories s ON p.subcategory_id = s.id " +
                         "JOIN categories c ON s.category_id = c.id " +
                         "LEFT JOIN currencies pc ON pc.id = p.price_currency_id ";
 
         public static final String FULL_QUERY = PRODUCT_ATTRIBUTES_SELECTION +
-                        "s.name AS subcategoryName, " +
-                        "c.id AS categoryId, " +
-                        "c.name AS categoryName, " +
-                        "pc.name AS priceCurrency, " +
-                        "l.id AS stockLocationId, " +
-                        "l.name AS stockLocationName, " +
-                        "l.address AS stockLocationAddress, " +
-                        "sl.quantity AS stockLocationQuantity, " +
-                        "sl.maximum_storage AS stockLocationMaximumStorage, " +
-                        "su.id AS supplierId, " +
-                        "su.name AS supplierName " +
+                        "s.name AS subcategory_name, " +
+                        "c.id AS category_id, " +
+                        "c.name AS category_name, " +
+                        "pc.name AS price_currency, " +
+                        "l.id AS stock_location_id, " +
+                        "l.name AS stock_location_name, " +
+                        "l.address AS stock_location_address, " +
+                        "sl.quantity AS stock_location_quantity, " +
+                        "sl.maximum_storage AS stock_location_maximum_storage, " +
+                        "su.id AS supplier_id, " +
+                        "su.name AS supplier_name " +
                         "FROM products p " +
                         "JOIN subcategories s ON p.subcategory_id = s.id " +
                         "JOIN categories c ON s.category_id = c.id  " +
@@ -42,12 +42,12 @@ public class ProductQuery {
                         "LEFT JOIN currencies pc ON pc.id = p.price_currency_id ";
 
         public static final String SUPPLIER_QUERY = PRODUCT_ATTRIBUTES_SELECTION +
-                        "s.name AS subcategoryName, " +
-                        "c.id AS categoryId, " +
-                        "c.name AS categoryName, " +
-                        "pc.name AS priceCurrency, " +
-                        "su.id AS supplierId, " +
-                        "su.name AS supplierName, " +
+                        "s.name AS subcategory_name, " +
+                        "c.id AS category_id, " +
+                        "c.name AS category_name, " +
+                        "pc.name AS price_currency, " +
+                        "su.id AS supplier_id, " +
+                        "su.name AS supplier_name, " +
                         "FROM products p " +
                         "JOIN subcategories s ON p.subcategory_id = s.id " +
                         "JOIN categories c ON s.category_id = c.id  " +
@@ -56,15 +56,15 @@ public class ProductQuery {
                         "LEFT JOIN currencies pc ON pc.id = p.price_currency_id ";
 
         public static final String LOCATION_QUERY = PRODUCT_ATTRIBUTES_SELECTION +
-                        "s.name AS subcategoryName, " +
-                        "c.id AS categoryId, " +
-                        "c.name AS categoryName, " +
-                        "pc.name AS priceCurrency, " +
-                        "l.id AS stockLocationId, " +
-                        "l.name AS stockLocationName, " +
-                        "l.address AS stockLocationAddress, " +
-                        "sl.quantity AS stockLocationQuantity, " +
-                        "sl.maximum_storage AS stockLocationMaximumStorage " +
+                        "s.name AS subcategory_name, " +
+                        "c.id AS category_id, " +
+                        "c.name AS category_name, " +
+                        "pc.name AS price_currency, " +
+                        "l.id AS stock_location_id, " +
+                        "l.name AS stock_location_name, " +
+                        "l.address AS stock_location_address, " +
+                        "sl.quantity AS stock_location_quantity, " +
+                        "sl.maximum_storage AS stock_location_maximum_storage " +
                         "FROM products p " +
                         "JOIN subcategories s ON p.subcategory_id = s.id " +
                         "JOIN categories c ON s.category_id = c.id " +
@@ -72,9 +72,17 @@ public class ProductQuery {
                         "LEFT JOIN locations l ON l.id = sl.location_id " +
                         "LEFT JOIN currencies pc ON pc.id = p.price_currency_id ";
 
-        public static final String STOCK_QUERY = "SELECT p.id, p.name, p.product_presentation, p.minimum_stock, " +
+        public static final String MINIMUM_STOCK_QUERY = "SELECT p.id, p.name, p.product_presentation, p.minimum_stock, "
+                        +
                         "SUM(sl.quantity) AS total_stock " +
                         "FROM products p " +
                         "JOIN stock_list sl ON sl.product_id = p.id " +
+                        "GROUP BY p.id ";
+
+        public static final String STOCK_QUERY = "SELECT p.id, p.name, p.product_presentation, p.minimum_stock, " +
+                        "SUM(sl.quantity) AS total_stock " +
+                        "FROM products p " +
+                        "LEFT JOIN stock_list sl ON sl.product_id = p.id " +
+                        "WHERE p.id = :productId " +
                         "GROUP BY p.id ";
 }

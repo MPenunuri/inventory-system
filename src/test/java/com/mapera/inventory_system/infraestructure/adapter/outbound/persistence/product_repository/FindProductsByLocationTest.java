@@ -18,6 +18,7 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.e
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.category.CategoryRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.location.LocationRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product.ProductRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product_supplier.ProductSupplierRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.stock.StockRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.subcategory.SubcategoryRepository;
 
@@ -28,6 +29,9 @@ import reactor.test.StepVerifier;
 @ActiveProfiles("test")
 @DataR2dbcTest
 public class FindProductsByLocationTest {
+
+        @Autowired
+        private ProductSupplierRepository productSupplierRepository;
 
         @Autowired
         private ProductRepository productRepository;
@@ -46,6 +50,7 @@ public class FindProductsByLocationTest {
 
         @BeforeEach
         void setUp() {
+                Mono<Void> deleteProdutSupplier = productSupplierRepository.deleteAll();
                 Mono<Void> deleteStocklist = stockRepository.deleteAll();
                 Mono<Void> deleteLocations = locationRepository.deleteAll();
                 Mono<Void> deleteProducts = productRepository.deleteAll();
@@ -54,6 +59,7 @@ public class FindProductsByLocationTest {
 
                 Mono<Void> setup = deleteStocklist
                                 .then(deleteLocations)
+                                .then(deleteProdutSupplier)
                                 .then(deleteProducts)
                                 .then(deleteSubcategories)
                                 .then(deleteCategories);

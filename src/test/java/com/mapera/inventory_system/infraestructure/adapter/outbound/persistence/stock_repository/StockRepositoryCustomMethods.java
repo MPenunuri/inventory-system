@@ -16,6 +16,7 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.e
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SubcategoryEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.category.CategoryRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.location.LocationRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.movement.MovementRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product.ProductRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product_supplier.ProductSupplierRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.stock.StockRepository;
@@ -27,6 +28,10 @@ import reactor.test.StepVerifier;
 @ActiveProfiles("test")
 @DataR2dbcTest
 public class StockRepositoryCustomMethods {
+
+        @Autowired
+        private MovementRepository movementRepository;
+
         @Autowired
         private ProductRepository productRepository;
 
@@ -47,6 +52,7 @@ public class StockRepositoryCustomMethods {
 
         @BeforeEach
         void setUp() {
+                Mono<Void> deleteMovements = movementRepository.deleteAll();
                 Mono<Void> deleteProductSupplier = productSupplierRepository.deleteAll();
                 Mono<Void> deleteStocklist = stockRepository.deleteAll();
                 Mono<Void> deleteLocations = locationRepository.deleteAll();
@@ -55,6 +61,8 @@ public class StockRepositoryCustomMethods {
                 Mono<Void> deleteCategories = categoryRepository.deleteAll();
 
                 Mono<Void> setup = deleteProductSupplier
+
+                                .then(deleteMovements)
                                 .then(deleteStocklist)
                                 .then(deleteLocations)
                                 .then(deleteProducts)

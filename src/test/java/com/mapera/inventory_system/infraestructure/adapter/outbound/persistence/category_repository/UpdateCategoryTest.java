@@ -10,8 +10,14 @@ import org.springframework.test.context.ActiveProfiles;
 import com.mapera.inventory_system.infraestructure.adapter.outbound.persistence.product_repository.Samples;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.CategoryEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.category.CategoryRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.currency.CurrencyRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.location.LocationRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.movement.MovementRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product.ProductRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product_supplier.ProductSupplierRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.stock.StockRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.subcategory.SubcategoryRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.supplier.SupplierRepository;
 
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -22,20 +28,53 @@ import reactor.test.StepVerifier;
 public class UpdateCategoryTest {
 
     @Autowired
-    private ProductRepository productRepository;
+    CategoryRepository categoryRepository;
 
     @Autowired
-    private SubcategoryRepository subcategoryRepository;
+    SubcategoryRepository subcategoryRepository;
 
     @Autowired
-    private CategoryRepository categoryRepository;
+    ProductRepository productRepository;
+
+    @Autowired
+    SupplierRepository supplierRepository;
+
+    @Autowired
+    ProductSupplierRepository productSupplierRepository;
+
+    @Autowired
+    LocationRepository locationRepository;
+
+    @Autowired
+    CurrencyRepository currencyRepository;
+
+    @Autowired
+    MovementRepository movementRepository;
+
+    @Autowired
+    StockRepository stockRepository;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
+        Mono<Void> deleteMovements = movementRepository.deleteAll();
+        Mono<Void> deleteProductSupplier = productSupplierRepository.deleteAll();
+        Mono<Void> deleteSuppliers = supplierRepository.deleteAll();
+        Mono<Void> deleteStocklist = stockRepository.deleteAll();
         Mono<Void> deleteProducts = productRepository.deleteAll();
         Mono<Void> deleteSubcategories = subcategoryRepository.deleteAll();
         Mono<Void> deleteCategories = categoryRepository.deleteAll();
-        Mono<Void> setup = deleteProducts.then(deleteSubcategories).then(deleteCategories);
+        Mono<Void> deleteCurrencies = currencyRepository.deleteAll();
+        Mono<Void> deleteLocations = currencyRepository.deleteAll();
+
+        Mono<Void> setup = deleteProductSupplier
+                .then(deleteStocklist)
+                .then(deleteMovements)
+                .then(deleteSuppliers)
+                .then(deleteProducts)
+                .then(deleteSubcategories)
+                .then(deleteCategories)
+                .then(deleteCurrencies)
+                .then(deleteLocations);
 
         setup.block();
     }

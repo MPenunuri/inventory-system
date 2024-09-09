@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.MinimumStockProductDTO;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.StockProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.CategoryEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.LocationEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.ProductEntity;
@@ -126,7 +126,7 @@ public class FindProductsWithMinimumStock {
 
                 StepVerifier.create(saveProductsMono).verifyComplete();
 
-                Flux<MinimumStockProductDTO> found = productRepository.findProductsWithMinimumStock();
+                Flux<StockProductDTO> found = productRepository.findProductsWithMinimumStock();
 
                 StepVerifier.create(found)
                                 .expectNextCount(2)

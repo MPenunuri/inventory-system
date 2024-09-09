@@ -75,10 +75,37 @@ public class StockRepositoryImpl implements StockRepositoryCustom {
     }
 
     @Override
-    public Mono<StockEntity> decreseQuantityInStock(Long stockId, int increse) {
+    public Mono<StockEntity> decreseQuantityInStock(Long stockId, int decrese) {
         return stockCrudRepository.findById(stockId)
                 .flatMap(stock -> {
-                    stock.setQuantity(stock.getQuantity() - increse);
+                    stock.setQuantity(stock.getQuantity() - decrese);
+                    return stockCrudRepository.save(stock);
+                });
+    }
+
+    @Override
+    public Mono<StockEntity> increseStockByLocationAndProduct(Long locationId, Long product_id, int increse) {
+        // Check if there is a current stock
+        return stockCrudRepository.findProductStockInLocation(product_id, locationId)
+                // If there is, increse stock quantity
+                .flatMap(stock -> {
+                    stock.setQuantity(stock.getQuantity() + increse);
+                    return stockCrudRepository.save(stock);
+                }).switchIfEmpty(Mono.defer(() -> {
+                    // If not, create stock and set increase as quantity
+                    StockEntity stockEntity = new StockEntity();
+                    stockEntity.setLocation_id(locationId);
+                    stockEntity.setProduct_id(product_id);
+                    stockEntity.setQuantity(increse);
+                    return stockCrudRepository.save(stockEntity);
+                }));
+    }
+
+    @Override
+    public Mono<StockEntity> decreseStockByLocationAndProduct(Long locationId, Long product_id, int decrese) {
+        return stockCrudRepository.findProductStockInLocation(product_id, locationId)
+                .flatMap(stock -> {
+                    stock.setQuantity(stock.getQuantity() - decrese);
                     return stockCrudRepository.save(stock);
                 });
     }

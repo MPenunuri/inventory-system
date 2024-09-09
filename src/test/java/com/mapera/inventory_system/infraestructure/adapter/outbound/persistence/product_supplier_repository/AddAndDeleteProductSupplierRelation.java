@@ -14,6 +14,7 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.e
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SubcategoryEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SupplierEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.category.CategoryRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.movement.MovementRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product.ProductRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product_supplier.ProductSupplierRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.stock.StockRepository;
@@ -26,6 +27,9 @@ import reactor.test.StepVerifier;
 @ActiveProfiles("test")
 @DataR2dbcTest
 public class AddAndDeleteProductSupplierRelation {
+
+    @Autowired
+    private MovementRepository movementRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -47,6 +51,7 @@ public class AddAndDeleteProductSupplierRelation {
 
     @BeforeEach
     void setUp() {
+        Mono<Void> deleteMovements = movementRepository.deleteAll();
         Mono<Void> deleteProductSupplier = productSupplierRepository.deleteAll();
         Mono<Void> deleteSuppliers = supplierRepository.deleteAll();
         Mono<Void> deleteStocklist = stockRepository.deleteAll();
@@ -57,6 +62,7 @@ public class AddAndDeleteProductSupplierRelation {
         Mono<Void> setup = deleteProductSupplier
                 .then(deleteSuppliers)
                 .then(deleteStocklist)
+                .then(deleteMovements)
                 .then(deleteProducts)
                 .then(deleteSubcategories)
                 .then(deleteCategories);

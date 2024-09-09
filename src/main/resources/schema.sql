@@ -56,3 +56,31 @@ CREATE TABLE IF NOT EXISTS product_supplier (
     FOREIGN KEY (product_id) REFERENCES products(id),
     FOREIGN KEY (supplier_id) REFERENCES suppliers(id)
 );
+
+ CREATE TABLE IF NOt EXISTS movements (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    date_time DATETIME NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    subtype VARCHAR(50) NOT NULL,
+    reason VARCHAR(300) NOT NULL,
+    comment TEXT NOT NULL,
+    quantity INT NOT NULL,
+    supplier_id INT,
+    from_location_id INT,
+    to_location_id INT,
+    transaction_type VARCHAR(50),
+    transaction_subtype VARCHAR(50),
+    transaction_value DECIMAL(20, 2),
+    transaction_currency_id INT,
+    FOREIGN KEY (product_id) REFERENCES products(id),    
+    FOREIGN KEY (supplier_id) REFERENCES suppliers(id),
+    FOREIGN KEY (from_location_id) REFERENCES locations(id),
+    FOREIGN KEY (to_location_id) REFERENCES locations(id),
+    FOREIGN KEY (transaction_currency_id) REFERENCES currencies(id),
+    CONSTRAINT type CHECK (type IN ('Entry', 'Output', 'Transfer')),
+    CONSTRAINT subtype CHECK (subtype IN (
+        'Acquisition', 'Customer return', 'Inventory adjustment', 'Production',
+        'Sales', 'Supplier Return', 'Internal Consumption',
+        'None'))
+);

@@ -4,11 +4,12 @@ import org.springframework.data.r2dbc.repository.Query;
 
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.FullProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.LocationProductDTO;
-import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.MinimumStockProductDTO;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.StockProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.StandardProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.SupplierProductDTO;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface ProductRepository
                 extends ProductCrudRepository, ProductRepositoryCustom {
@@ -31,8 +32,11 @@ public interface ProductRepository
         @Query(ProductQuery.LOCATION_QUERY + "WHERE l.id = :locationId")
         Flux<LocationProductDTO> findProductsByLocationid(Long locationId);
 
-        @Query(ProductQuery.STOCK_QUERY + "HAVING SUM(sl.quantity) < p.minimum_stock")
-        Flux<MinimumStockProductDTO> findProductsWithMinimumStock();
+        @Query(ProductQuery.MINIMUM_STOCK_QUERY + "HAVING SUM(sl.quantity) < p.minimum_stock")
+        Flux<StockProductDTO> findProductsWithMinimumStock();
+
+        @Query(ProductQuery.STOCK_QUERY)
+        Mono<StockProductDTO> getProductStockById(Long locationId);
 
         @Query(ProductQuery.STANDARD_QUERY + "WHERE p.price_currency_id = :currencyId AND " +
                         "p.retail_price >= :min AND p.retail_price <= :max")
