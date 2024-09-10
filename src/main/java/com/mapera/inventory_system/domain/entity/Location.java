@@ -1,17 +1,17 @@
 package com.mapera.inventory_system.domain.entity;
 
 public class Location {
-    private final int id;
+    private final Long id;
     private String name;
     private String address;
 
-    public Location(int id, String name, String address) {
+    public Location(Long id, String name, String address) {
         this.id = id;
         this.name = name;
         this.address = address;
     }
 
-    public int getId() {
+    public Long getId() {
         return this.id;
     }
 

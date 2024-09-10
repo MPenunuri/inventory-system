@@ -39,7 +39,7 @@ public class StockManager {
         this.stockList.add(stock);
     }
 
-    public boolean removeStock(int id) {
+    public boolean removeStock(long id) {
         Iterator<Stock> iterator = this.stockList.iterator();
         while (iterator.hasNext()) {
             Stock stock = iterator.next();
@@ -51,19 +51,19 @@ public class StockManager {
         return false;
     }
 
-    public Optional<Stock> findStockById(int stockId) {
+    public Optional<Stock> findStockById(long stockId) {
         return this.stockList.stream()
                 .filter(stock -> stock.getId() == stockId)
                 .findFirst();
     }
 
-    public Optional<Stock> findStockInLocation(int locationId) {
+    public Optional<Stock> findStockInLocation(long locationId) {
         return this.stockList.stream()
                 .filter(stock -> stock.getLocation().getId() == locationId)
                 .findFirst();
     }
 
-    public Stock getStockInLocation(int locationId) {
+    public Stock getStockInLocation(long locationId) {
         Optional<Stock> found = findStockInLocation(locationId);
         if (!found.isPresent()) {
             throw new IllegalArgumentException("Stock not found");
@@ -72,17 +72,17 @@ public class StockManager {
         return stock;
     }
 
-    public void increseStockInLocation(int locationId, int quantity) {
+    public void increseStockInLocation(long locationId, int quantity) {
         Stock stock = getStockInLocation(locationId);
         stock.increase(quantity);
     }
 
-    public void decreaseStockInLocation(int locationId, int quantity) {
+    public void decreaseStockInLocation(long locationId, int quantity) {
         Stock stock = getStockInLocation(locationId);
         stock.decrease(quantity);
     }
 
-    public void setMaximumStockInLocation(int locationId, int quantity) {
+    public void setMaximumStockInLocation(long locationId, int quantity) {
         Stock stock = getStockInLocation(locationId);
         stock.setMaximumStorage(quantity);
     }

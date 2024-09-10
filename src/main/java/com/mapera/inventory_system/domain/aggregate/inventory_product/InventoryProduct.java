@@ -14,7 +14,7 @@ public class InventoryProduct extends Product {
         public SupplierManager supplierManager;
 
         public InventoryProduct(
-                        int id, String name, Subcategory subcategory,
+                        Long id, String name, Subcategory subcategory,
                         List<Stock> stockList, String productPresentation,
                         List<Supplier> suppliers, MinimumStock minimumStock,
                         SellingPrice sellingPrice) {
@@ -25,8 +25,8 @@ public class InventoryProduct extends Product {
                 this.supplierManager = new SupplierManager(suppliers);
         }
 
-        public InventoryProduct(Integer id, String name) {
-                this(id, name, null, null,
+        public InventoryProduct(String name) {
+                this(null, name, null, null,
                                 null, null,
                                 null, null);
                 this.setStockList(new ArrayList<Stock>());

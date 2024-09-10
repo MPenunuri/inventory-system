@@ -9,7 +9,7 @@ import com.mapera.inventory_system.domain.valueobject.MinimumStock;
 import com.mapera.inventory_system.domain.valueobject.SellingPrice;
 
 public class Product {
-        private final int id;
+        private Long id;
         private String name;
         private Subcategory subcategory;
         private List<Stock> stockList;
@@ -18,7 +18,7 @@ public class Product {
         private MinimumStock minimumStock;
         private SellingPrice sellingPrice;
 
-        public Product(int id, String name, Subcategory subcategory, List<Stock> stockList,
+        public Product(Long id, String name, Subcategory subcategory, List<Stock> stockList,
                         String productPresentation, List<Supplier> suppliers,
                         MinimumStock minimumStock, SellingPrice sellingPrice) {
                 this.id = id;
@@ -31,13 +31,17 @@ public class Product {
                 this.sellingPrice = sellingPrice;
         }
 
-        public Product(Integer id, String name) {
-                this(id, name, null, null,
+        public Product(String name) {
+                this(null, name, null, null,
                                 null, null,
                                 null, null);
         }
 
-        public Integer getId() {
+        public void setId(Long id) {
+                this.id = id;
+        }
+
+        public Long getId() {
                 return this.id;
         }
 

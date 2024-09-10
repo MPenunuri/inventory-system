@@ -3,19 +3,19 @@ package com.mapera.inventory_system.domain.entity;
 import com.mapera.inventory_system.domain.valueobject.MaximumStorage;
 
 public class Stock {
-    private final int id;
+    private final Long id;
     private final Location location;
     private int quantity;
     private MaximumStorage maximumStorage;
 
-    public Stock(int id, Location location, int quantity, int maximumStorage) {
+    public Stock(Long id, Location location, int quantity, int maximumStorage) {
         this.id = id;
         this.location = location;
         this.quantity = quantity;
         this.maximumStorage = new MaximumStorage(maximumStorage);
     }
 
-    public Stock(int id, Location location, int quantity) {
+    public Stock(Long id, Location location, int quantity) {
         this.id = id;
         this.location = location;
         this.quantity = quantity;
@@ -48,7 +48,7 @@ public class Stock {
         this.quantity -= quantity;
     }
 
-    public int getId() {
+    public Long getId() {
         return this.id;
     }
 

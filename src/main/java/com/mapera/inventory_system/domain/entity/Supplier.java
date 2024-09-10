@@ -3,15 +3,15 @@ package com.mapera.inventory_system.domain.entity;
 import com.mapera.inventory_system.domain.common.Identifiable;
 
 public class Supplier implements Identifiable {
-    private final int id;
+    private final Long id;
     private String name;
 
-    public Supplier(int id, String name) {
+    public Supplier(Long id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public int getId() {
+    public Long getId() {
         return this.id;
     }
 

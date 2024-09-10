@@ -1,17 +1,17 @@
 package com.mapera.inventory_system.domain.entity;
 
 public class Subcategory {
-    private final int id;
+    private final Long id;
     private final Category category;
     private String name;
 
-    public Subcategory(int id, Category category, String name) {
+    public Subcategory(Long id, Category category, String name) {
         this.id = id;
         this.category = category;
         this.name = name;
     }
 
-    public int getId() {
+    public Long getId() {
         return this.id;
     }
 

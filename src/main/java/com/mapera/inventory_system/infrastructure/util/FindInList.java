@@ -8,13 +8,13 @@ import com.mapera.inventory_system.domain.common.Identifiable;
 
 public class FindInList {
 
-    public static <T extends Identifiable> Optional<T> findById(List<T> list, int id) {
+    public static <T extends Identifiable> Optional<T> findById(List<T> list, long id) {
         return list.stream()
                 .filter(item -> item.getId() == id)
                 .findFirst();
     }
 
-    public static <T extends Identifiable> T getById(List<T> list, int id, String tag) {
+    public static <T extends Identifiable> T getById(List<T> list, long id, String tag) {
         Optional<T> found = findById(list, id);
         if (!found.isPresent()) {
             throw new IllegalArgumentException(tag + " not found");
@@ -23,7 +23,7 @@ public class FindInList {
         return element;
     }
 
-    public static <T extends Identifiable> boolean findByIdAndRemove(List<T> list, int id) {
+    public static <T extends Identifiable> boolean findByIdAndRemove(List<T> list, long id) {
         Iterator<T> iterator = list.iterator();
         while (iterator.hasNext()) {
             T item = iterator.next();
