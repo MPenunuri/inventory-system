@@ -305,6 +305,10 @@ public class MovementsTest {
                 StepVerifier.create(stockOnAlternativeWarehouse).expectNextMatches(s -> s.getQuantity() == 10)
                                 .verifyComplete();
 
+                // Mono set cancelations
+
+                StepVerifier.create(addMovements.setCancelations()).verifyComplete();
+
                 Mono<StockEntity> stockOnCentralWarehouse = stockRepository.findProductStockInLocation(
                                 productId.get(), location1Id.get());
 
