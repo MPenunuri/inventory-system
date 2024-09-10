@@ -3,7 +3,7 @@ package com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.mapera.inventory_system.application.ports.outbound.ProductPersistencePort;
+import com.mapera.inventory_system.application.port.outbound.ProductPersistencePort;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.FullProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.LocationProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.StandardProductDTO;
@@ -19,6 +19,13 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
 
     @Autowired
     private ProductCrudRepository productCrudRepository;
+
+    @Override
+    public Mono<ProductEntity> registerProduct(String name) {
+        ProductEntity productEntity = new ProductEntity();
+        productEntity.setName(name);
+        return productCrudRepository.save(productEntity);
+    }
 
     @Override
     public Flux<StandardProductDTO> findAllProducts() {

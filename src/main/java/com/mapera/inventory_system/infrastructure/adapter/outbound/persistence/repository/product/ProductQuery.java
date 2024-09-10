@@ -16,8 +16,8 @@ public class ProductQuery {
                         "c.name AS category_name, " +
                         "pc.name AS price_currency " +
                         "FROM products p " +
-                        "JOIN subcategories s ON p.subcategory_id = s.id " +
-                        "JOIN categories c ON s.category_id = c.id " +
+                        "LEFT JOIN subcategories s ON p.subcategory_id = s.id " +
+                        "LEFT JOIN categories c ON s.category_id = c.id " +
                         "LEFT JOIN currencies pc ON pc.id = p.price_currency_id ";
 
         public static final String FULL_QUERY = PRODUCT_ATTRIBUTES_SELECTION +
@@ -33,8 +33,8 @@ public class ProductQuery {
                         "su.id AS supplier_id, " +
                         "su.name AS supplier_name " +
                         "FROM products p " +
-                        "JOIN subcategories s ON p.subcategory_id = s.id " +
-                        "JOIN categories c ON s.category_id = c.id  " +
+                        "LEFT JOIN subcategories s ON p.subcategory_id = s.id " +
+                        "LEFT JOIN categories c ON s.category_id = c.id  " +
                         "LEFT JOIN stock_list sl ON sl.product_id = p.id " +
                         "LEFT JOIN locations l ON l.id = sl.location_id " +
                         "LEFT JOIN product_supplier ps ON ps.product_id = p.id " +
@@ -49,8 +49,8 @@ public class ProductQuery {
                         "su.id AS supplier_id, " +
                         "su.name AS supplier_name, " +
                         "FROM products p " +
-                        "JOIN subcategories s ON p.subcategory_id = s.id " +
-                        "JOIN categories c ON s.category_id = c.id  " +
+                        "LEFT JOIN subcategories s ON p.subcategory_id = s.id " +
+                        "LEFT JOIN categories c ON s.category_id = c.id  " +
                         "LEFT JOIN product_supplier ps ON ps.product_id = p.id " +
                         "LEFT JOIN suppliers su ON su.id = ps.supplier_id " +
                         "LEFT JOIN currencies pc ON pc.id = p.price_currency_id ";
@@ -66,8 +66,8 @@ public class ProductQuery {
                         "sl.quantity AS stock_location_quantity, " +
                         "sl.maximum_storage AS stock_location_maximum_storage " +
                         "FROM products p " +
-                        "JOIN subcategories s ON p.subcategory_id = s.id " +
-                        "JOIN categories c ON s.category_id = c.id " +
+                        "LEFT JOIN subcategories s ON p.subcategory_id = s.id " +
+                        "LEFT JOIN categories c ON s.category_id = c.id " +
                         "LEFT JOIN stock_list sl ON sl.product_id = p.id " +
                         "LEFT JOIN locations l ON l.id = sl.location_id " +
                         "LEFT JOIN currencies pc ON pc.id = p.price_currency_id ";

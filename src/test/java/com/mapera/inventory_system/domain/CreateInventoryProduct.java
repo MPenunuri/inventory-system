@@ -13,19 +13,19 @@ import com.mapera.inventory_system.domain.entity.Supplier;
 public class CreateInventoryProduct {
 
     public static InventoryProduct createSampleProduct() {
-        InventoryProduct product = new InventoryProduct(1, "Coca Cola");
-        Category category = new Category(0, "Drink");
-        Subcategory subcategory = new Subcategory(0, category, "Soda");
+        InventoryProduct product = new InventoryProduct("Coca Cola");
+        Category category = new Category(0L, "Drink");
+        Subcategory subcategory = new Subcategory(0L, category, "Soda");
         product.setSubcategory(subcategory);
-        Location location1 = new Location(0, "Central warehouse", "Liberty 183");
-        Location location2 = new Location(1, "Alternative warehouse", "San Diego 3B");
-        Stock stock1 = new Stock(0, location1, 40, 40);
-        Stock stock2 = new Stock(1, location2, 10);
+        Location location1 = new Location(0L, "Central warehouse", "Liberty 183");
+        Location location2 = new Location(1L, "Alternative warehouse", "San Diego 3B");
+        Stock stock1 = new Stock(0L, location1, 40, 40);
+        Stock stock2 = new Stock(1L, location2, 10);
         product.stockManager.addStock(stock1);
         product.stockManager.addStock(stock2);
         product.setProductPresentation("Glass container 600 ml");
-        Supplier supplier1 = new Supplier(0, "International business S.A.");
-        Supplier supplier2 = new Supplier(1, "Another company");
+        Supplier supplier1 = new Supplier(0L, "International business S.A.");
+        Supplier supplier2 = new Supplier(1L, "Another company");
         product.supplierManager.addSupplier(supplier1);
         product.supplierManager.addSupplier(supplier2);
         product.setMinimumStock(100);

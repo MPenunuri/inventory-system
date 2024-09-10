@@ -1,4 +1,4 @@
-package com.mapera.inventory_system.application.ports.outbound;
+package com.mapera.inventory_system.application.port.outbound;
 
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.FullProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.LocationProductDTO;
@@ -11,6 +11,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ProductPersistencePort {
+
+    Mono<ProductEntity> registerProduct(String name);
 
     Flux<StandardProductDTO> findAllProducts();
 
