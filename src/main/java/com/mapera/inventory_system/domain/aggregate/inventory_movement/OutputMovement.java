@@ -1,6 +1,6 @@
 package com.mapera.inventory_system.domain.aggregate.inventory_movement;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 import com.mapera.inventory_system.domain.aggregate.inventory_product.InventoryProduct;
 import com.mapera.inventory_system.domain.entity.Location;
@@ -12,7 +12,7 @@ public class OutputMovement extends Movement {
     private Sell sell;
 
     public OutputMovement(int id, InventoryProduct product,
-            ZonedDateTime time,
+            LocalDateTime time,
             OutputType subtype, String reason, int quantity,
             String comment, Location location, Sell sell) {
         super(id, product, time, "output", subtype, reason, quantity, comment);
@@ -21,7 +21,7 @@ public class OutputMovement extends Movement {
     }
 
     public OutputMovement(int id, InventoryProduct product,
-            ZonedDateTime time,
+            LocalDateTime time,
             OutputType subtype, String reason, int quantity,
             Location location, Sell sell) {
         super(id, product, time, "output", subtype, reason, quantity, null);

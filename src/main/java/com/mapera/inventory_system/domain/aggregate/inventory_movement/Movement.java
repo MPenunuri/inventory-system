@@ -1,6 +1,6 @@
 package com.mapera.inventory_system.domain.aggregate.inventory_movement;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 import com.mapera.inventory_system.domain.aggregate.inventory_product.InventoryProduct;
 import com.mapera.inventory_system.domain.common.MovementSubtype;
@@ -8,7 +8,7 @@ import com.mapera.inventory_system.domain.common.MovementSubtype;
 public class Movement {
     private final int id;
     private InventoryProduct product;
-    private ZonedDateTime time;
+    private LocalDateTime time;
     private String type;
     private MovementSubtype subtype;
     private String reason;
@@ -16,7 +16,7 @@ public class Movement {
     private String comment;
 
     public Movement(int id, InventoryProduct product,
-            ZonedDateTime time, String type,
+            LocalDateTime time, String type,
             MovementSubtype subtype,
             String reason, int quantity, String comment) {
         this.id = id;
@@ -30,7 +30,7 @@ public class Movement {
     }
 
     public Movement(int id, InventoryProduct product,
-            ZonedDateTime time, String type,
+            LocalDateTime time, String type,
             MovementSubtype subtype,
             String reason, int quantity) {
         this(id, product, time, type, subtype, reason, quantity, null);
@@ -48,11 +48,11 @@ public class Movement {
         this.product = product;
     }
 
-    public ZonedDateTime getTime() {
+    public LocalDateTime getTime() {
         return this.time;
     }
 
-    public void setTime(ZonedDateTime time) {
+    public void setTime(LocalDateTime time) {
         this.time = time;
     }
 

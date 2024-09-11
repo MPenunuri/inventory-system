@@ -1,6 +1,6 @@
 package com.mapera.inventory_system.domain.aggregate.inventory_movement;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 import com.mapera.inventory_system.domain.aggregate.inventory_product.InventoryProduct;
 import com.mapera.inventory_system.domain.valueobject.Cost;
@@ -10,13 +10,13 @@ import com.mapera.inventory_system.domain.entity.Location;
 public class InventoryEntryMovement extends EntryMovement {
 
     public InventoryEntryMovement(int id, InventoryProduct product,
-            ZonedDateTime time, EntryType subtype, String reason, int quantity, String comment,
+            LocalDateTime time, EntryType subtype, String reason, int quantity, String comment,
             Location location, Cost cost) {
         super(id, product, time, subtype, reason, quantity, comment, location, cost);
     }
 
     public InventoryEntryMovement(int id, InventoryProduct product,
-            ZonedDateTime time, EntryType subtype, String reason, int quantity, Location location,
+            LocalDateTime time, EntryType subtype, String reason, int quantity, Location location,
             Cost cost) {
         super(id, product, time, subtype, reason, quantity, location, cost);
     }

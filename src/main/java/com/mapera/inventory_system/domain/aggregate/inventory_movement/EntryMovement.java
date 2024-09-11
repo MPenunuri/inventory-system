@@ -1,6 +1,6 @@
 package com.mapera.inventory_system.domain.aggregate.inventory_movement;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 import com.mapera.inventory_system.domain.aggregate.inventory_product.InventoryProduct;
 import com.mapera.inventory_system.domain.entity.Location;
@@ -12,7 +12,7 @@ public class EntryMovement extends Movement {
     private Cost cost;
 
     public EntryMovement(int id, InventoryProduct product,
-            ZonedDateTime time, EntryType subtype, String reason, int quantity,
+            LocalDateTime time, EntryType subtype, String reason, int quantity,
             String comment, Location location, Cost cost) {
         super(id, product, time, "entry", subtype, reason, quantity, comment);
         this.Location = location;
@@ -20,7 +20,7 @@ public class EntryMovement extends Movement {
     }
 
     public EntryMovement(int id, InventoryProduct product,
-            ZonedDateTime time, EntryType subtype, String reason, int quantity, Location location, Cost cost) {
+            LocalDateTime time, EntryType subtype, String reason, int quantity, Location location, Cost cost) {
         super(id, product, time, "entry", subtype, reason, quantity, null);
         this.Location = location;
         this.cost = cost;
