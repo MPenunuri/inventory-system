@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS products (
     name VARCHAR(255) NOT NULL,
     subcategory_id INT,
     product_presentation VARCHAR(255),
-    minimum_stock INT,
+    minimum_stock INT CHECK (minimum_stock >= 0),
     retail_price DECIMAL(20, 2) CHECK (retail_price >= 0),
     wholesale_price DECIMAL(20, 2) CHECK (wholesale_price >= 0),
     price_currency_id INT,
