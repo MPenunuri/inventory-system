@@ -15,6 +15,7 @@ public class FullProductDTO {
     private double retailPrice;
     private double wholesalePrice;
     private String priceCurrency;
+    private Long stockId;
     private Long stockLocationId;
     private String stockLocationName;
     private String stockLocationAddress;

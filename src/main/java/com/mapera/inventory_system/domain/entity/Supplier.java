@@ -23,4 +23,12 @@ public class Supplier implements Identifiable {
         this.name = name;
     }
 
+    @Override
+    public String toString() {
+        return "{" +
+                " id='" + getId() + "'" +
+                ", name='" + getName() + "'" +
+                "}";
+    }
+
 }

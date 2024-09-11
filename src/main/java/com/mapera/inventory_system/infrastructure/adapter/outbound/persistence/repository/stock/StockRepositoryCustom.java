@@ -5,10 +5,9 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.e
 import reactor.core.publisher.Mono;
 
 public interface StockRepositoryCustom {
-    public Mono<Boolean> addProductStockInLocation(Long locationId, Long product_id, int quantity);
 
-    public Mono<Boolean> addProductStockInLocation(Long locationId, Long product_id, int quantity,
-            int maximum_storage);
+    public Mono<Boolean> addProductStockInLocation(long locationId, long product_id, int quantity,
+            Integer maximum_storage);
 
     public Mono<Boolean> removeProductStockInLocation(Long locationId, Long product_id);
 

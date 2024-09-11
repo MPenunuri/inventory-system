@@ -1,6 +1,6 @@
 package com.mapera.inventory_system.application.port.outbound;
 
-import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.FullProductDTO;
+import com.mapera.inventory_system.domain.aggregate.inventory_product.InventoryProduct;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.LocationProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.StandardProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.StockProductDTO;
@@ -16,7 +16,7 @@ public interface ProductPersistencePort {
 
     Flux<StandardProductDTO> findAllProducts();
 
-    Flux<FullProductDTO> findProductById(Long productId);
+    Mono<InventoryProduct> findProductById(Long productId);
 
     Flux<StandardProductDTO> findProductsByCategoryId(long categoryId);
 

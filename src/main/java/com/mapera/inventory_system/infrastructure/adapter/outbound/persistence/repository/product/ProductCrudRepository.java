@@ -17,8 +17,8 @@ public interface ProductCrudRepository extends ReactiveCrudRepository<ProductEnt
         @Query(ProductQuery.STANDARD_QUERY)
         Flux<StandardProductDTO> findAllProducts();
 
-        @Query(ProductQuery.FULL_QUERY + "WHERE p.id = :productId")
-        Flux<FullProductDTO> findProductById(Long productId);
+        @Query(ProductQuery.FULL_QUERY)
+        Flux<FullProductDTO> findFullProductById(Long productId);
 
         @Query(ProductQuery.STANDARD_QUERY + "WHERE c.id = :categoryId")
         Flux<StandardProductDTO> findProductsByCategoryId(long categoryId);

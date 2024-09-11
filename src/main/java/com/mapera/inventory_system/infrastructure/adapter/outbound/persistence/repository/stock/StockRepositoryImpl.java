@@ -14,41 +14,23 @@ public class StockRepositoryImpl implements StockRepositoryCustom {
     StockCrudRepository stockCrudRepository;
 
     @Override
-    public Mono<Boolean> addProductStockInLocation(Long locationId, Long product_id, int quantity) {
-        // Check first if there is a current stock
-        return stockCrudRepository.findProductStockInLocation(product_id, locationId)
+    public Mono<Boolean> addProductStockInLocation(long locationId, long productId, int quantity,
+            Integer maximumStorage) {
+        return stockCrudRepository.findProductStockInLocation(productId, locationId)
                 .flatMap(stock -> {
-                    // Return Mono with false if stock already exists
                     return Mono.just(false);
                 })
                 .switchIfEmpty(Mono.defer(() -> {
-                    // If not, create stock a return Mono with true
                     StockEntity stockEntity = new StockEntity();
                     stockEntity.setLocation_id(locationId);
-                    stockEntity.setProduct_id(product_id);
+                    stockEntity.setProduct_id(productId);
                     stockEntity.setQuantity(quantity);
+                    if (maximumStorage != null) {
+                        stockEntity.setMaximumStorage(maximumStorage);
+                    }
                     return stockCrudRepository.save(stockEntity).then(Mono.just(true));
                 }));
-    }
 
-    @Override
-    public Mono<Boolean> addProductStockInLocation(Long locationId, Long product_id,
-            int quantity, int maximum_storage) {
-        // Check first if there is a current stock
-        return stockCrudRepository.findProductStockInLocation(product_id, locationId)
-                .flatMap(stock -> {
-                    // Return Mono with false if stock already exists
-                    return Mono.just(false);
-                })
-                .switchIfEmpty(Mono.defer(() -> {
-                    // If not, create stock a return Mono with true
-                    StockEntity stockEntity = new StockEntity();
-                    stockEntity.setLocation_id(locationId);
-                    stockEntity.setProduct_id(product_id);
-                    stockEntity.setQuantity(quantity);
-                    stockEntity.setMaximumStorage(maximum_storage);
-                    return stockCrudRepository.save(stockEntity).then(Mono.just(true));
-                }));
     }
 
     @Override

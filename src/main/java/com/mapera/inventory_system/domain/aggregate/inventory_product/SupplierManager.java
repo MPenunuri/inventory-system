@@ -33,12 +33,17 @@ public class SupplierManager {
         this.suppliers.add(supplier);
     }
 
-    public Supplier getSupplier(int id) {
+    public Supplier getSupplier(long id) {
         Supplier supplier = FindInList.getById(this.suppliers, id, "Supplier");
         return supplier;
     }
 
-    public boolean removeSupplier(int id) {
+    public Optional<Supplier> findSupplier(long id) {
+        Optional<Supplier> supplier = FindInList.findById(this.suppliers, id);
+        return supplier;
+    }
+
+    public boolean removeSupplier(long id) {
         boolean removed = FindInList.findByIdAndRemove(this.suppliers, id);
         return removed;
     }

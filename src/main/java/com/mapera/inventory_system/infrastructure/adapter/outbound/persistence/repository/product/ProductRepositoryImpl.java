@@ -4,12 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.mapera.inventory_system.application.port.outbound.ProductPersistencePort;
-import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.FullProductDTO;
+import com.mapera.inventory_system.domain.aggregate.inventory_product.InventoryProduct;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.LocationProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.StandardProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.StockProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.SupplierProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.ProductEntity;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.mapper.ProductMapper;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -19,6 +20,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
 
     @Autowired
     private ProductCrudRepository productCrudRepository;
+
+    private ProductMapper productMapper = new ProductMapper();
 
     @Override
     public Mono<ProductEntity> registerProduct(String name) {
@@ -33,8 +36,12 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
     }
 
     @Override
-    public Flux<FullProductDTO> findProductById(Long productId) {
-        return productCrudRepository.findProductById(productId);
+    public Mono<InventoryProduct> findProductById(Long productId) {
+        return productCrudRepository.findFullProductById(productId)
+                .collectList()
+                .map(dtoList -> {
+                    return productMapper.toDomain(dtoList);
+                });
     }
 
     @Override

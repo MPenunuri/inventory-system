@@ -20,26 +20,46 @@ public class ProductQuery {
                         "LEFT JOIN categories c ON s.category_id = c.id " +
                         "LEFT JOIN currencies pc ON pc.id = p.price_currency_id ";
 
-        public static final String FULL_QUERY = PRODUCT_ATTRIBUTES_SELECTION +
+        public static final String STOCK_DATA_CTE = "WITH StockData AS ( " +
+                        "SELECT sl.product_id AS product_id, sl.id AS stock_id, " +
+                        "sl.location_id AS stock_location_id, " +
+                        "l.name AS stock_location_name, " +
+                        "l.address AS stock_location_address, " +
+                        "sl.quantity AS stock_location_quantity, " +
+                        "sl.maximum_storage AS stock_location_maximum_storage " +
+                        "FROM stock_list sl " +
+                        "JOIN locations l ON l.id = sl.location_id " +
+                        "WHERE sl.product_id = :productId), ";
+
+        public static final String SUPPLIER_DATA_CTE = "SupplierData AS ( " +
+                        "SELECT ps.product_id AS product_id, ps.supplier_id AS supplier_id, " +
+                        "su.name AS supplier_name " +
+                        "FROM product_supplier ps " +
+                        "JOIN suppliers su ON su.id = ps.supplier_id " +
+                        "WHERE ps.product_id = :productId) ";
+
+        public static final String FULL_QUERY = STOCK_DATA_CTE +
+                        SUPPLIER_DATA_CTE +
+                        PRODUCT_ATTRIBUTES_SELECTION +
                         "s.name AS subcategory_name, " +
                         "c.id AS category_id, " +
                         "c.name AS category_name, " +
                         "pc.name AS price_currency, " +
-                        "l.id AS stock_location_id, " +
-                        "l.name AS stock_location_name, " +
-                        "l.address AS stock_location_address, " +
-                        "sl.quantity AS stock_location_quantity, " +
-                        "sl.maximum_storage AS stock_location_maximum_storage, " +
-                        "su.id AS supplier_id, " +
-                        "su.name AS supplier_name " +
+                        "sd.stock_id AS stock_id, " +
+                        "sd.stock_location_id AS stock_location_id, " +
+                        "sd.stock_location_name AS stock_location_name, " +
+                        "sd.stock_location_address AS stock_location_address, " +
+                        "sd.stock_location_quantity AS stock_location_quantity, " +
+                        "sd.stock_location_maximum_storage AS stock_location_maximum_storage, " +
+                        "su.supplier_id AS supplier_id, " +
+                        "su.supplier_name AS supplier_name " +
                         "FROM products p " +
                         "LEFT JOIN subcategories s ON p.subcategory_id = s.id " +
-                        "LEFT JOIN categories c ON s.category_id = c.id  " +
-                        "LEFT JOIN stock_list sl ON sl.product_id = p.id " +
-                        "LEFT JOIN locations l ON l.id = sl.location_id " +
-                        "LEFT JOIN product_supplier ps ON ps.product_id = p.id " +
-                        "LEFT JOIN suppliers su ON su.id = ps.supplier_id " +
-                        "LEFT JOIN currencies pc ON pc.id = p.price_currency_id ";
+                        "LEFT JOIN categories c ON s.category_id = c.id " +
+                        "LEFT JOIN StockData sd ON sd.product_id = p.id " +
+                        "LEFT JOIN SupplierData su ON su.product_id = p.id " +
+                        "LEFT JOIN currencies pc ON pc.id = p.price_currency_id " +
+                        "WHERE p.id = :productId ";
 
         public static final String SUPPLIER_QUERY = PRODUCT_ATTRIBUTES_SELECTION +
                         "s.name AS subcategory_name, " +
