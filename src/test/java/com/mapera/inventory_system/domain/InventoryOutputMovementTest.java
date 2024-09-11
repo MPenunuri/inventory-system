@@ -2,7 +2,7 @@ package com.mapera.inventory_system.domain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +23,7 @@ public class InventoryOutputMovementTest {
                 product.getSellingPrice().getCurrency(),
                 SellType.RETAIL);
         InventoryOutputMovement movement = new InventoryOutputMovement(
-                0, product, ZonedDateTime.now(), OutputType.SALES, "Common sale",
+                0, product, LocalDateTime.now(), OutputType.SALES, "Common sale",
                 10, location, sell);
 
         assertEquals(true, movement.execute());

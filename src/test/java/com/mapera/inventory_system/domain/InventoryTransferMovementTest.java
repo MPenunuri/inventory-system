@@ -2,7 +2,7 @@ package com.mapera.inventory_system.domain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +19,7 @@ public class InventoryTransferMovementTest {
         Location from = product.stockManager.getStockInLocation(0).getLocation();
         Location to = product.stockManager.getStockInLocation(1).getLocation();
         InventoryTransferMovement movement = new InventoryTransferMovement(0, product,
-                ZonedDateTime.now(), TransferType.NONE,
+                LocalDateTime.now(), TransferType.NONE,
                 "Maximise the use of space", 10, from, to);
         assertEquals(true, movement.execute());
     }

@@ -2,7 +2,7 @@ package com.mapera.inventory_system.domain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +22,7 @@ public class InventoryEntryMovementTest {
         CostType costType = CostType.PER_UNIT;
         Cost cost = new Cost(5.75, "USD", costType);
         InventoryEntryMovement movement = new InventoryEntryMovement(
-                0, product, ZonedDateTime.now(), EntryType.ACQUISITION, "Minimum provision",
+                0, product, LocalDateTime.now(), EntryType.ACQUISITION, "Minimum provision",
                 10, location, cost);
 
         assertEquals(true, movement.execute());
