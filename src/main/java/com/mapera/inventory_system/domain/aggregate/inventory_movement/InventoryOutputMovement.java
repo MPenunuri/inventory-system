@@ -9,8 +9,8 @@ import com.mapera.inventory_system.domain.valueobject.Sell;
 
 public class InventoryOutputMovement extends OutputMovement {
 
-    public InventoryOutputMovement(int id, InventoryProduct product,
-            LocalDateTime time,
+    public InventoryOutputMovement(int id,
+            InventoryProduct product, LocalDateTime time,
             OutputType subtype, String reason, int quantity,
             String comment, Location location, Sell sell) {
         super(id, product, time, subtype, reason, quantity, comment, location, sell);

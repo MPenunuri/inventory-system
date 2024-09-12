@@ -85,7 +85,7 @@ public class MovementsTest {
                 Mono<Void> deleteSubcategories = subcategoryRepository.deleteAll();
                 Mono<Void> deleteCategories = categoryRepository.deleteAll();
                 Mono<Void> deleteCurrencies = currencyRepository.deleteAll();
-                Mono<Void> deleteLocations = currencyRepository.deleteAll();
+                Mono<Void> deleteLocations = locationRepository.deleteAll();
 
                 Mono<Void> setup = deleteProductSupplier
                                 .then(deleteStocklist)

@@ -43,19 +43,20 @@ public class ProductMapper {
                         .findStockInLocation(d.getStockLocationId());
 
                 if (!stockFound.isPresent()) {
-                    System.out.println("locId: " + d.getStockLocationId() + " stId: " + d.getStockId());
                     Location location = new Location(
                             d.getStockLocationId(),
                             d.getStockLocationName(),
                             d.getStockLocationAddress());
-                    Stock stock = new Stock(
+                    Stock stock = d.getStockLocationMaximumStorage() == 0 ? new Stock(
                             d.getStockId(),
                             location,
-                            d.getStockLocationQuantity(),
-                            d.getStockLocationMaximumStorage());
+                            d.getStockLocationQuantity())
+                            : new Stock(
+                                    d.getStockId(),
+                                    location,
+                                    d.getStockLocationQuantity(),
+                                    d.getStockLocationMaximumStorage());
                     inventoryProduct.stockManager.addStock(stock);
-                } else {
-                    System.out.println("Stock already exists for location: " + d.getStockLocationId());
                 }
             }
 

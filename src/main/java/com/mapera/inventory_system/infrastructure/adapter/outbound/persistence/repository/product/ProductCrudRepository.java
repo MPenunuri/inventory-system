@@ -14,6 +14,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ProductCrudRepository extends ReactiveCrudRepository<ProductEntity, Long> {
+
         @Query(ProductQuery.STANDARD_QUERY)
         Flux<StandardProductDTO> findAllProducts();
 

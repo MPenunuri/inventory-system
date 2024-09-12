@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.Optional;
 
+import com.mapera.inventory_system.domain.entity.Location;
 import com.mapera.inventory_system.domain.entity.Stock;
 
 public class StockManager {
@@ -66,7 +67,10 @@ public class StockManager {
     public Stock getStockInLocation(long locationId) {
         Optional<Stock> found = findStockInLocation(locationId);
         if (!found.isPresent()) {
-            throw new IllegalArgumentException("Stock not found");
+            Location newLoc = new Location(locationId, null, null);
+            Stock newStock = new Stock((long) this.stockList.size() + 1, newLoc, 0);
+            addStock(newStock);
+            return newStock;
         }
         Stock stock = found.get();
         return stock;

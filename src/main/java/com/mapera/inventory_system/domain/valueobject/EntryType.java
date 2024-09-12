@@ -18,4 +18,19 @@ public enum EntryType implements MovementSubtype {
     public String getSubtype() {
         return this.subtypeName;
     }
+
+    public static EntryType fromString(String value) {
+        switch (value.toUpperCase()) {
+            case "Acquisition":
+                return ACQUISITION;
+            case "Customer return":
+                return CUSTOMER_RETURN;
+            case "Inventory adjustment":
+                return INVENTORY_ADJUSTMENT;
+            case "Production":
+                return PRODUCTION;
+            default:
+                throw new IllegalArgumentException("Unknown EntryType: " + value);
+        }
+    }
 }
