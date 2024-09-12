@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.mapera.inventory_system.application.port.outbound.CurrencyPersistencePort;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.CurrencyEntity;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
@@ -14,6 +15,11 @@ public class CurrencyRepositoryImpl implements CurrencyRepositoryCustom, Currenc
 
     @Autowired
     CurrencyCrudRepository currencyCrudRepository;
+
+    @Override
+    public Flux<CurrencyEntity> getCurrencies(String name) {
+        return currencyCrudRepository.findAll();
+    }
 
     @Override
     public Mono<CurrencyEntity> registerCurrency(String name) {

@@ -2,9 +2,12 @@ package com.mapera.inventory_system.application.port.outbound;
 
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.CurrencyEntity;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface CurrencyPersistencePort {
+
+    public Flux<CurrencyEntity> getCurrencies(String name);
 
     public Mono<CurrencyEntity> registerCurrency(String name);
 
