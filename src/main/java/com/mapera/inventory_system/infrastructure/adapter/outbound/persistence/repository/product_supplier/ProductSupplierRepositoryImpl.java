@@ -3,12 +3,14 @@ package com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.mapera.inventory_system.application.port.outbound.ProductSupplierPersistencePort;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.ProductSupplierEntity;
 
 import reactor.core.publisher.Mono;
 
 @Repository
-public class ProductSupplierRepositoryImpl implements ProductSupplierRespositoryCustom {
+public class ProductSupplierRepositoryImpl
+        implements ProductSupplierRespositoryCustom, ProductSupplierPersistencePort {
 
     ProductSupplierEntity productSupplierEntity = new ProductSupplierEntity();
 
