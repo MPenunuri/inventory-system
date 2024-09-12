@@ -7,6 +7,7 @@ import com.mapera.inventory_system.application.port.outbound.LocationPersistence
 import com.mapera.inventory_system.domain.entity.Location;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.LocationEntity;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
@@ -63,5 +64,10 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom, Locatio
     @Override
     public Mono<Void> deleteLocationById(Long locationId) {
         return locationCrudRepository.deleteById(locationId);
+    }
+
+    @Override
+    public Flux<LocationEntity> getLocations() {
+        return locationCrudRepository.findAll();
     }
 }
