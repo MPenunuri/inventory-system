@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mapera.inventory_system.application.security.AuthenticationService;
 import com.mapera.inventory_system.application.security.SignupService;
-import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.UserLoginRequest;
-import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.UserSignupRequest;
+import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.user.UserLoginRequest;
+import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.user.UserSignupRequest;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.UserEntity;
 
 import jakarta.validation.Valid;

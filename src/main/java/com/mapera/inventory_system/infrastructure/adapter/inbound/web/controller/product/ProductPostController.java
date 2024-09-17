@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mapera.inventory_system.application.service.ProductApplicationService;
-import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.ProductPostRequest;
+import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.product.ProductPostRequest;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.ProductEntity;
 
 import jakarta.validation.Valid;

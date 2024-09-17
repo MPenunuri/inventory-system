@@ -9,7 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.ProductPostRequest;
+import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.product.ProductPostRequest;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.user.UserRepository;
 
 import reactor.core.publisher.Mono;

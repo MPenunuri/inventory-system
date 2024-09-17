@@ -1,4 +1,4 @@
-package com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto;
+package com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;

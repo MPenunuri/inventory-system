@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.UserLoginRequest;
-import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.UserSignupRequest;
+import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.user.UserLoginRequest;
+import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.user.UserSignupRequest;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.UserEntity;
 import java.util.concurrent.atomic.AtomicReference;
 

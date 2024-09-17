@@ -1,4 +1,4 @@
-package com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto;
+package com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.product;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
