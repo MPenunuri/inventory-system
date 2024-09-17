@@ -25,11 +25,15 @@ public class JwtAuthenticationFilter extends AuthenticationWebFilter {
             }
 
             private String extractToken(ServerWebExchange exchange) {
-                return exchange.getRequest().getHeaders().getFirst("Authorization");
+                String bearerToken = exchange.getRequest().getHeaders().getFirst("Authorization");
+                if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+                    return bearerToken.substring(7).trim();
+                }
+                return null;
             }
         });
 
-        setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers("/secure/**"));
+        setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers("/api/secure/**"));
     }
 
 }

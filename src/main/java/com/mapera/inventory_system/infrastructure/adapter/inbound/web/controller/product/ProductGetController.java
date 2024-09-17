@@ -18,7 +18,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/api/products/get")
+@RequestMapping("/api/secure/product/")
 public class ProductGetController {
 
     @Autowired
@@ -69,6 +69,9 @@ public class ProductGetController {
             @RequestParam Long currencyId,
             @RequestParam Double min,
             @RequestParam Double max) {
+        if (min > max) {
+            throw new IllegalArgumentException("min should not be greater than max");
+        }
         return productApplicationService.findProductsBySellingRetailPrice(currencyId, min, max);
     }
 
@@ -77,6 +80,9 @@ public class ProductGetController {
             @RequestParam Long currencyId,
             @RequestParam Double min,
             @RequestParam Double max) {
+        if (min > max) {
+            throw new IllegalArgumentException("min should not be greater than max");
+        }
         return productApplicationService.findProductsBySellingWholesalePrice(currencyId, min, max);
     }
 

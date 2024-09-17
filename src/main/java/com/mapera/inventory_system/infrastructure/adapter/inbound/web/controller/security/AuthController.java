@@ -14,10 +14,11 @@ import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.UserLo
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.UserSignupRequest;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.UserEntity;
 
+import jakarta.validation.Valid;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     @Autowired
@@ -27,20 +28,14 @@ public class AuthController {
 
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<UserEntity> signup(@RequestBody UserSignupRequest request) {
+    public Mono<UserEntity> signup(@Valid @RequestBody UserSignupRequest request) {
         return signupService.signup(
                 request.getUsername(), request.getEmail(), request.getPassword());
     }
 
-    @PostMapping("/hello")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Mono<String> hello() {
-        return Mono.just("Hello");
-    }
-
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public Mono<String> login(@RequestBody UserLoginRequest request) {
+    public Mono<String> login(@Valid @RequestBody UserLoginRequest request) {
         return authService.authenticate(
                 request.getEmail(), request.getPassword());
     }

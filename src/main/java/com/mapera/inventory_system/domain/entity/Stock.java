@@ -33,7 +33,7 @@ public class Stock {
         }
         if (maximumStorageRegistered() &&
                 this.quantity + quantity > getMaximumStorage()) {
-            throw new IllegalStateException("Cannot increase quantity beyond the maximum storage limit.");
+            throw new IllegalArgumentException("Cannot increase quantity beyond the maximum storage limit.");
         }
         this.quantity += quantity;
     }

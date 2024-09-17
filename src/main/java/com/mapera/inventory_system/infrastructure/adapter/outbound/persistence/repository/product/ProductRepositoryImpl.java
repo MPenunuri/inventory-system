@@ -32,7 +32,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
 
     @Override
     public Flux<StandardProductDTO> findAllProducts() {
-        return productCrudRepository.findAllProducts();
+        return productCrudRepository.findAllProducts()
+                .switchIfEmpty(Mono.error(new RuntimeException("No products found")));
     }
 
     @Override
@@ -41,47 +42,56 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
                 .collectList()
                 .map(dtoList -> {
                     return productMapper.toDomain(dtoList);
-                });
+                })
+                .switchIfEmpty(Mono.error(new RuntimeException("Product not found")));
     }
 
     @Override
     public Flux<StandardProductDTO> findProductsByCategoryId(long categoryId) {
-        return productCrudRepository.findProductsByCategoryId(categoryId);
+        return productCrudRepository.findProductsByCategoryId(categoryId)
+                .switchIfEmpty(Mono.error(new RuntimeException("No products found")));
     }
 
     @Override
     public Flux<StandardProductDTO> findProductsBySubcategoryId(Long subcategoryId) {
-        return productCrudRepository.findProductsBySubcategoryId(subcategoryId);
+        return productCrudRepository.findProductsBySubcategoryId(subcategoryId)
+                .switchIfEmpty(Mono.error(new RuntimeException("No products found")));
     }
 
     @Override
     public Flux<SupplierProductDTO> findProductsBySupplierId(Long supplierId) {
-        return productCrudRepository.findProductsBySupplierId(supplierId);
+        return productCrudRepository.findProductsBySupplierId(supplierId)
+                .switchIfEmpty(Mono.error(new RuntimeException("No products found")));
     }
 
     @Override
     public Flux<LocationProductDTO> findProductsByLocationid(Long locationId) {
-        return productCrudRepository.findProductsByLocationid(locationId);
+        return productCrudRepository.findProductsByLocationid(locationId)
+                .switchIfEmpty(Mono.error(new RuntimeException("No products found")));
     }
 
     @Override
     public Flux<StockProductDTO> findProductsWithMinimumStock() {
-        return productCrudRepository.findProductsWithMinimumStock();
+        return productCrudRepository.findProductsWithMinimumStock()
+                .switchIfEmpty(Mono.error(new RuntimeException("No products found")));
     }
 
     @Override
     public Mono<StockProductDTO> getProductStockById(Long productId) {
-        return productCrudRepository.getProductStockById(productId);
+        return productCrudRepository.getProductStockById(productId)
+                .switchIfEmpty(Mono.error(new RuntimeException("No product found")));
     }
 
     @Override
     public Flux<StandardProductDTO> findProductsBySellingRetailPrice(Long currencyId, Double min, Double max) {
-        return productCrudRepository.findProductsBySellingRetailPrice(currencyId, min, max);
+        return productCrudRepository.findProductsBySellingRetailPrice(currencyId, min, max)
+                .switchIfEmpty(Mono.error(new RuntimeException("No products found")));
     }
 
     @Override
     public Flux<StandardProductDTO> findProductsBySellingWholesalePrice(Long currencyId, Double min, Double max) {
-        return productCrudRepository.findProductsBySellingWholesalePrice(currencyId, min, max);
+        return productCrudRepository.findProductsBySellingWholesalePrice(currencyId, min, max)
+                .switchIfEmpty(Mono.error(new RuntimeException("No products found")));
     }
 
     @Override
@@ -90,7 +100,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
                 .flatMap(product -> {
                     product.setName(name);
                     return productCrudRepository.save(product);
-                });
+                })
+                .switchIfEmpty(Mono.error(new RuntimeException("No product found")));
     }
 
     @Override
@@ -99,7 +110,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
                 .flatMap(product -> {
                     product.setSubcategory_id(subcategoryId);
                     return productCrudRepository.save(product);
-                });
+                })
+                .switchIfEmpty(Mono.error(new RuntimeException("No product found")));
     }
 
     @Override
@@ -108,7 +120,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
                 .flatMap(product -> {
                     product.setProductPresentation(productPresentation);
                     return productCrudRepository.save(product);
-                });
+                })
+                .switchIfEmpty(Mono.error(new RuntimeException("No product found")));
     }
 
     @Override
@@ -117,7 +130,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
                 .flatMap(product -> {
                     product.setMinimumStock(minimumStock);
                     return productCrudRepository.save(product);
-                });
+                })
+                .switchIfEmpty(Mono.error(new RuntimeException("No product found")));
     }
 
     @Override
@@ -126,7 +140,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
                 .flatMap(product -> {
                     product.setRetail_price(price);
                     return productCrudRepository.save(product);
-                });
+                })
+                .switchIfEmpty(Mono.error(new RuntimeException("No product found")));
     }
 
     @Override
@@ -135,7 +150,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
                 .flatMap(product -> {
                     product.setWholesale_price(price);
                     return productCrudRepository.save(product);
-                });
+                })
+                .switchIfEmpty(Mono.error(new RuntimeException("No product found")));
     }
 
     @Override
@@ -144,7 +160,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
                 .flatMap(product -> {
                     product.setPrice_currency_id(priceCurrencyId);
                     return productCrudRepository.save(product);
-                });
+                })
+                .switchIfEmpty(Mono.error(new RuntimeException("No product found")));
     }
 
     @Override

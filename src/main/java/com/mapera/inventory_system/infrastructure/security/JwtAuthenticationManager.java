@@ -1,6 +1,7 @@
 
 package com.mapera.inventory_system.infrastructure.security;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,6 +24,9 @@ public class JwtAuthenticationManager implements ReactiveAuthenticationManager {
 
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
+        if (authentication.getCredentials() == null) {
+            return Mono.error(new BadCredentialsException("No token provided"));
+        }
         String token = authentication.getCredentials().toString();
         if (jwtTokenProvider.validateToken(token)) {
             Claims claims = jwtTokenProvider.getClaimsFromToken(token);
@@ -32,7 +36,7 @@ public class JwtAuthenticationManager implements ReactiveAuthenticationManager {
                     null,
                     roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList())));
         } else {
-            return Mono.empty();
+            return Mono.error(new BadCredentialsException("Invalid token"));
         }
     }
 
