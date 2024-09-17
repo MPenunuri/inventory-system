@@ -65,7 +65,7 @@ public class ProductControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.get())
                 .bodyValue(productPostRequest)
                 .exchange()
-                .expectStatus().isOk();
+                .expectStatus().isCreated();
 
     }
 

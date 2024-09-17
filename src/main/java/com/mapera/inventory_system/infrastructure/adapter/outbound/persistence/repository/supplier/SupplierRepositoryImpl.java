@@ -25,7 +25,8 @@ public class SupplierRepositoryImpl
 
     @Override
     public Flux<SupplierEntity> getSuppliers() {
-        return supplierCrudRepository.findAll();
+        return supplierCrudRepository.findAll()
+                .switchIfEmpty(Mono.error(new RuntimeException("Not suppliers found")));
     }
 
     @Override
@@ -33,7 +34,7 @@ public class SupplierRepositoryImpl
         return supplierCrudRepository.findById(supplierId).flatMap(s -> {
             s.setName(name);
             return supplierCrudRepository.save(s);
-        });
+        }).switchIfEmpty(Mono.error(new RuntimeException("Supplier not found")));
     }
 
     @Override
