@@ -25,7 +25,8 @@ public class CategoryRepositoryImpl implements CategoryRepositoryCustom, Categor
 
     @Override
     public Flux<CategoryEntity> getCategories() {
-        return categoryCrudRepository.findAll();
+        return categoryCrudRepository.findAll()
+                .switchIfEmpty(Mono.error(new RuntimeException("No categories found")));
     }
 
     @Override
@@ -34,12 +35,15 @@ public class CategoryRepositoryImpl implements CategoryRepositoryCustom, Categor
                 .flatMap(category -> {
                     category.setName(name);
                     return categoryCrudRepository.save(category);
-                });
+                }).switchIfEmpty(Mono.error(new RuntimeException("Category not found")));
     }
 
     @Override
     public Mono<Void> deleteCategoryById(Long categoryId) {
-        return categoryCrudRepository.deleteById(categoryId);
+        return categoryCrudRepository.deleteById(categoryId).onErrorMap(error -> {
+            return new IllegalArgumentException(
+                    "Failed to delete category with ID: " + categoryId, error);
+        });
     }
 
 }

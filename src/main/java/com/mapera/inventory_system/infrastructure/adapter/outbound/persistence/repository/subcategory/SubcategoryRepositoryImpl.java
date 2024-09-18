@@ -26,7 +26,8 @@ public class SubcategoryRepositoryImpl
 
     @Override
     public Flux<SubcategoryEntity> findSubcategoriesByCategoryId(long categoryId) {
-        return subcategoryCrudRepository.findSubcategoriesByCategoryId(categoryId);
+        return subcategoryCrudRepository.findSubcategoriesByCategoryId(categoryId)
+                .switchIfEmpty(Mono.error(new RuntimeException("No subcategories found")));
     }
 
     @Override
@@ -38,7 +39,12 @@ public class SubcategoryRepositoryImpl
     public Mono<SubcategoryEntity> changeSubcategoryCategory(Long subcategoryId, Long newCategoryId) {
         return subcategoryCrudRepository.findById(subcategoryId).flatMap(subcategory -> {
             subcategory.setCategory_id(newCategoryId);
-            return subcategoryCrudRepository.save(subcategory);
+            return subcategoryCrudRepository.save(subcategory)
+                    .switchIfEmpty(Mono.error(new RuntimeException("Subcategory not found")))
+                    .onErrorMap(error -> {
+                        return new IllegalArgumentException(
+                                "Failed change Subcategory Category: " + subcategoryId, error);
+                    });
         });
     }
 
@@ -46,13 +52,17 @@ public class SubcategoryRepositoryImpl
     public Mono<SubcategoryEntity> renameSubcategory(Long subcategoryId, String newName) {
         return subcategoryCrudRepository.findById(subcategoryId).flatMap(subcategory -> {
             subcategory.setName(newName);
-            return subcategoryCrudRepository.save(subcategory);
+            return subcategoryCrudRepository.save(subcategory)
+                    .switchIfEmpty(Mono.error(new RuntimeException("Subcategory not found")));
         });
     }
 
     @Override
     public Mono<Void> deleteSubcategory(Long subcategoryId) {
-        return subcategoryCrudRepository.deleteById(subcategoryId);
+        return subcategoryCrudRepository.deleteById(subcategoryId).onErrorMap(error -> {
+            return new IllegalArgumentException(
+                    "Failed to delete subcategory with ID: " + subcategoryId, error);
+        });
     }
 
 }
