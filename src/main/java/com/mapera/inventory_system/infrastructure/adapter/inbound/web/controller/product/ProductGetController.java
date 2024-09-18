@@ -18,7 +18,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/api/secure/product/")
+@RequestMapping("/api/secure/product")
 public class ProductGetController {
 
     @Autowired
@@ -54,17 +54,17 @@ public class ProductGetController {
         return productApplicationService.findProductsByLocationid(locationId);
     }
 
-    @GetMapping("/stock/product/minimum")
-    public Flux<StockProductDTO> getProductsByLocationId() {
+    @GetMapping("/stock/minimum")
+    public Flux<StockProductDTO> findProductsWithMinimumStock() {
         return productApplicationService.findProductsWithMinimumStock();
     }
 
-    @GetMapping("/stock/product/{productId}")
+    @GetMapping("/stock/{productId}")
     public Mono<StockProductDTO> getProductStockById(@PathVariable Long productId) {
         return productApplicationService.getProductStockById(productId);
     }
 
-    @GetMapping("/price/retail/")
+    @GetMapping("/price/retail")
     public Flux<StandardProductDTO> getProductsBySellingRetailPrice(
             @RequestParam Long currencyId,
             @RequestParam Double min,
@@ -75,7 +75,7 @@ public class ProductGetController {
         return productApplicationService.findProductsBySellingRetailPrice(currencyId, min, max);
     }
 
-    @GetMapping("/price/wholesale/")
+    @GetMapping("/price/wholesale")
     public Flux<StandardProductDTO> getProductsBySellingWholesalePrice(
             @RequestParam Long currencyId,
             @RequestParam Double min,

@@ -1,6 +1,7 @@
 package com.mapera.inventory_system.domain.aggregate.inventory_product;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Optional;
 
@@ -10,7 +11,11 @@ import com.mapera.inventory_system.domain.entity.Stock;
 public class StockManager {
     private final List<Stock> stockList;
 
-    protected StockManager(List<Stock> stockList) {
+    public StockManager() {
+        this.stockList = new ArrayList<>();
+    }
+
+    public StockManager(List<Stock> stockList) {
         this.stockList = stockList;
     }
 

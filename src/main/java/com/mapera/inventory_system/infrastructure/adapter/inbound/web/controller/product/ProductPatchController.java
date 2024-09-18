@@ -15,7 +15,7 @@ import jakarta.validation.Valid;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/api/secure/product/")
+@RequestMapping("/api/secure/product")
 @Validated
 public class ProductPatchController {
 

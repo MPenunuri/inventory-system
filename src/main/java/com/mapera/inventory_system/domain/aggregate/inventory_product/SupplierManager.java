@@ -1,5 +1,6 @@
 package com.mapera.inventory_system.domain.aggregate.inventory_product;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -9,6 +10,10 @@ import com.mapera.inventory_system.infrastructure.util.FindInList;
 
 public class SupplierManager {
     private final List<Supplier> suppliers;
+
+    public SupplierManager() {
+        this.suppliers = new ArrayList<>();
+    }
 
     public SupplierManager(List<Supplier> suppliers) {
         this.suppliers = suppliers;

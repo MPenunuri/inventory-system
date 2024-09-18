@@ -33,7 +33,7 @@ public interface ProductCrudRepository extends ReactiveCrudRepository<ProductEnt
         @Query(ProductQuery.LOCATION_QUERY + "WHERE l.id = :locationId")
         Flux<LocationProductDTO> findProductsByLocationid(Long locationId);
 
-        @Query(ProductQuery.MINIMUM_STOCK_QUERY + "HAVING SUM(sl.quantity) < p.minimum_stock")
+        @Query(ProductQuery.MINIMUM_STOCK_QUERY)
         Flux<StockProductDTO> findProductsWithMinimumStock();
 
         @Query(ProductQuery.STOCK_QUERY)

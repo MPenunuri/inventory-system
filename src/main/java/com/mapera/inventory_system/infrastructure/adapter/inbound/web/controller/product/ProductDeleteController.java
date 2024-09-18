@@ -11,7 +11,7 @@ import com.mapera.inventory_system.application.service.ProductApplicationService
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/api/secure/product/")
+@RequestMapping("/api/secure/product")
 public class ProductDeleteController {
 
     @Autowired

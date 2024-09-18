@@ -15,10 +15,9 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.d
 public class ProductMapper {
     public InventoryProduct toDomain(List<FullProductDTO> dtoList) {
 
-        System.out.println("dtoList: " + dtoList);
-
-        if (dtoList.isEmpty())
+        if (dtoList.isEmpty()) {
             return null;
+        }
 
         FullProductDTO dto = dtoList.get(0);
 

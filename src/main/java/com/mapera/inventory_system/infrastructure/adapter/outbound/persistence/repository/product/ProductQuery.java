@@ -94,10 +94,12 @@ public class ProductQuery {
 
         public static final String MINIMUM_STOCK_QUERY = "SELECT p.id, p.name, p.product_presentation, p.minimum_stock, "
                         +
-                        "SUM(sl.quantity) AS total_stock " +
+                        "IFNULL(SUM(sl.quantity), 0) AS total_stock " +
                         "FROM products p " +
-                        "JOIN stock_list sl ON sl.product_id = p.id " +
-                        "GROUP BY p.id ";
+                        "LEFT JOIN stock_list sl ON sl.product_id = p.id " +
+                        "GROUP BY p.id " +
+                        "HAVING (p.minimum_stock IS NOT NULL AND total_stock < p.minimum_stock) " +
+                        " OR (p.minimum_stock IS NOT NULL AND total_stock = 0)";
 
         public static final String STOCK_QUERY = "SELECT p.id, p.name, p.product_presentation, p.minimum_stock, " +
                         "SUM(sl.quantity) AS total_stock " +
