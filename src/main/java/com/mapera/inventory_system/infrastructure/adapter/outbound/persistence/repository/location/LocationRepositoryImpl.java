@@ -37,7 +37,8 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom, Locatio
                 .flatMap(location -> {
                     location.setName(name);
                     return locationCrudRepository.save(location);
-                });
+                })
+                .switchIfEmpty(Mono.error(new RuntimeException("Location not found")));
     }
 
     @Override
@@ -46,7 +47,8 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom, Locatio
                 .flatMap(location -> {
                     location.setAddress(address);
                     return locationCrudRepository.save(location);
-                });
+                })
+                .switchIfEmpty(Mono.error(new RuntimeException("Location not found")));
     }
 
     @Override
@@ -58,16 +60,21 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom, Locatio
                             savedLoc.getName(),
                             savedLoc.getAddress());
                     return Mono.just(location);
-                });
+                })
+                .switchIfEmpty(Mono.error(new RuntimeException("Location not found")));
     }
 
     @Override
     public Mono<Void> deleteLocationById(Long locationId) {
-        return locationCrudRepository.deleteById(locationId);
+        return locationCrudRepository.deleteById(locationId).onErrorMap(error -> {
+            return new IllegalArgumentException(
+                    "Failed to delete location with ID: " + locationId, error);
+        });
     }
 
     @Override
     public Flux<LocationEntity> getLocations() {
-        return locationCrudRepository.findAll();
+        return locationCrudRepository.findAll()
+                .switchIfEmpty(Mono.error(new RuntimeException("No locations found")));
     }
 }
