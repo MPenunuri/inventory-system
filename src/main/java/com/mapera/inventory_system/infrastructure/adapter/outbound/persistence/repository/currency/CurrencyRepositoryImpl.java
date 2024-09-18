@@ -17,8 +17,10 @@ public class CurrencyRepositoryImpl implements CurrencyRepositoryCustom, Currenc
     CurrencyCrudRepository currencyCrudRepository;
 
     @Override
-    public Flux<CurrencyEntity> getCurrencies(String name) {
-        return currencyCrudRepository.findAll();
+    public Flux<CurrencyEntity> getCurrencies() {
+        return currencyCrudRepository.findAll()
+                .switchIfEmpty(
+                        Mono.error(new RuntimeException("Not currencies found")));
     }
 
     @Override
@@ -33,17 +35,22 @@ public class CurrencyRepositoryImpl implements CurrencyRepositoryCustom, Currenc
         return currencyCrudRepository.findById(currencyId).flatMap(c -> {
             c.setName(name);
             return currencyCrudRepository.save(c);
-        });
+        }).switchIfEmpty(
+                Mono.error(new RuntimeException("Currency not found")));
     }
 
     @Override
     public Mono<String> getCurrencyNameById(Long currencyId) {
-        return currencyCrudRepository.findById(currencyId).map(c -> c.getName());
+        return currencyCrudRepository.findById(currencyId).map(c -> c.getName()).switchIfEmpty(
+                Mono.error(new RuntimeException("Currency not found")));
     }
 
     @Override
     public Mono<Void> deleteCurrency(Long currencyId) {
-        return currencyCrudRepository.deleteById(currencyId);
+        return currencyCrudRepository.deleteById(currencyId).onErrorMap(error -> {
+            return new IllegalArgumentException(
+                    "Failed to delete currency with ID: " + currencyId, error);
+        });
     }
 
 }

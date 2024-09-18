@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
 
 public interface CurrencyPersistencePort {
 
-    public Flux<CurrencyEntity> getCurrencies(String name);
+    public Flux<CurrencyEntity> getCurrencies();
 
     public Mono<CurrencyEntity> registerCurrency(String name);
 

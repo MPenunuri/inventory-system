@@ -15,8 +15,8 @@ public class CurrencyApplicationService {
     @Autowired
     private CurrencyPersistencePort currencyPersistencePort;
 
-    public Flux<CurrencyEntity> getCurrencies(String name) {
-        return currencyPersistencePort.getCurrencies(name);
+    public Flux<CurrencyEntity> getCurrencies() {
+        return currencyPersistencePort.getCurrencies();
     }
 
     public Mono<CurrencyEntity> registerCurrency(String name) {
