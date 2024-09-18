@@ -50,7 +50,7 @@ public class ProductSupplierRepositoryImpl
                     return Mono.just(false);
                 })).onErrorMap(error -> {
                     return new IllegalArgumentException(
-                            "Failed to delete product supplier relation: " + supplierId, error);
+                            "Failed to delete product supplier relation: " + supplierId);
                 });
 
     }

@@ -1,6 +1,7 @@
 package com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import com.mapera.inventory_system.application.port.outbound.UserPersistencePort;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.UserEntity;
@@ -66,8 +67,16 @@ public class UserRepositoryImpl
     public Mono<Void> deleteUserById(Long id) {
         return userCrudRepository.deleteById(id)
                 .onErrorMap(error -> {
+                    if (error instanceof DataIntegrityViolationException) {
+                        return new IllegalStateException(
+                                "Failed to delete user with ID: " + id + ". " +
+                                        "The user is associated with other records and cannot be deleted. "
+                                        +
+                                        "Please remove any related registry before attempting to delete this user.",
+                                error);
+                    }
                     return new IllegalArgumentException(
-                            "Failed to delete user with ID: " + id, error);
+                            "Failed to delete user with ID: " + id + ". Unexpected error occurred.");
                 });
     }
 

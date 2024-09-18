@@ -1,6 +1,7 @@
 package com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
 import com.mapera.inventory_system.application.port.outbound.SupplierPersistencePort;
@@ -41,8 +42,16 @@ public class SupplierRepositoryImpl
     public Mono<Void> deleteSupplier(Long supplierId) {
         return supplierCrudRepository.deleteById(supplierId)
                 .onErrorMap(error -> {
+                    if (error instanceof DataIntegrityViolationException) {
+                        return new IllegalStateException(
+                                "Failed to delete supplier with ID: " + supplierId + ". " +
+                                        "The supplier is associated with other records and cannot be deleted. "
+                                        +
+                                        "Please remove any related registry before attempting to delete this supplier.",
+                                error);
+                    }
                     return new IllegalArgumentException(
-                            "Failed to delete supplier with ID: " + supplierId, error);
+                            "Failed to delete supplier with ID: " + supplierId + ". Unexpected error occurred.");
                 });
     }
 

@@ -2,6 +2,7 @@
 package com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.category;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
 import com.mapera.inventory_system.application.port.outbound.CategoryPersitencePort;
@@ -41,8 +42,16 @@ public class CategoryRepositoryImpl implements CategoryRepositoryCustom, Categor
     @Override
     public Mono<Void> deleteCategoryById(Long categoryId) {
         return categoryCrudRepository.deleteById(categoryId).onErrorMap(error -> {
+            if (error instanceof DataIntegrityViolationException) {
+                return new IllegalStateException(
+                        "Failed to delete category with ID: " + categoryId + ". " +
+                                "The category is associated with other records and cannot be deleted. "
+                                +
+                                "Please remove any related registry before attempting to delete this category.",
+                        error);
+            }
             return new IllegalArgumentException(
-                    "Failed to delete category with ID: " + categoryId, error);
+                    "Failed to delete category with ID: " + categoryId + ". Unexpected error occurred.");
         });
     }
 

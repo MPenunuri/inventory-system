@@ -1,6 +1,7 @@
 package com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.location;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
 import com.mapera.inventory_system.application.port.outbound.LocationPersistencePort;
@@ -67,8 +68,16 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom, Locatio
     @Override
     public Mono<Void> deleteLocationById(Long locationId) {
         return locationCrudRepository.deleteById(locationId).onErrorMap(error -> {
+            if (error instanceof DataIntegrityViolationException) {
+                return new IllegalStateException(
+                        "Failed to delete location with ID: " + locationId + ". " +
+                                "The location is associated with other records and cannot be deleted. "
+                                +
+                                "Please remove any related registry before attempting to delete this location.",
+                        error);
+            }
             return new IllegalArgumentException(
-                    "Failed to delete location with ID: " + locationId, error);
+                    "Failed to delete location with ID: " + locationId + ". Unexpected error occurred.");
         });
     }
 

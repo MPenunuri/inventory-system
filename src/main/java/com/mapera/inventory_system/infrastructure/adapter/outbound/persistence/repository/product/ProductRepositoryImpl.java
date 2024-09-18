@@ -1,6 +1,7 @@
 package com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
 import com.mapera.inventory_system.application.port.outbound.ProductPersistencePort;
@@ -41,7 +42,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
         return productCrudRepository.findFullProductById(productId)
                 .collectList()
                 .map(dtoList -> {
-                    return productMapper.toDomain(dtoList);
+                    InventoryProduct product = productMapper.toDomain(dtoList);
+                    return product;
                 })
                 .switchIfEmpty(Mono.error(new RuntimeException("Product not found")));
     }
@@ -166,10 +168,19 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
 
     @Override
     public Mono<Void> deleteProductById(Long productId) {
-        return productCrudRepository.deleteById(productId).onErrorMap(error -> {
-            return new IllegalArgumentException(
-                    "Failed to delete product with ID: " + productId, error);
-        });
+        return productCrudRepository.deleteById(productId)
+                .onErrorMap(error -> {
+                    if (error instanceof DataIntegrityViolationException) {
+                        return new IllegalStateException(
+                                "Failed to delete product with ID: " + productId + ". " +
+                                        "The product is associated with other records and cannot be deleted. "
+                                        +
+                                        "Please remove any related registry before attempting to delete this product.",
+                                error);
+                    }
+                    return new IllegalArgumentException(
+                            "Failed to delete product with ID: " + productId + ". Unexpected error occurred.");
+                });
     }
 
 }

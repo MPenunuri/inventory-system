@@ -1,6 +1,7 @@
 package com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.subcategory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
 import com.mapera.inventory_system.application.port.outbound.SubcategoryPersistencePort;
@@ -60,8 +61,16 @@ public class SubcategoryRepositoryImpl
     @Override
     public Mono<Void> deleteSubcategory(Long subcategoryId) {
         return subcategoryCrudRepository.deleteById(subcategoryId).onErrorMap(error -> {
+            if (error instanceof DataIntegrityViolationException) {
+                return new IllegalStateException(
+                        "Failed to delete subcategory with ID: " + subcategoryId + ". " +
+                                "The subcategory is associated with other records and cannot be deleted. "
+                                +
+                                "Please remove any related registry before attempting to delete this subcategory.",
+                        error);
+            }
             return new IllegalArgumentException(
-                    "Failed to delete subcategory with ID: " + subcategoryId, error);
+                    "Failed to delete subcategory with ID: " + subcategoryId + ". Unexpected error occurred.");
         });
     }
 

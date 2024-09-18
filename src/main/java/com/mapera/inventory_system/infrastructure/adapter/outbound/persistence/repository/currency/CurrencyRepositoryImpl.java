@@ -2,6 +2,7 @@
 package com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.currency;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
 import com.mapera.inventory_system.application.port.outbound.CurrencyPersistencePort;
@@ -48,8 +49,16 @@ public class CurrencyRepositoryImpl implements CurrencyRepositoryCustom, Currenc
     @Override
     public Mono<Void> deleteCurrency(Long currencyId) {
         return currencyCrudRepository.deleteById(currencyId).onErrorMap(error -> {
+            if (error instanceof DataIntegrityViolationException) {
+                return new IllegalStateException(
+                        "Failed to delete currency with ID: " + currencyId + ". " +
+                                "The currency is associated with other records and cannot be deleted. "
+                                +
+                                "Please remove any related registry before attempting to delete this currency.",
+                        error);
+            }
             return new IllegalArgumentException(
-                    "Failed to delete currency with ID: " + currencyId, error);
+                    "Failed to delete currency with ID: " + currencyId + ". Unexpected error occurred.");
         });
     }
 
