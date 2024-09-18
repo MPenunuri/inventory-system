@@ -166,7 +166,10 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
 
     @Override
     public Mono<Void> deleteProductById(Long productId) {
-        return productCrudRepository.deleteById(productId);
+        return productCrudRepository.deleteById(productId).onErrorMap(error -> {
+            return new IllegalArgumentException(
+                    "Failed to delete product with ID: " + productId, error);
+        });
     }
 
 }

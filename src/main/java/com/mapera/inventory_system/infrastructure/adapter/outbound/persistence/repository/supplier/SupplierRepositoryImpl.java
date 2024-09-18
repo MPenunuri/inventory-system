@@ -39,7 +39,11 @@ public class SupplierRepositoryImpl
 
     @Override
     public Mono<Void> deleteSupplier(Long supplierId) {
-        return supplierCrudRepository.deleteById(supplierId);
+        return supplierCrudRepository.deleteById(supplierId)
+                .onErrorMap(error -> {
+                    return new IllegalArgumentException(
+                            "Failed to delete supplier with ID: " + supplierId, error);
+                });
     }
 
 }

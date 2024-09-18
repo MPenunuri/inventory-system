@@ -25,19 +25,22 @@ public class UserRepositoryImpl
 
     @Override
     public Mono<UserEntity> findUserById(Long id) {
-        return userCrudRepository.findById(id);
+        return userCrudRepository.findById(id)
+                .switchIfEmpty(Mono.error(new RuntimeException("User not found")));
     }
 
     @Override
     public Mono<UserEntity> findUserByEmail(String email) {
-        return userCrudRepository.findUserByEmail(email);
+        return userCrudRepository.findUserByEmail(email)
+                .switchIfEmpty(Mono.error(new RuntimeException("User not found")));
     }
 
     @Override
     public Mono<UserEntity> updateUserName(Long id, String name) {
         return userCrudRepository.findById(id).flatMap(user -> {
             user.setUsername(name);
-            return userCrudRepository.save(user);
+            return userCrudRepository.save(user)
+                    .switchIfEmpty(Mono.error(new RuntimeException("User not found")));
         });
     }
 
@@ -45,7 +48,8 @@ public class UserRepositoryImpl
     public Mono<UserEntity> updateUserEmail(Long id, String email) {
         return userCrudRepository.findById(id).flatMap(user -> {
             user.setEmail(email);
-            return userCrudRepository.save(user);
+            return userCrudRepository.save(user)
+                    .switchIfEmpty(Mono.error(new RuntimeException("User not found")));
         });
     }
 
@@ -53,13 +57,18 @@ public class UserRepositoryImpl
     public Mono<UserEntity> updateUserPassword(Long id, String password) {
         return userCrudRepository.findById(id).flatMap(user -> {
             user.setPassword(password);
-            return userCrudRepository.save(user);
+            return userCrudRepository.save(user)
+                    .switchIfEmpty(Mono.error(new RuntimeException("User not found")));
         });
     }
 
     @Override
     public Mono<Void> deleteUserById(Long id) {
-        return userCrudRepository.deleteById(id);
+        return userCrudRepository.deleteById(id)
+                .onErrorMap(error -> {
+                    return new IllegalArgumentException(
+                            "Failed to delete user with ID: " + id, error);
+                });
     }
 
 }
