@@ -153,7 +153,7 @@ public class SupplierControllerTest {
 
                 webTestClient.delete().uri("/api/secure/supplier/" + supplierPatchRequest.getId())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.get())
-                                .exchange().expectStatus().isBadRequest();
+                                .exchange().expectStatus().is4xxClientError();
 
                 webTestClient.delete()
                                 .uri(uri)

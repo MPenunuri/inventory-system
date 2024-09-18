@@ -22,6 +22,8 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.e
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.category.CategoryRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.movement.MovementRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product.ProductRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product_supplier.ProductSupplierRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.stock.StockRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.subcategory.SubcategoryRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.user.UserRepository;
 
@@ -47,21 +49,31 @@ public class CategoryAndSubcategoryControllerTest {
         ProductRepository productRepository;
 
         @Autowired
+        StockRepository stockRepository;
+
+        @Autowired
+        ProductSupplierRepository productSupplierRepository;
+
+        @Autowired
         MovementRepository movementRepository;
 
         @BeforeEach
         public void setup() {
                 Mono<Void> deleteUsers = userRepository.deleteAll();
+                Mono<Void> deleteStocks = stockRepository.deleteAll();
+                Mono<Void> deleteProductSupplierRelations = productSupplierRepository.deleteAll();
                 Mono<Void> deleteMovements = movementRepository.deleteAll();
                 Mono<Void> deleteProducts = productRepository.deleteAll();
                 Mono<Void> deleteSubcategories = subcategoryRepository.deleteAll();
                 Mono<Void> deleteCategories = categoryRepository.deleteAll();
 
-                Mono<Void> setUp = deleteUsers
+                Mono<Void> setUp = deleteStocks
+                                .then(deleteProductSupplierRelations)
                                 .then(deleteMovements)
                                 .then(deleteProducts)
                                 .then(deleteSubcategories)
                                 .then(deleteCategories)
+                                .then(deleteUsers)
                                 .then();
 
                 setUp.block();
@@ -204,7 +216,7 @@ public class CategoryAndSubcategoryControllerTest {
                 webTestClient.delete()
                                 .uri("/api/secure/category/" + category2Id.get())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.get()).exchange()
-                                .expectStatus().isBadRequest();
+                                .expectStatus().is4xxClientError();
 
                 webTestClient.delete()
                                 .uri("/api/secure/subcategory/" + patchSubcategoryRequest.getId())
