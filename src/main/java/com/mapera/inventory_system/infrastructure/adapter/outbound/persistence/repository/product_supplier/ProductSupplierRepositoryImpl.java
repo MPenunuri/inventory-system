@@ -48,7 +48,11 @@ public class ProductSupplierRepositoryImpl
                 .switchIfEmpty(Mono.defer(() -> {
                     // Return Mono with false if the relation already does not exists
                     return Mono.just(false);
-                }));
+                })).onErrorMap(error -> {
+                    return new IllegalArgumentException(
+                            "Failed to delete product supplier relation: " + supplierId, error);
+                });
+
     }
 
 }

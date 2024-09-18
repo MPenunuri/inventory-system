@@ -4,10 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mapera.inventory_system.application.service.ProductSupplierApplicationService;
 import com.mapera.inventory_system.application.service.SupplierApplicationService;
+import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.supplier.ProductSupplierRelationRequest;
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.supplier.SupplierPatchRequest;
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.supplier.SupplierRegisterRequest;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SupplierEntity;
@@ -31,6 +34,9 @@ public class SupplierController {
     @Autowired
     SupplierApplicationService supplierApplicationService;
 
+    @Autowired
+    ProductSupplierApplicationService productSupplierApplicationService;
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<SupplierEntity> registerSupplier(
@@ -52,6 +58,21 @@ public class SupplierController {
     @DeleteMapping("/{id}")
     public Mono<Void> deleteSupplier(@PathVariable Long id) {
         return supplierApplicationService.deleteSupplier(id);
+    }
+
+    @PostMapping("/product")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Mono<Boolean> addProductSupplierRelation(
+            @Valid @RequestBody ProductSupplierRelationRequest request) {
+        return productSupplierApplicationService.addProductSupplierRelation(
+                request.getProductId(), request.getSupplierId());
+    }
+
+    @DeleteMapping("/product")
+    public Mono<Boolean> deleteProductSupplierRelation(
+            @RequestParam Long productId, @RequestParam Long supplierId) {
+        return productSupplierApplicationService.deleteProductSupplierRelation(
+                productId, supplierId);
     }
 
 }
