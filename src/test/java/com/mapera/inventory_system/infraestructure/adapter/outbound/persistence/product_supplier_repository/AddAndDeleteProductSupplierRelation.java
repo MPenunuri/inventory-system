@@ -60,9 +60,9 @@ public class AddAndDeleteProductSupplierRelation {
         Mono<Void> deleteCategories = categoryRepository.deleteAll();
 
         Mono<Void> setup = deleteProductSupplier
-                .then(deleteSuppliers)
                 .then(deleteStocklist)
                 .then(deleteMovements)
+                .then(deleteSuppliers)
                 .then(deleteProducts)
                 .then(deleteSubcategories)
                 .then(deleteCategories);
