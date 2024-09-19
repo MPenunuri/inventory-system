@@ -144,140 +144,185 @@ public class MovementRepositoryImpl implements MovementRepositoryCustom, Movemen
 
         @Override
         public Mono<Boolean> cancelMovementById(Long movementId) {
-                return CancelMovementById.execute(movementCrudRepository, stockRepository, movementId);
+                String errMsg = "Failed to cancel movement with ID: " + movementId
+                                + ". Quantity in stock cannot be less than 0.";
+                return CancelMovementById.execute(movementCrudRepository, stockRepository, movementId)
+                                .onErrorMap(error -> {
+                                        return new IllegalStateException(errMsg);
+                                });
         }
 
         @Override
         public Flux<StandardMovementDTO> getMovements() {
-                return movementCrudRepository.getMovements();
+                return movementCrudRepository.getMovements()
+                                .switchIfEmpty(Mono.error(
+                                                new RuntimeException("No movements found")));
         }
 
         @Override
         public Flux<EntryMovementDTO> getEntries() {
-                return movementCrudRepository.getEntries();
+                return movementCrudRepository.getEntries()
+                                .switchIfEmpty(Mono.error(
+                                                new RuntimeException("No movements found")));
         }
 
         @Override
         public Flux<OutputMovementDTO> getOutputs() {
-                return movementCrudRepository.getOutputs();
+                return movementCrudRepository.getOutputs()
+                                .switchIfEmpty(Mono.error(
+                                                new RuntimeException("No movements found")));
         }
 
         @Override
         public Flux<TransferMovementDTO> getTransfers() {
-                return movementCrudRepository.getTransfers();
+                return movementCrudRepository.getTransfers()
+                                .switchIfEmpty(Mono.error(
+                                                new RuntimeException("No movements found")));
         }
 
         @Override
         public Flux<AcquisitionDTO> getAcquisitions() {
-                return movementCrudRepository.getAcquisitions();
+                return movementCrudRepository.getAcquisitions()
+                                .switchIfEmpty(Mono.error(
+                                                new RuntimeException("No movements found")));
         }
 
         @Override
         public Flux<CustomerReturnDTO> getCustomerReturns() {
-                return movementCrudRepository.getCustomerReturns();
+                return movementCrudRepository.getCustomerReturns()
+                                .switchIfEmpty(Mono.error(
+                                                new RuntimeException("No movements found")));
         }
 
         @Override
         public Flux<EntryMovementDTO> getEntryInventoryAdjustments() {
-                return movementCrudRepository.getEntryInventoryAdjustments();
+                return movementCrudRepository.getEntryInventoryAdjustments()
+                                .switchIfEmpty(Mono.error(
+                                                new RuntimeException("No movements found")));
         }
 
         @Override
         public Flux<ProductionDTO> getProductions() {
-                return movementCrudRepository.getProductions();
+                return movementCrudRepository.getProductions()
+                                .switchIfEmpty(Mono.error(
+                                                new RuntimeException("No movements found")));
         }
 
         @Override
         public Flux<SaleDTO> getSales() {
-                return movementCrudRepository.getSales();
+                return movementCrudRepository.getSales()
+                                .switchIfEmpty(Mono.error(
+                                                new RuntimeException("No movements found")));
         }
 
         @Override
         public Flux<SupplierReturnDTO> getSupplierReturns() {
-                return movementCrudRepository.getSupplierReturns();
+                return movementCrudRepository.getSupplierReturns()
+                                .switchIfEmpty(Mono.error(
+                                                new RuntimeException("No movements found")));
         }
 
         @Override
         public Flux<OutputMovementDTO> getOutputInventoryAdjustments() {
-                return movementCrudRepository.getOutputInventoryAdjustments();
+                return movementCrudRepository.getOutputInventoryAdjustments()
+                                .switchIfEmpty(Mono.error(
+                                                new RuntimeException("No movements found")));
         }
 
         @Override
         public Flux<OutputMovementDTO> getInternalConsumptionMovements() {
-                return movementCrudRepository.getInternalConsumptionMovements();
+                return movementCrudRepository.getInternalConsumptionMovements()
+                                .switchIfEmpty(Mono.error(
+                                                new RuntimeException("No movements found")));
         }
 
         @Override
         public Flux<StandardMovementDTO> getMovementsByProductId(Long productId) {
-                return movementCrudRepository.getMovementsByProductId(productId);
+                return movementCrudRepository.getMovementsByProductId(productId)
+                                .switchIfEmpty(Mono.error(
+                                                new RuntimeException("No movements found")));
         }
 
         @Override
         public Flux<AcquisitionDTO> getAcquisitionsBySupplierId(Long supplierId) {
-                return movementCrudRepository.getAcquisitionsBySupplierId(supplierId);
+                return movementCrudRepository.getAcquisitionsBySupplierId(supplierId)
+                                .switchIfEmpty(Mono.error(
+                                                new RuntimeException("No movements found")));
         }
 
         @Override
-        public Flux<AcquisitionDTO> findAcquisitionsByCostAndYear(Long currencyId, double minCost, double maxCost,
-                        int fromYear, int toYear) {
-                return movementCrudRepository.findAcquisitionsByCostAndYear(currencyId, minCost, maxCost,
-                                fromYear, toYear);
+        public Flux<AcquisitionDTO> findAcquisitionsByCostAndYear(String costType,
+                        Long currencyId, double minCost, double maxCost, int fromYear, int toYear) {
+                return movementCrudRepository.findAcquisitionsByCostAndYear(costType,
+                                currencyId, minCost, maxCost,
+                                fromYear, toYear).switchIfEmpty(
+                                                Mono.error(new RuntimeException("No movements found")));
         }
 
         @Override
-        public Flux<AverageCostProductDTO> getAvgUnitCostByAcquisition(Long productId, Long currencyId, int fromYear,
-                        int toYear) {
+        public Flux<AverageCostProductDTO> getAvgUnitCostByAcquisition(
+                        Long productId, Long currencyId, int fromYear, int toYear) {
                 return movementCrudRepository.getAvgUnitCostByAcquisition(productId, currencyId, fromYear,
-                                toYear);
+                                toYear).switchIfEmpty(
+                                                Mono.error(new RuntimeException("No AVG acquisition cost found")));
         }
 
         @Override
-        public Flux<AverageCostProductDTO> getAvgTotalCostByAcquisition(Long productId, Long currencyId, int fromYear,
-                        int toYear) {
+        public Flux<AverageCostProductDTO> getAvgTotalCostByAcquisition(
+                        Long productId, Long currencyId, int fromYear, int toYear) {
                 return movementCrudRepository.getAvgTotalCostByAcquisition(productId, currencyId, fromYear,
-                                toYear);
+                                toYear).switchIfEmpty(
+                                                Mono.error(new RuntimeException("No AVG found")));
         }
 
         @Override
-        public Flux<ProductionDTO> findProductionByCostAndYear(Long currencyId, double minCost, double maxCost,
-                        int fromYear, int toYear) {
-                return movementCrudRepository.findProductionByCostAndYear(currencyId, minCost, maxCost,
-                                fromYear, toYear);
+        public Flux<ProductionDTO> findProductionByCostAndYear(String costType,
+                        Long currencyId, double minCost, double maxCost, int fromYear, int toYear) {
+                return movementCrudRepository.findProductionByCostAndYear(costType,
+                                currencyId, minCost, maxCost,
+                                fromYear, toYear).switchIfEmpty(
+                                                Mono.error(new RuntimeException("No movements found")));
         }
 
         @Override
-        public Flux<AverageCostProductDTO> getAvgUnitProductionCost(Long productId, Long currencyId, int fromYear,
-                        int toYear) {
+        public Flux<AverageCostProductDTO> getAvgUnitProductionCost(
+                        Long productId, Long currencyId, int fromYear, int toYear) {
                 return movementCrudRepository.getAvgUnitProductionCost(productId, currencyId, fromYear,
-                                toYear);
+                                toYear).switchIfEmpty(
+                                                Mono.error(new RuntimeException("No AVG found")));
         }
 
         @Override
-        public Flux<AverageCostProductDTO> getAvgTotalProductionCost(Long productId, Long currencyId, int fromYear,
-                        int toYear) {
+        public Flux<AverageCostProductDTO> getAvgTotalProductionCost(
+                        Long productId, Long currencyId, int fromYear, int toYear) {
                 return movementCrudRepository.getAvgTotalProductionCost(productId, currencyId, fromYear,
-                                toYear);
+                                toYear).switchIfEmpty(
+                                                Mono.error(new RuntimeException("No AVG found")));
         }
 
         @Override
-        public Flux<SaleDTO> findSalesByValueAndYear(Long currencyId, double minValue, double maxValue, int fromYear,
-                        int toYear) {
-                return movementCrudRepository.findSalesByValueAndYear(currencyId, minValue, maxValue, fromYear,
-                                toYear);
+        public Flux<SaleDTO> findSalesByValueAndYear(String sellType,
+                        Long currencyId, double minValue, double maxValue, int fromYear, int toYear) {
+                return movementCrudRepository.findSalesByValueAndYear(sellType,
+                                currencyId, minValue, maxValue, fromYear,
+                                toYear).switchIfEmpty(
+                                                Mono.error(new RuntimeException("No movements found")));
         }
 
         @Override
-        public Flux<AverageSellProductDTO> getAvgUnitSellValue(Long productId, Long currencyId, int fromYear,
-                        int toYear) {
+        public Flux<AverageSellProductDTO> getAvgUnitSellValue(
+                        Long productId, Long currencyId, int fromYear, int toYear) {
                 return movementCrudRepository.getAvgUnitSellValue(productId, currencyId, fromYear,
-                                toYear);
+                                toYear).switchIfEmpty(
+                                                Mono.error(new RuntimeException("No AVG found")));
         }
 
         @Override
-        public Flux<AverageSellProductDTO> getAvgTotalSellValue(Long productId, Long currencyId, int fromYear,
-                        int toYear) {
+        public Flux<AverageSellProductDTO> getAvgTotalSellValue(
+                        Long productId, Long currencyId, int fromYear, int toYear) {
                 return movementCrudRepository.getAvgTotalSellValue(productId, currencyId, fromYear,
-                                toYear);
+                                toYear).switchIfEmpty(
+                                                Mono.error(new RuntimeException("No AVG found")));
         }
 
 }

@@ -124,7 +124,8 @@ public class MovementQuery {
                         "AND m.transaction_value >= :minCost " +
                         "AND m.transaction_value <= :maxCost " +
                         "AND m.transaction_currency_id = :currencyId " +
-                        "AND YEAR(m.date_time) >= :fromYear AND YEAR(m.date_time) <= :toYear ";
+                        "AND YEAR(m.date_time) >= :fromYear AND YEAR(m.date_time) <= :toYear " +
+                        "AND m.transaction_subtype = :costType";
 
         public static final String AVERAGE_COST_QUERY = "SELECT m.product_id AS product_id, " +
                         "p.name AS product_name, " +
@@ -138,14 +139,14 @@ public class MovementQuery {
                         "cur.name AS cost_currency " +
                         "FROM movements m " +
                         "JOIN products p ON p.id = m.product_id " +
-                        "JOIN subcategories s ON s.id = p.subcategory_id " +
-                        "JOIN categories c ON c.id = s.category_id " +
-                        "JOIN currencies cur ON cur.id = m.transaction_currency_id " +
+                        "LEFT JOIN subcategories s ON s.id = p.subcategory_id " +
+                        "LEFT JOIN categories c ON c.id = s.category_id " +
+                        "LEFT JOIN currencies cur ON cur.id = m.transaction_currency_id " +
                         "WHERE m.product_id = :productId AND m.transaction_currency_id = :currencyId " +
                         "AND YEAR(m.date_time) >= :fromYear AND YEAR(m.date_time) <= :toYear ";
 
         public static final String AVERAGE_COST_PERUNIT_QUERY = AVERAGE_COST_QUERY +
-                        "AND m.transaction_subtype = 'Per unit' ";
+                        "AND m.transaction_subtype = 'PER_UNIT' ";
 
         public static final String AVERAGE_COST_PERUNIT_ACQUISITION = AVERAGE_COST_PERUNIT_QUERY +
                         "AND m.subtype = 'Acquisition' " +
@@ -156,7 +157,7 @@ public class MovementQuery {
                         "GROUP BY p.id ";
 
         public static final String AVERAGE_COST_OVERALL_QUERY = AVERAGE_COST_QUERY +
-                        "AND m.transaction_subtype = 'Overall' ";
+                        "AND m.transaction_subtype = 'OVERALL' ";
 
         public static final String AVERAGE_COST_OVERALL_ACQUISITION = AVERAGE_COST_OVERALL_QUERY +
                         "AND m.subtype = 'Acquisition' " +
@@ -170,13 +171,15 @@ public class MovementQuery {
                         "AND m.transaction_value >= :minCost " +
                         "AND m.transaction_value <= :maxCost " +
                         "AND m.transaction_currency_id = :currencyId " +
-                        "AND YEAR(m.date_time) >= :fromYear AND YEAR(m.date_time) <= :toYear ";
+                        "AND YEAR(m.date_time) >= :fromYear AND YEAR(m.date_time) <= :toYear " +
+                        "AND m.transaction_subtype = :costType";
 
         public static final String SALES_VALUE_QUERY = SALES_QUERY +
                         "AND m.transaction_value >= :minCost " +
                         "AND m.transaction_value <= :maxCost " +
                         "AND m.transaction_currency_id = :currencyId " +
-                        "AND YEAR(m.date_time) >= :fromYear AND YEAR(m.date_time) <= :toYear ";
+                        "AND YEAR(m.date_time) >= :fromYear AND YEAR(m.date_time) <= :toYear " +
+                        "AND m.transaction_subtype = :sellType ";
 
         public static final String AVERAGE_SELL_QUERY = "SELECT m.product_id AS product_id, " +
                         "p.name AS product_name, " +
@@ -191,19 +194,19 @@ public class MovementQuery {
                         "SUM(m.quantity) AS sells " +
                         "FROM movements m " +
                         "JOIN products p ON p.id = m.product_id " +
-                        "JOIN subcategories s ON s.id = p.subcategory_id " +
-                        "JOIN categories c ON c.id = s.category_id " +
-                        "JOIN currencies cur ON cur.id = m.transaction_currency_id " +
+                        "LEFT JOIN subcategories s ON s.id = p.subcategory_id " +
+                        "LEFT JOIN categories c ON c.id = s.category_id " +
+                        "LEFT JOIN currencies cur ON cur.id = m.transaction_currency_id " +
                         "WHERE m.product_id = :productId AND m.transaction_currency_id = :currencyId " +
                         "AND YEAR(m.date_time) >= :fromYear AND YEAR(m.date_time) <= :toYear " +
                         "AND m.subtype = 'Sales' ";
 
         public static final String AVERAGE_SELL_RETAIL = AVERAGE_SELL_QUERY +
-                        "AND m.transaction_subtype = 'Retail' " +
+                        "AND m.transaction_subtype = 'RETAIL' " +
                         "GROUP BY p.id ";
 
         public static final String AVERAGE_SELL_WHOLESALE = AVERAGE_SELL_QUERY +
-                        "AND m.transaction_subtype = 'Wholesale' " +
+                        "AND m.transaction_subtype = 'WHOLESALE' " +
                         "GROUP BY p.id ";
 
 }

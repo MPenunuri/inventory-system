@@ -111,9 +111,9 @@ public class MovementApplicationService {
         return movementPersistencePort.getAcquisitionsBySupplierId(supplierId);
     }
 
-    public Flux<AcquisitionDTO> findAcquisitionsByCostAndYear(
+    public Flux<AcquisitionDTO> findAcquisitionsByCostAndYear(String costType,
             Long currencyId, double minCost, double maxCost, int fromYear, int toYear) {
-        return movementPersistencePort.findAcquisitionsByCostAndYear(
+        return movementPersistencePort.findAcquisitionsByCostAndYear(costType,
                 currencyId, minCost, maxCost, fromYear, toYear);
     }
 
@@ -131,10 +131,10 @@ public class MovementApplicationService {
                 productId, currencyId, fromYear, toYear);
     }
 
-    public Flux<ProductionDTO> findProductionByCostAndYear(
+    public Flux<ProductionDTO> findProductionByCostAndYear(String costType,
             Long currencyId, double minCost, double maxCost,
             int fromYear, int toYear) {
-        return movementPersistencePort.findProductionByCostAndYear(
+        return movementPersistencePort.findProductionByCostAndYear(costType,
                 currencyId, minCost, maxCost, fromYear, toYear);
     }
 
@@ -150,9 +150,9 @@ public class MovementApplicationService {
                 productId, currencyId, fromYear, toYear);
     }
 
-    public Flux<SaleDTO> findSalesByValueAndYear(
+    public Flux<SaleDTO> findSalesByValueAndYear(String sellType,
             Long currencyId, double minValue, double maxValue, int fromYear, int toYear) {
-        return movementPersistencePort.findSalesByValueAndYear(
+        return movementPersistencePort.findSalesByValueAndYear(sellType,
                 currencyId, minValue, maxValue, fromYear, toYear);
     }
 

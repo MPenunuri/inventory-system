@@ -63,8 +63,9 @@ public interface MovementCrudRepository extends ReactiveCrudRepository<MovementE
         Flux<AcquisitionDTO> getAcquisitionsBySupplierId(Long supplierId);
 
         @Query(MovementQuery.ACQUISITION_COST_QUERY)
-        Flux<AcquisitionDTO> findAcquisitionsByCostAndYear(Long currencyId, double minCost, double maxCost,
-                        int fromYear, int toYear);
+        Flux<AcquisitionDTO> findAcquisitionsByCostAndYear(
+                        String costType, Long currencyId, double minCost,
+                        double maxCost, int fromYear, int toYear);
 
         @Query(MovementQuery.AVERAGE_COST_PERUNIT_ACQUISITION)
         Flux<AverageCostProductDTO> getAvgUnitCostByAcquisition(Long productId, Long currencyId,
@@ -75,7 +76,8 @@ public interface MovementCrudRepository extends ReactiveCrudRepository<MovementE
                         int fromYear, int toYear);
 
         @Query(MovementQuery.PRODUCTION_COST_QUERY)
-        Flux<ProductionDTO> findProductionByCostAndYear(Long currencyId, double minCost, double maxCost,
+        Flux<ProductionDTO> findProductionByCostAndYear(String costType,
+                        Long currencyId, double minCost, double maxCost,
                         int fromYear, int toYear);
 
         @Query(MovementQuery.AVERAGE_COST_PERUNIT_PRODUCTION)
@@ -87,7 +89,8 @@ public interface MovementCrudRepository extends ReactiveCrudRepository<MovementE
                         int fromYear, int toYear);
 
         @Query(MovementQuery.SALES_VALUE_QUERY)
-        Flux<SaleDTO> findSalesByValueAndYear(Long currencyId, double minValue, double maxValue,
+        Flux<SaleDTO> findSalesByValueAndYear(
+                        String sellType, Long currencyId, double minValue, double maxValue,
                         int fromYear, int toYear);
 
         @Query(MovementQuery.AVERAGE_SELL_RETAIL)

@@ -43,28 +43,29 @@ public class AddMovements {
                                 LocalDateTime.of(2022, 10, 11, 10, 30, 45),
                                 "Regular acquisition",
                                 "No comment", 20, supplierId,
-                                location1Id, "Per unit",
+                                location1Id,
+                                "PER_UNIT",
                                 .75, currencyId)
                                 .then(movementRepository.addAcquisitionEntryMovement(
                                                 productId,
                                                 LocalDateTime.of(2023, 12, 25, 10, 30, 45),
                                                 "Regular acquisition",
                                                 "No comment", 20, supplierId,
-                                                location1Id, "Per unit",
+                                                location1Id, "PER_UNIT",
                                                 .75, currencyId))
                                 .then(movementRepository.addAcquisitionEntryMovement(
                                                 productId,
                                                 LocalDateTime.of(2024, 2, 14, 10, 30, 45),
                                                 "Regular acquisition",
                                                 "No comment", 20, supplierId,
-                                                location1Id, "Per unit",
+                                                location1Id, "PER_UNIT",
                                                 1, currencyId))
                                 .then(movementRepository.addAcquisitionEntryMovement(
                                                 productId,
                                                 LocalDateTime.of(2025, 5, 2, 10, 30, 45),
                                                 "Regular acquisition",
                                                 "No comment", 20, supplierId,
-                                                location1Id, "Per unit",
+                                                location1Id, "PER_UNIT",
                                                 .75, currencyId))
                                 .then();
 
@@ -72,7 +73,7 @@ public class AddMovements {
                                 productId,
                                 LocalDateTime.of(2024, 2, 14, 10, 30, 45),
                                 "Defective product",
-                                "The product was damaged", 1, location1Id, "Per unit",
+                                "The product was damaged", 1, location1Id, "PER_UNIT",
                                 1.00, currencyId).then();
 
                 Mono<Void> addEntryAdjusment = movementRepository.addInventoryAdjustmentEntryMovement(
@@ -85,25 +86,25 @@ public class AddMovements {
                                 productId,
                                 LocalDateTime.of(2022, 10, 11, 10, 30, 45),
                                 "Company production",
-                                "Experimental own production", 20, location1Id, "Per unit",
+                                "Experimental own production", 20, location1Id, "PER_UNIT",
                                 .25, currencyId)
                                 .then(movementRepository.addProductionEntryMovement(
                                                 productId,
                                                 LocalDateTime.of(2023, 12, 25, 10, 30, 45),
                                                 "Company production",
-                                                "Experimental own production", 20, location1Id, "Per unit",
+                                                "Experimental own production", 20, location1Id, "PER_UNIT",
                                                 .5, currencyId))
                                 .then(movementRepository.addProductionEntryMovement(
                                                 productId,
                                                 LocalDateTime.of(2024, 2, 14, 10, 30, 45),
                                                 "Company production",
-                                                "Experimental own production", 20, location1Id, "Per unit",
+                                                "Experimental own production", 20, location1Id, "PER_UNIT",
                                                 .75, currencyId))
                                 .then(movementRepository.addProductionEntryMovement(
                                                 productId,
                                                 LocalDateTime.of(2025, 5, 2, 10, 30, 45),
                                                 "Company production",
-                                                "Experimental own production", 20, location1Id, "Per unit",
+                                                "Experimental own production", 20, location1Id, "PER_UNIT",
                                                 .5, currencyId))
                                 .then();
 
@@ -121,31 +122,31 @@ public class AddMovements {
                                 productId,
                                 LocalDateTime.of(2022, 1, 27, 10, 30, 45),
                                 "Regular sell", "No comment",
-                                20, location1Id, "Retail", productEntity.getRetail_price() - .25,
+                                20, location1Id, "RETAIL", productEntity.getRetail_price() - .25,
                                 productEntity.getPrice_currency_id())
                                 .then(movementRepository.addSalesOutputMovement(
                                                 productId,
                                                 LocalDateTime.of(2023, 5, 2, 10, 30, 45),
                                                 "Regular sell", "No comment",
-                                                20, location1Id, "Retail", productEntity.getRetail_price(),
+                                                20, location1Id, "RETAIL", productEntity.getRetail_price(),
                                                 productEntity.getPrice_currency_id()))
                                 .then(movementRepository.addSalesOutputMovement(
                                                 productId,
                                                 LocalDateTime.of(2024, 11, 13, 10, 30, 45),
                                                 "Regular sell", "No comment",
-                                                20, location1Id, "Retail", productEntity.getRetail_price() + .25,
+                                                20, location1Id, "RETAIL", productEntity.getRetail_price() + .25,
                                                 productEntity.getPrice_currency_id()))
                                 .then(movementRepository.addSalesOutputMovement(
                                                 productId,
                                                 LocalDateTime.of(2025, 7, 22, 10, 30, 45),
                                                 "Regular sell", "No comment",
-                                                20, location1Id, "Retail", productEntity.getRetail_price(),
+                                                20, location1Id, "RETAIL", productEntity.getRetail_price(),
                                                 productEntity.getPrice_currency_id()))
                                 .then();
 
                 Mono<Void> addSupplierReturn = movementRepository.addSupplierReturnOutputMovement(
                                 productId, LocalDateTime.now(), "Defective product", "The product was damaged",
-                                20, supplierId, location1Id, "Per unit",
+                                20, supplierId, location1Id, "RETAIL",
                                 .75, currencyId).then();
 
                 Mono<Void> addOutputAdjustment = movementRepository.addInventoryAdjustmentOutputMovement(
@@ -166,7 +167,6 @@ public class AddMovements {
         }
 
         public Flux<Void> setTransfers() {
-
                 Mono<Void> addTransfer = movementRepository.addTransferMovement(
                                 productId, LocalDateTime.now(), "Manager indication", "No comment",
                                 10, location1Id, location2Id).map(t -> {
@@ -174,17 +174,13 @@ public class AddMovements {
                                         return t;
                                 }).then();
 
-                return Flux.concat(
-                                addTransfer);
-
+                return Flux.concat(addTransfer);
         }
 
         public Flux<Void> setCancelations() {
-
-                Mono<Void> cancelTransfer = movementRepository.cancelMovementById(transferId.get()).then();
-                return Flux.concat(
-                                cancelTransfer);
-
+                Mono<Void> cancelTransfer = movementRepository
+                                .cancelMovementById(transferId.get()).then();
+                return Flux.concat(cancelTransfer);
         }
 
 }

@@ -168,7 +168,7 @@ public class SupplierControllerTest {
                 webTestClient.get().uri("/api/secure/supplier")
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.get())
                                 .exchange()
-                                .expectStatus().isBadRequest();
+                                .expectStatus().isNotFound();
 
         }
 }

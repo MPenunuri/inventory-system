@@ -195,7 +195,7 @@ public class MovementsTest {
                 StepVerifier.create(acquisitionsBySupplier).expectNextCount(4).verifyComplete();
 
                 Flux<AcquisitionDTO> acquisitionsByCostAndYear = movementRepository
-                                .findAcquisitionsByCostAndYear(
+                                .findAcquisitionsByCostAndYear("PER_UNIT",
                                                 currencyId.get(), .75, 1, 2023, 2024);
 
                 Flux<AverageCostProductDTO> acquisitionAVGCost1 = movementRepository
@@ -221,6 +221,7 @@ public class MovementsTest {
 
                 Flux<ProductionDTO> productionsByCostAndYear = movementRepository
                                 .findProductionByCostAndYear(
+                                                "PER_UNIT",
                                                 currencyId.get(), .5, .75, 2023, 2025);
 
                 Flux<AverageCostProductDTO> productionAVGCost1 = movementRepository
@@ -264,7 +265,7 @@ public class MovementsTest {
                 StepVerifier.create(foundInternalConsumption).expectNextCount(1).verifyComplete();
 
                 Flux<SaleDTO> sellByValueAndYear = movementRepository
-                                .findSalesByValueAndYear(
+                                .findSalesByValueAndYear("RETAIL",
                                                 currencyId.get(), 1, 1, 2022, 2025);
 
                 StepVerifier.create(sellByValueAndYear).expectNextCount(2).verifyComplete();
