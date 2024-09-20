@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mapera.inventory_system.application.security.AuthenticationService;
 import com.mapera.inventory_system.application.service.MovementApplicationService;
 
 import reactor.core.publisher.Mono;
@@ -19,9 +20,15 @@ public class MovementDeleteController {
     @Autowired
     MovementApplicationService movementApplicationService;
 
+    @Autowired
+    private AuthenticationService authService;
+
     @DeleteMapping("/{movementId}")
     public Mono<Boolean> cancelMovementById(@PathVariable Long movementId) {
-        return movementApplicationService.cancelMovementById(movementId);
+        return authService.getUserIdFromToken().flatMap(userId -> {
+            return movementApplicationService.cancelMovementById(userId, movementId);
+        });
+
     }
 
 }

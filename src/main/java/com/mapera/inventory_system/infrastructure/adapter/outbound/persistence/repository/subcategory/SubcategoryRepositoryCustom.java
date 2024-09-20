@@ -5,7 +5,7 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.e
 import reactor.core.publisher.Mono;
 
 public interface SubcategoryRepositoryCustom {
-    public Mono<SubcategoryEntity> changeSubcategoryCategory(Long subcategoryId, Long newCategoryId);
+    public Mono<SubcategoryEntity> changeSubcategoryCategory(Long userId, Long subcategoryId, Long newCategoryId);
 
-    public Mono<SubcategoryEntity> renameSubcategory(Long subcategoryId, String newName);
+    public Mono<SubcategoryEntity> renameSubcategory(Long userId, Long subcategoryId, String newName);
 }

@@ -20,104 +20,111 @@ import java.time.LocalDateTime;
 
 public interface MovementPersistencePort {
 
-        Flux<StandardMovementDTO> getMovements();
+        Flux<StandardMovementDTO> getMovements(Long userId);
 
-        Flux<EntryMovementDTO> getEntries();
+        Flux<EntryMovementDTO> getEntries(Long userId);
 
-        Flux<OutputMovementDTO> getOutputs();
+        Flux<OutputMovementDTO> getOutputs(Long userId);
 
-        Flux<TransferMovementDTO> getTransfers();
+        Flux<TransferMovementDTO> getTransfers(Long userId);
 
-        Flux<AcquisitionDTO> getAcquisitions();
+        Flux<AcquisitionDTO> getAcquisitions(Long userId);
 
-        Flux<CustomerReturnDTO> getCustomerReturns();
+        Flux<CustomerReturnDTO> getCustomerReturns(Long userId);
 
-        Flux<EntryMovementDTO> getEntryInventoryAdjustments();
+        Flux<EntryMovementDTO> getEntryInventoryAdjustments(Long userId);
 
-        Flux<ProductionDTO> getProductions();
+        Flux<ProductionDTO> getProductions(Long userId);
 
-        Flux<SaleDTO> getSales();
+        Flux<SaleDTO> getSales(Long userId);
 
-        Flux<SupplierReturnDTO> getSupplierReturns();
+        Flux<SupplierReturnDTO> getSupplierReturns(Long userId);
 
-        Flux<OutputMovementDTO> getOutputInventoryAdjustments();
+        Flux<OutputMovementDTO> getOutputInventoryAdjustments(Long userId);
 
-        Flux<OutputMovementDTO> getInternalConsumptionMovements();
+        Flux<OutputMovementDTO> getInternalConsumptionMovements(Long userId);
 
-        Flux<StandardMovementDTO> getMovementsByProductId(Long productId);
+        Flux<StandardMovementDTO> getMovementsByProductId(Long userId, Long productId);
 
-        Flux<AcquisitionDTO> getAcquisitionsBySupplierId(Long supplierId);
+        Flux<AcquisitionDTO> getAcquisitionsBySupplierId(Long userId, Long supplierId);
 
-        Flux<AcquisitionDTO> findAcquisitionsByCostAndYear(String costType,
+        Flux<AcquisitionDTO> findAcquisitionsByCostAndYear(Long userId, String costType,
                         Long currencyId, double minCost, double maxCost,
                         int fromYear, int toYear);
 
-        Flux<AverageCostProductDTO> getAvgUnitCostByAcquisition(Long productId, Long currencyId,
+        Flux<AverageCostProductDTO> getAvgUnitCostByAcquisition(Long userId,
+                        Long productId, Long currencyId,
                         int fromYear, int toYear);
 
-        Flux<AverageCostProductDTO> getAvgTotalCostByAcquisition(Long productId, Long currencyId,
+        Flux<AverageCostProductDTO> getAvgTotalCostByAcquisition(Long userId,
+                        Long productId, Long currencyId,
                         int fromYear, int toYear);
 
-        Flux<ProductionDTO> findProductionByCostAndYear(String costType,
+        Flux<ProductionDTO> findProductionByCostAndYear(Long userId, String costType,
                         Long currencyId, double minCost, double maxCost,
                         int fromYear, int toYear);
 
-        Flux<AverageCostProductDTO> getAvgUnitProductionCost(Long productId, Long currencyId,
+        Flux<AverageCostProductDTO> getAvgUnitProductionCost(Long userId,
+                        Long productId, Long currencyId,
                         int fromYear, int toYear);
 
-        Flux<AverageCostProductDTO> getAvgTotalProductionCost(Long productId, Long currencyId,
+        Flux<AverageCostProductDTO> getAvgTotalProductionCost(Long userId,
+                        Long productId, Long currencyId,
                         int fromYear, int toYear);
 
-        Flux<SaleDTO> findSalesByValueAndYear(String sellType, Long currencyId, double minValue, double maxValue,
+        Flux<SaleDTO> findSalesByValueAndYear(Long userId,
+                        String sellType, Long currencyId, double minValue, double maxValue,
                         int fromYear, int toYear);
 
-        Flux<AverageSellProductDTO> getAvgUnitSellValue(Long productId, Long currencyId,
+        Flux<AverageSellProductDTO> getAvgUnitSellValue(Long userId,
+                        Long productId, Long currencyId,
                         int fromYear, int toYear);
 
-        Flux<AverageSellProductDTO> getAvgTotalSellValue(Long productId, Long currencyId,
+        Flux<AverageSellProductDTO> getAvgTotalSellValue(Long userId,
+                        Long productId, Long currencyId,
                         int fromYear, int toYear);
 
-        public Mono<MovementEntity> addAcquisitionEntryMovement(
+        public Mono<MovementEntity> addAcquisitionEntryMovement(Long userId,
                         Long productId, LocalDateTime dateTime, String reason, String comment,
                         int quantity, Long supplierId, Long toLocationId, String transactionSubtype,
                         double transactionValue, Long transactionCurrencyId);
 
-        public Mono<MovementEntity> addCustomerReturnEntryMovement(
+        public Mono<MovementEntity> addCustomerReturnEntryMovement(Long userId,
                         Long productId, LocalDateTime dateTime, String reason, String comment,
                         int quantity, Long toLocationId, String transactionSubtype,
                         double transactionValue, Long transactionCurrencyId);
 
-        public Mono<MovementEntity> addInventoryAdjustmentEntryMovement(
+        public Mono<MovementEntity> addInventoryAdjustmentEntryMovement(Long userId,
                         Long productId, LocalDateTime dateTime, String reason, String comment,
                         int quantity, Long toLocationId);
 
-        public Mono<MovementEntity> addProductionEntryMovement(
+        public Mono<MovementEntity> addProductionEntryMovement(Long userId,
                         Long productId, LocalDateTime dateTime, String reason, String comment,
                         int quantity, Long toLocationId, String transactionSubtype,
                         double transactionValue, Long transactionCurrencyId);
 
-        public Mono<MovementEntity> addSalesOutputMovement(
+        public Mono<MovementEntity> addSalesOutputMovement(Long userId,
                         Long productId, LocalDateTime dateTime, String reason, String comment,
                         int quantity, Long fromLocationId, String transactionSubtype,
                         double transactionValue, Long transactionCurrencyId);
 
-        public Mono<MovementEntity> addSupplierReturnOutputMovement(
+        public Mono<MovementEntity> addSupplierReturnOutputMovement(Long userId,
                         Long productId, LocalDateTime dateTime, String reason, String comment,
                         int quantity, Long supplierId, Long fromLocationId,
                         String transactionSubtype, double transactionValue, Long transactionCurrencyId);
 
-        public Mono<MovementEntity> addInventoryAdjustmentOutputMovement(
+        public Mono<MovementEntity> addInventoryAdjustmentOutputMovement(Long userId,
                         Long productId, LocalDateTime dateTime, String reason, String comment,
                         int quantity, Long fromLocationId);
 
-        public Mono<MovementEntity> addInternalConsumptionOutputMovement(
+        public Mono<MovementEntity> addInternalConsumptionOutputMovement(Long userId,
                         Long productId, LocalDateTime dateTime, String reason, String comment,
                         int quantity, Long fromLocationId);
 
-        public Mono<MovementEntity> addTransferMovement(
+        public Mono<MovementEntity> addTransferMovement(Long userId,
                         Long productId, LocalDateTime dateTime, String reason, String comment,
                         int quantity, Long fromLocationId, Long toLocationId);
 
-        public Mono<Boolean> cancelMovementById(Long movementId);
+        public Mono<Boolean> cancelMovementById(Long userId, Long movementId);
 
 }

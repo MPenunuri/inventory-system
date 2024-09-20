@@ -7,11 +7,11 @@ import reactor.core.publisher.Mono;
 
 public interface SupplierPersistencePort {
 
-    public Mono<SupplierEntity> registerSupplier(String name);
+    public Mono<SupplierEntity> registerSupplier(Long userId, String name);
 
-    public Flux<SupplierEntity> getSuppliers();
+    public Flux<SupplierEntity> getSuppliers(Long userId);
 
-    public Mono<SupplierEntity> renameSupplier(Long supplierId, String name);
+    public Mono<SupplierEntity> renameSupplier(Long userId, Long supplierId, String name);
 
-    public Mono<Void> deleteSupplier(Long supplierId);
+    public Mono<Void> deleteSupplier(Long userId, Long supplierId);
 }

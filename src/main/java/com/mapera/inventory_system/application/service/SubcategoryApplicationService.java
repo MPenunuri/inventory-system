@@ -15,27 +15,27 @@ public class SubcategoryApplicationService {
     @Autowired
     private SubcategoryPersistencePort subcategoryPersistencePort;
 
-    public Mono<SubcategoryEntity> registerSubcategory(long categoryId, String name) {
-        return subcategoryPersistencePort.registerSubcategory(categoryId, name);
+    public Mono<SubcategoryEntity> registerSubcategory(Long userId, long categoryId, String name) {
+        return subcategoryPersistencePort.registerSubcategory(userId, categoryId, name);
     }
 
-    public Flux<SubcategoryEntity> findSubcategoriesByCategoryId(long categoryId) {
-        return subcategoryPersistencePort.findSubcategoriesByCategoryId(categoryId);
+    public Flux<SubcategoryEntity> findSubcategoriesByCategoryId(Long userId, long categoryId) {
+        return subcategoryPersistencePort.findSubcategoriesByCategoryId(userId, categoryId);
     }
 
-    public Flux<SubcategoryEntity> getAllSubcategories() {
-        return subcategoryPersistencePort.getAllSubcategories();
+    public Flux<SubcategoryEntity> getAllSubcategories(Long userId) {
+        return subcategoryPersistencePort.getAllSubcategories(userId);
     }
 
-    public Mono<SubcategoryEntity> changeSubcategoryCategory(Long subcategoryId, Long newCategoryId) {
-        return subcategoryPersistencePort.changeSubcategoryCategory(subcategoryId, newCategoryId);
+    public Mono<SubcategoryEntity> changeSubcategoryCategory(Long userId, Long subcategoryId, Long newCategoryId) {
+        return subcategoryPersistencePort.changeSubcategoryCategory(userId, subcategoryId, newCategoryId);
     }
 
-    public Mono<SubcategoryEntity> renameSubcategory(Long subcategoryId, String newName) {
-        return subcategoryPersistencePort.renameSubcategory(subcategoryId, newName);
+    public Mono<SubcategoryEntity> renameSubcategory(Long userId, Long subcategoryId, String newName) {
+        return subcategoryPersistencePort.renameSubcategory(userId, subcategoryId, newName);
     }
 
-    public Mono<Void> deleteSubcategory(Long subcategoryId) {
-        return subcategoryPersistencePort.deleteSubcategory(subcategoryId);
+    public Mono<Void> deleteSubcategory(Long userId, Long subcategoryId) {
+        return subcategoryPersistencePort.deleteSubcategory(userId, subcategoryId);
     }
 }

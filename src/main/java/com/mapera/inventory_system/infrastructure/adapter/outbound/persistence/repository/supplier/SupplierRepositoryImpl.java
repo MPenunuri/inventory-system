@@ -18,37 +18,46 @@ public class SupplierRepositoryImpl
     SupplierCrudRepository supplierCrudRepository;
 
     @Override
-    public Mono<SupplierEntity> registerSupplier(String name) {
+    public Mono<SupplierEntity> registerSupplier(Long userId, String name) {
         SupplierEntity supplierEntity = new SupplierEntity();
+        supplierEntity.setUser_id(userId);
         supplierEntity.setName(name);
         return supplierCrudRepository.save(supplierEntity);
     }
 
     @Override
-    public Flux<SupplierEntity> getSuppliers() {
-        return supplierCrudRepository.findAll()
+    public Flux<SupplierEntity> getSuppliers(Long userId) {
+        return supplierCrudRepository.findAllUserSuppliers(userId)
                 .switchIfEmpty(Mono.error(new RuntimeException("Not suppliers found")));
     }
 
     @Override
-    public Mono<SupplierEntity> renameSupplier(Long supplierId, String name) {
+    public Mono<SupplierEntity> renameSupplier(Long userId, Long supplierId, String name) {
         return supplierCrudRepository.findById(supplierId).flatMap(s -> {
+            if (!s.getUser_id().equals(userId)) {
+                throw new IllegalArgumentException("Invalid credentials");
+            }
             s.setName(name);
             return supplierCrudRepository.save(s);
         }).switchIfEmpty(Mono.error(new RuntimeException("Supplier not found")));
     }
 
     @Override
-    public Mono<Void> deleteSupplier(Long supplierId) {
-        return supplierCrudRepository.deleteById(supplierId)
-                .onErrorMap(error -> {
+    public Mono<Void> deleteSupplier(Long userId, Long supplierId) {
+        return supplierCrudRepository.findById(supplierId)
+                .switchIfEmpty(Mono.error(new RuntimeException("Supplier not found")))
+                .flatMap(s -> {
+                    if (!s.getUser_id().equals(userId)) {
+                        throw new IllegalArgumentException("Invalid credentials");
+                    }
+                    return supplierCrudRepository.delete(s);
+                }).onErrorMap(error -> {
                     if (error instanceof DataIntegrityViolationException) {
                         return new IllegalStateException(
                                 "Failed to delete supplier with ID: " + supplierId + ". " +
                                         "The supplier is associated with other records and cannot be deleted. "
                                         +
-                                        "Please remove any related registry before attempting to delete this supplier.",
-                                error);
+                                        "Please remove any related registry before attempting to delete this supplier.");
                     }
                     return new IllegalArgumentException(
                             "Failed to delete supplier with ID: " + supplierId + ". Unexpected error occurred.");

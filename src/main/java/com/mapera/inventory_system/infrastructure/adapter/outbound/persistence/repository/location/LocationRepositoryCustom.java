@@ -6,7 +6,7 @@ import reactor.core.publisher.Mono;
 
 public interface LocationRepositoryCustom {
 
-    public Mono<LocationEntity> updateLocationName(Long locationId, String name);
+    public Mono<LocationEntity> updateLocationName(Long userId, Long locationId, String name);
 
-    public Mono<LocationEntity> updateLocationAddress(Long locationId, String address);
+    public Mono<LocationEntity> updateLocationAddress(Long userId, Long locationId, String address);
 }

@@ -9,6 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.mapera.inventory_system.infraestructure.adapter.outbound.persistence.product_repository.Samples;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.CategoryEntity;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.UserEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.category.CategoryRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.currency.CurrencyRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.location.LocationRepository;
@@ -18,6 +19,7 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.r
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.stock.StockRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.subcategory.SubcategoryRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.supplier.SupplierRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.user.UserRepository;
 
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -26,6 +28,9 @@ import reactor.test.StepVerifier;
 
 @DataR2dbcTest
 public class UpdateCategoryTest {
+
+    @Autowired
+    UserRepository userRepository;
 
     @Autowired
     CategoryRepository categoryRepository;
@@ -64,7 +69,8 @@ public class UpdateCategoryTest {
         Mono<Void> deleteSubcategories = subcategoryRepository.deleteAll();
         Mono<Void> deleteCategories = categoryRepository.deleteAll();
         Mono<Void> deleteCurrencies = currencyRepository.deleteAll();
-        Mono<Void> deleteLocations = currencyRepository.deleteAll();
+        Mono<Void> deleteLocations = locationRepository.deleteAll();
+        Mono<Void> deleteUsers = userRepository.deleteAll();
 
         Mono<Void> setup = deleteProductSupplier
                 .then(deleteStocklist)
@@ -74,7 +80,8 @@ public class UpdateCategoryTest {
                 .then(deleteSubcategories)
                 .then(deleteCategories)
                 .then(deleteCurrencies)
-                .then(deleteLocations);
+                .then(deleteLocations)
+                .then(deleteUsers);
 
         setup.block();
     }
@@ -82,12 +89,19 @@ public class UpdateCategoryTest {
     @Test
     public void test() {
         Samples samples = new Samples();
+        UserEntity userEntity = samples.user();
         CategoryEntity category = samples.category();
+
+        Mono<Void> savedUser = userRepository.save(userEntity).doOnNext(u -> {
+            category.setUser_id(u.getId());
+        }).then();
+
+        StepVerifier.create(savedUser).verifyComplete();
 
         Mono<Long> savedCategoryId = categoryRepository.save(category).map(c -> c.getId());
 
         Mono<CategoryEntity> updatedCategory = savedCategoryId.flatMap(id -> {
-            return categoryRepository.updateCategoryName(id, "Other");
+            return categoryRepository.updateCategoryName(category.getUser_id(), id, "Other");
         });
 
         StepVerifier.create(updatedCategory).expectNextMatches(c -> c.getName().equals("Other")).verifyComplete();

@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -35,5 +38,21 @@ public class AuthenticationService {
                     return tokenProvider.generateToken(user.getId(), roles);
                 })
                 .switchIfEmpty(Mono.error(new RuntimeException("Invalid credentials")));
+    }
+
+    public Mono<Long> getUserIdFromToken() {
+        return ReactiveSecurityContextHolder.getContext()
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("No auth context")))
+                .map(SecurityContext::getAuthentication)
+                .map(Authentication::getName)
+                .flatMap(name -> {
+                    try {
+                        Long userId = Long.parseLong(name);
+                        return Mono.just(userId);
+                    } catch (NumberFormatException e) {
+                        return Mono.error(new IllegalArgumentException("Invalid userId"));
+                    }
+                })
+                .doOnError(error -> Mono.error(new IllegalArgumentException("Invalid credentials")));
     }
 }

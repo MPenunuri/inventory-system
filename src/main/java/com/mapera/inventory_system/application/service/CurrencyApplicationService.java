@@ -15,23 +15,23 @@ public class CurrencyApplicationService {
     @Autowired
     private CurrencyPersistencePort currencyPersistencePort;
 
-    public Flux<CurrencyEntity> getCurrencies() {
-        return currencyPersistencePort.getCurrencies();
+    public Flux<CurrencyEntity> getCurrencies(Long userId) {
+        return currencyPersistencePort.getCurrencies(userId);
     }
 
-    public Mono<CurrencyEntity> registerCurrency(String name) {
-        return currencyPersistencePort.registerCurrency(name);
+    public Mono<CurrencyEntity> registerCurrency(Long userId, String name) {
+        return currencyPersistencePort.registerCurrency(userId, name);
     }
 
-    public Mono<String> getCurrencyNameById(Long currencyId) {
-        return currencyPersistencePort.getCurrencyNameById(currencyId);
+    public Mono<String> getCurrencyNameById(Long userId, Long currencyId) {
+        return currencyPersistencePort.getCurrencyNameById(userId, currencyId);
     }
 
-    public Mono<CurrencyEntity> renameCurrency(Long currencyId, String name) {
-        return currencyPersistencePort.renameCurrency(currencyId, name);
+    public Mono<CurrencyEntity> renameCurrency(Long userId, Long currencyId, String name) {
+        return currencyPersistencePort.renameCurrency(userId, currencyId, name);
     }
 
-    public Mono<Void> deleteCurrency(Long currencyId) {
-        return currencyPersistencePort.deleteCurrency(currencyId);
+    public Mono<Void> deleteCurrency(Long userId, Long currencyId) {
+        return currencyPersistencePort.deleteCurrency(userId, currencyId);
     }
 }

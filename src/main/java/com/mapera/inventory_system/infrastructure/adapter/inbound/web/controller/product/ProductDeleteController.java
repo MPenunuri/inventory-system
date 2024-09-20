@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mapera.inventory_system.application.security.AuthenticationService;
 import com.mapera.inventory_system.application.service.ProductApplicationService;
 
 import reactor.core.publisher.Mono;
@@ -17,9 +18,13 @@ public class ProductDeleteController {
     @Autowired
     private ProductApplicationService productApplicationService;
 
+    @Autowired
+    private AuthenticationService authService;
+
     @DeleteMapping("/{productId}")
     public Mono<Void> deleteProductById(@PathVariable Long productId) {
-        return productApplicationService.deleteProductById(productId);
+        return authService.getUserIdFromToken().flatMap(userId -> {
+            return productApplicationService.deleteProductById(userId, productId);
+        });
     }
-
 }

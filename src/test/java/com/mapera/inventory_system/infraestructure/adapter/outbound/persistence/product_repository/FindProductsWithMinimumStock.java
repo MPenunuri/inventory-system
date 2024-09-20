@@ -13,13 +13,17 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.e
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.ProductEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.StockEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SubcategoryEntity;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.UserEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.category.CategoryRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.currency.CurrencyRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.location.LocationRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.movement.MovementRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product.ProductRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product_supplier.ProductSupplierRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.stock.StockRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.subcategory.SubcategoryRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.supplier.SupplierRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.user.UserRepository;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -30,43 +34,58 @@ import reactor.test.StepVerifier;
 public class FindProductsWithMinimumStock {
 
         @Autowired
-        private ProductRepository productRepository;
+        UserRepository userRepository;
 
         @Autowired
-        private CategoryRepository categoryRepository;
+        CategoryRepository categoryRepository;
 
         @Autowired
-        private SubcategoryRepository subcategoryRepository;
+        SubcategoryRepository subcategoryRepository;
 
         @Autowired
-        private LocationRepository locationRepository;
+        ProductRepository productRepository;
 
         @Autowired
-        private StockRepository stockRepository;
+        SupplierRepository supplierRepository;
 
         @Autowired
-        private SupplierRepository supplierRepository;
+        ProductSupplierRepository productSupplierRepository;
 
         @Autowired
-        private ProductSupplierRepository productSupplierRepository;
+        LocationRepository locationRepository;
+
+        @Autowired
+        CurrencyRepository currencyRepository;
+
+        @Autowired
+        MovementRepository movementRepository;
+
+        @Autowired
+        StockRepository stockRepository;
 
         @BeforeEach
         void setUp() {
+                Mono<Void> deleteMovements = movementRepository.deleteAll();
                 Mono<Void> deleteProductSupplier = productSupplierRepository.deleteAll();
                 Mono<Void> deleteSuppliers = supplierRepository.deleteAll();
                 Mono<Void> deleteStocklist = stockRepository.deleteAll();
-                Mono<Void> deleteLocations = locationRepository.deleteAll();
                 Mono<Void> deleteProducts = productRepository.deleteAll();
                 Mono<Void> deleteSubcategories = subcategoryRepository.deleteAll();
                 Mono<Void> deleteCategories = categoryRepository.deleteAll();
+                Mono<Void> deleteCurrencies = currencyRepository.deleteAll();
+                Mono<Void> deleteLocations = locationRepository.deleteAll();
+                Mono<Void> deleteUsers = userRepository.deleteAll();
 
                 Mono<Void> setup = deleteProductSupplier
-                                .then(deleteSuppliers)
                                 .then(deleteStocklist)
-                                .then(deleteLocations)
+                                .then(deleteMovements)
+                                .then(deleteSuppliers)
                                 .then(deleteProducts)
                                 .then(deleteSubcategories)
-                                .then(deleteCategories);
+                                .then(deleteCategories)
+                                .then(deleteCurrencies)
+                                .then(deleteLocations)
+                                .then(deleteUsers);
 
                 setup.block();
         }
@@ -74,6 +93,7 @@ public class FindProductsWithMinimumStock {
         @Test
         public void test() {
                 Samples samples = new Samples();
+                UserEntity userEntity = samples.user();
                 ProductEntity[] products = new ProductEntity[3];
                 products[0] = samples.product();
                 products[0].setMinimumStock(40);
@@ -92,6 +112,20 @@ public class FindProductsWithMinimumStock {
                 stockList[1].setQuantity(20);
                 stockList[2] = new StockEntity();
                 stockList[2].setQuantity(5);
+
+                Mono<Void> savedUser = userRepository.save(userEntity).doOnNext(u -> {
+                        category.setUser_id(u.getId());
+                        subcategory.setUser_id(u.getId());
+                        location.setUser_id(u.getId());
+                        products[0].setUser_id(u.getId());
+                        products[1].setUser_id(u.getId());
+                        products[2].setUser_id(u.getId());
+                        stockList[0].setUser_id(u.getId());
+                        stockList[1].setUser_id(u.getId());
+                        stockList[2].setUser_id(u.getId());
+                }).then();
+
+                StepVerifier.create(savedUser).verifyComplete();
 
                 Flux<ProductEntity> productFlux = Flux.fromArray(products);
                 Flux<StockEntity> stockFlux = Flux.fromArray(stockList);
@@ -126,7 +160,7 @@ public class FindProductsWithMinimumStock {
 
                 StepVerifier.create(saveProductsMono).verifyComplete();
 
-                Flux<StockProductDTO> found = productRepository.findProductsWithMinimumStock();
+                Flux<StockProductDTO> found = productRepository.findProductsWithMinimumStock(category.getUser_id());
 
                 StepVerifier.create(found)
                                 .expectNextCount(2)

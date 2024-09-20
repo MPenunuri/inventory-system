@@ -15,19 +15,20 @@ public class CategoryApplicationService {
     @Autowired
     CategoryPersitencePort categoryPersitencePort;
 
-    public Mono<CategoryEntity> registerCategory(String name) {
-        return categoryPersitencePort.registerCategory(name);
+    public Mono<CategoryEntity> registerCategory(Long userId, String name) {
+        return categoryPersitencePort.registerCategory(userId, name);
     }
 
-    public Flux<CategoryEntity> getCategories() {
-        return categoryPersitencePort.getCategories();
+    public Flux<CategoryEntity> getCategories(Long userId) {
+        return categoryPersitencePort.getCategories(userId);
     }
 
-    public Mono<CategoryEntity> updateCategoryName(Long categoryId, String name) {
-        return categoryPersitencePort.updateCategoryName(categoryId, name);
+    public Mono<CategoryEntity> updateCategoryName(
+            Long userId, Long categoryId, String name) {
+        return categoryPersitencePort.updateCategoryName(userId, categoryId, name);
     }
 
-    public Mono<Void> deleteCategoryById(Long categoryId) {
-        return categoryPersitencePort.deleteCategoryById(categoryId);
+    public Mono<Void> deleteCategoryById(Long userId, Long categoryId) {
+        return categoryPersitencePort.deleteCategoryById(userId, categoryId);
     }
 }

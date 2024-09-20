@@ -18,7 +18,7 @@ public class ProductSupplierRepositoryImpl
     ProductSupplierCrudRepository productSupplierCrudRepository;
 
     @Override
-    public Mono<Boolean> addProductSupplierRelation(Long productId, Long supplierId) {
+    public Mono<Boolean> addProductSupplierRelation(Long userId, Long productId, Long supplierId) {
         // Check first if there is a current relation.
         return productSupplierCrudRepository.findRelation(productId, supplierId)
                 .flatMap(relation -> {
@@ -28,6 +28,7 @@ public class ProductSupplierRepositoryImpl
                 .switchIfEmpty(Mono.defer(() -> {
                     // If no existing relation, create a new one and return true
                     ProductSupplierEntity productSupplierEntity = new ProductSupplierEntity();
+                    productSupplierEntity.setUser_id(userId);
                     productSupplierEntity.setProductId(productId);
                     productSupplierEntity.setSupplierId(supplierId);
                     return productSupplierCrudRepository.save(productSupplierEntity)
@@ -36,10 +37,13 @@ public class ProductSupplierRepositoryImpl
     }
 
     @Override
-    public Mono<Boolean> deleteProductSupplierRelation(Long productId, Long supplierId) {
+    public Mono<Boolean> deleteProductSupplierRelation(Long userId, Long productId, Long supplierId) {
         // Check first if there is a current relation.
         return productSupplierCrudRepository.findRelation(productId, supplierId)
                 .flatMap(relation -> {
+                    if (!relation.getUser_id().equals(userId)) {
+                        throw new IllegalArgumentException("Invalid credentials");
+                    }
                     // Delete the relation by its ID and return true if the operation was
                     // successfuld
                     return productSupplierCrudRepository.deleteById(relation.getId())

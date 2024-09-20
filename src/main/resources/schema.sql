@@ -7,23 +7,30 @@ CREATE TABLE IF NOT EXISTS users(
 );
 
 CREATE TABLE IF NOT EXISTS categories(
+    user_id INT NOT NULL, 
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
+    name VARCHAR(255) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS subcategories(
+    user_id INT NOT NULL,
     id INT AUTO_INCREMENT PRIMARY KEY,
     category_id INT NOT NULL,
     name VARCHAR(255) NOT NULL,
-    FOREIGN KEY (category_id) REFERENCES categories(id)
+    FOREIGN KEY (category_id) REFERENCES categories(id), 
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS currencies(
+    user_id INT NOT NULL,
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(10) NOT NULL
+    name VARCHAR(10) NOT NULL, 
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS products (
+    user_id INT NOT NULL,
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     subcategory_id INT,
@@ -33,39 +40,49 @@ CREATE TABLE IF NOT EXISTS products (
     wholesale_price DECIMAL(20, 2) CHECK (wholesale_price >= 0),
     price_currency_id INT,
     FOREIGN KEY (subcategory_id) REFERENCES subcategories(id),
-    FOREIGN KEY (price_currency_id) REFERENCES currencies(id)
+    FOREIGN KEY (price_currency_id) REFERENCES currencies(id), 
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS locations (
+    user_id INT NOT NULL,
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    address VARCHAR(500)
+    address VARCHAR(500), 
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS stock_list (
+    user_id INT NOT NULL,
     id INT AUTO_INCREMENT PRIMARY KEY,
     location_id INT NOT NULL,
     product_id INT NOT NULL,
     quantity INT CHECK (quantity >= 0) NOT NULL,
     maximum_storage INT,
     FOREIGN KEY (location_id) REFERENCES locations(id),
-    FOREIGN KEY (product_id) REFERENCES products(id)
+    FOREIGN KEY (product_id) REFERENCES products(id), 
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS suppliers (
+    user_id INT NOT NULL,
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
+    name VARCHAR(255) NOT NULL, 
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS product_supplier (
+    user_id INT NOT NULL,
     id INT AUTO_INCREMENT PRIMARY KEY,
     product_id INT NOT NULL,
     supplier_id INT NOT NULL,
     FOREIGN KEY (product_id) REFERENCES products(id),
-    FOREIGN KEY (supplier_id) REFERENCES suppliers(id)
+    FOREIGN KEY (supplier_id) REFERENCES suppliers(id), 
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
  CREATE TABLE IF NOt EXISTS movements (
+    user_id INT NOT NULL,
     id INT AUTO_INCREMENT PRIMARY KEY,
     product_id INT NOT NULL,
     date_time DATETIME NOT NULL,
@@ -85,7 +102,8 @@ CREATE TABLE IF NOT EXISTS product_supplier (
     FOREIGN KEY (supplier_id) REFERENCES suppliers(id),
     FOREIGN KEY (from_location_id) REFERENCES locations(id),
     FOREIGN KEY (to_location_id) REFERENCES locations(id),
-    FOREIGN KEY (transaction_currency_id) REFERENCES currencies(id),
+    FOREIGN KEY (transaction_currency_id) REFERENCES currencies(id), 
+    FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT type CHECK (type IN ('Entry', 'Output', 'Transfer')),
     CONSTRAINT subtype CHECK (subtype IN (
         'Acquisition', 'Customer return', 'Inventory adjustment', 'Production',

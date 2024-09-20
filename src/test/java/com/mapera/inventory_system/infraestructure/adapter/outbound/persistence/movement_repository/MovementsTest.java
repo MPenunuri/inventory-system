@@ -29,6 +29,7 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.e
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.StockEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SubcategoryEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SupplierEntity;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.UserEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.category.CategoryRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.currency.CurrencyRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.location.LocationRepository;
@@ -38,15 +39,18 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.r
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.stock.StockRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.subcategory.SubcategoryRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.supplier.SupplierRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.user.UserRepository;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @ActiveProfiles("test")
-
 @DataR2dbcTest
 public class MovementsTest {
+
+        @Autowired
+        UserRepository userRepository;
 
         @Autowired
         CategoryRepository categoryRepository;
@@ -86,6 +90,7 @@ public class MovementsTest {
                 Mono<Void> deleteCategories = categoryRepository.deleteAll();
                 Mono<Void> deleteCurrencies = currencyRepository.deleteAll();
                 Mono<Void> deleteLocations = locationRepository.deleteAll();
+                Mono<Void> deleteUsers = userRepository.deleteAll();
 
                 Mono<Void> setup = deleteProductSupplier
                                 .then(deleteStocklist)
@@ -95,7 +100,8 @@ public class MovementsTest {
                                 .then(deleteSubcategories)
                                 .then(deleteCategories)
                                 .then(deleteCurrencies)
-                                .then(deleteLocations);
+                                .then(deleteLocations)
+                                .then(deleteUsers);
 
                 setup.block();
         }
@@ -105,6 +111,7 @@ public class MovementsTest {
 
                 // Set up entry data
                 Samples samples = new Samples();
+                UserEntity userEntity = samples.user();
                 CategoryEntity categoryEntity = samples.category();
                 SubcategoryEntity subcategoryEntity = samples.subcategory();
                 ProductEntity productEntity = samples.product();
@@ -116,6 +123,23 @@ public class MovementsTest {
                 locationEntity2.setName("Secondary warehouse");
                 CurrencyEntity currencyEntity = new CurrencyEntity();
                 currencyEntity.setName("USD");
+
+                // Save user
+
+                AtomicReference<Long> userId = new AtomicReference<>();
+
+                Mono<Void> savedUser = userRepository.save(userEntity).doOnNext(u -> {
+                        userId.set(u.getId());
+                        categoryEntity.setUser_id(u.getId());
+                        subcategoryEntity.setUser_id(u.getId());
+                        productEntity.setUser_id(u.getId());
+                        supplierEntity.setUser_id(u.getId());
+                        locationEntity1.setUser_id(u.getId());
+                        locationEntity2.setUser_id(u.getId());
+                        currencyEntity.setUser_id(u.getId());
+                }).then();
+
+                StepVerifier.create(savedUser).verifyComplete();
 
                 // Define atomic references for id entities
 
@@ -159,6 +183,7 @@ public class MovementsTest {
                 // Set up Add movements tool
 
                 AddMovements addMovements = new AddMovements(
+                                userId.get(),
                                 movementRepository,
                                 productId.get(),
                                 productEntity,
@@ -171,17 +196,19 @@ public class MovementsTest {
 
                 StepVerifier.create(addMovements.setEntries()).verifyComplete();
 
-                Mono<StockProductDTO> entryProduct = productRepository.getProductStockById(productId.get());
+                Mono<StockProductDTO> entryProduct = productRepository.getProductStockById(userId.get(),
+                                productId.get());
 
                 StepVerifier.create(entryProduct)
                                 .expectNextMatches(p -> p.getTotalStock() == 181)
                                 .verifyComplete();
 
-                Flux<EntryMovementDTO> entryFound = movementRepository.getEntries();
-                Flux<AcquisitionDTO> acquisitionFound = movementRepository.getAcquisitions();
-                Flux<CustomerReturnDTO> customerReturnFound = movementRepository.getCustomerReturns();
-                Flux<EntryMovementDTO> entryAdjusmentFound = movementRepository.getEntryInventoryAdjustments();
-                Flux<ProductionDTO> productionFound = movementRepository.getProductions();
+                Flux<EntryMovementDTO> entryFound = movementRepository.getEntries(userId.get());
+                Flux<AcquisitionDTO> acquisitionFound = movementRepository.getAcquisitions(userId.get());
+                Flux<CustomerReturnDTO> customerReturnFound = movementRepository.getCustomerReturns(userId.get());
+                Flux<EntryMovementDTO> entryAdjusmentFound = movementRepository
+                                .getEntryInventoryAdjustments(userId.get());
+                Flux<ProductionDTO> productionFound = movementRepository.getProductions(userId.get());
 
                 StepVerifier.create(entryFound).expectNextCount(10).verifyComplete();
                 StepVerifier.create(acquisitionFound).expectNextCount(4).verifyComplete();
@@ -190,20 +217,20 @@ public class MovementsTest {
                 StepVerifier.create(productionFound).expectNextCount(4).verifyComplete();
 
                 Flux<AcquisitionDTO> acquisitionsBySupplier = movementRepository
-                                .getAcquisitionsBySupplierId(supplierId.get());
+                                .getAcquisitionsBySupplierId(userId.get(), supplierId.get());
 
                 StepVerifier.create(acquisitionsBySupplier).expectNextCount(4).verifyComplete();
 
                 Flux<AcquisitionDTO> acquisitionsByCostAndYear = movementRepository
-                                .findAcquisitionsByCostAndYear("PER_UNIT",
+                                .findAcquisitionsByCostAndYear(userId.get(), "PER_UNIT",
                                                 currencyId.get(), .75, 1, 2023, 2024);
 
                 Flux<AverageCostProductDTO> acquisitionAVGCost1 = movementRepository
-                                .getAvgUnitCostByAcquisition(
+                                .getAvgUnitCostByAcquisition(userId.get(),
                                                 productId.get(), currencyId.get(), 2022, 2025);
 
                 Flux<AverageCostProductDTO> acquisitionAVGCost2 = movementRepository
-                                .getAvgUnitCostByAcquisition(
+                                .getAvgUnitCostByAcquisition(userId.get(),
                                                 productId.get(), currencyId.get(), 2023, 2024);
 
                 StepVerifier.create(acquisitionsByCostAndYear).expectNextCount(2).verifyComplete();
@@ -220,16 +247,16 @@ public class MovementsTest {
                                 .verifyComplete();
 
                 Flux<ProductionDTO> productionsByCostAndYear = movementRepository
-                                .findProductionByCostAndYear(
+                                .findProductionByCostAndYear(userId.get(),
                                                 "PER_UNIT",
                                                 currencyId.get(), .5, .75, 2023, 2025);
 
                 Flux<AverageCostProductDTO> productionAVGCost1 = movementRepository
-                                .getAvgUnitProductionCost(
+                                .getAvgUnitProductionCost(userId.get(),
                                                 productId.get(), currencyId.get(), 2023, 2024);
 
                 Flux<AverageCostProductDTO> productionAVGCost2 = movementRepository
-                                .getAvgUnitProductionCost(
+                                .getAvgUnitProductionCost(userId.get(),
                                                 productId.get(), currencyId.get(), 2022, 2024);
 
                 StepVerifier.create(productionsByCostAndYear).expectNextCount(3).verifyComplete();
@@ -252,11 +279,13 @@ public class MovementsTest {
                                 .expectNextMatches(p -> p.getTotalStock() == 70)
                                 .verifyComplete();
 
-                Flux<OutputMovementDTO> foundOutput = movementRepository.getOutputs();
-                Flux<SaleDTO> foundSale = movementRepository.getSales();
-                Flux<SupplierReturnDTO> foundSupplierReturn = movementRepository.getSupplierReturns();
-                Flux<OutputMovementDTO> foundOutputAdjustment = movementRepository.getOutputInventoryAdjustments();
-                Flux<OutputMovementDTO> foundInternalConsumption = movementRepository.getInternalConsumptionMovements();
+                Flux<OutputMovementDTO> foundOutput = movementRepository.getOutputs(userId.get());
+                Flux<SaleDTO> foundSale = movementRepository.getSales(userId.get());
+                Flux<SupplierReturnDTO> foundSupplierReturn = movementRepository.getSupplierReturns(userId.get());
+                Flux<OutputMovementDTO> foundOutputAdjustment = movementRepository
+                                .getOutputInventoryAdjustments(userId.get());
+                Flux<OutputMovementDTO> foundInternalConsumption = movementRepository
+                                .getInternalConsumptionMovements(userId.get());
 
                 StepVerifier.create(foundOutput).expectNextCount(7).verifyComplete();
                 StepVerifier.create(foundSale).expectNextCount(4).verifyComplete();
@@ -265,13 +294,13 @@ public class MovementsTest {
                 StepVerifier.create(foundInternalConsumption).expectNextCount(1).verifyComplete();
 
                 Flux<SaleDTO> sellByValueAndYear = movementRepository
-                                .findSalesByValueAndYear("RETAIL",
+                                .findSalesByValueAndYear(userId.get(), "RETAIL",
                                                 currencyId.get(), 1, 1, 2022, 2025);
 
                 StepVerifier.create(sellByValueAndYear).expectNextCount(2).verifyComplete();
 
                 Flux<AverageSellProductDTO> avgUnitSellValue1 = movementRepository
-                                .getAvgUnitSellValue(productId.get(), currencyId.get(), 2023, 2024);
+                                .getAvgUnitSellValue(userId.get(), productId.get(), currencyId.get(), 2023, 2024);
 
                 StepVerifier.create(avgUnitSellValue1)
                                 .expectNextMatches(product -> Math.abs(product.getAverageSellValue()
@@ -279,7 +308,7 @@ public class MovementsTest {
                                 .verifyComplete();
 
                 Flux<AverageSellProductDTO> avgUnitSellValue2 = movementRepository
-                                .getAvgUnitSellValue(productId.get(), currencyId.get(), 2023, 2025);
+                                .getAvgUnitSellValue(userId.get(), productId.get(), currencyId.get(), 2023, 2025);
 
                 StepVerifier.create(avgUnitSellValue2)
                                 .expectNextMatches(product -> Math.abs(product.getAverageSellValue()
@@ -290,7 +319,7 @@ public class MovementsTest {
 
                 StepVerifier.create(addMovements.setTransfers()).verifyComplete();
 
-                Flux<TransferMovementDTO> foundTransfer = movementRepository.getTransfers();
+                Flux<TransferMovementDTO> foundTransfer = movementRepository.getTransfers(userId.get());
 
                 StepVerifier.create(foundTransfer).expectNextCount(1).verifyComplete();
 
@@ -326,12 +355,12 @@ public class MovementsTest {
 
                 // Verify number of tests
 
-                Flux<StandardMovementDTO> foundMovement = movementRepository.getMovements();
+                Flux<StandardMovementDTO> foundMovement = movementRepository.getMovements(userId.get());
 
                 StepVerifier.create(foundMovement).expectNextCount(17).verifyComplete();
 
                 Flux<StandardMovementDTO> foundMovementsByProduct = movementRepository
-                                .getMovementsByProductId(productId.get());
+                                .getMovementsByProductId(userId.get(), productId.get());
 
                 StepVerifier.create(foundMovementsByProduct).expectNextCount(17).verifyComplete();
 

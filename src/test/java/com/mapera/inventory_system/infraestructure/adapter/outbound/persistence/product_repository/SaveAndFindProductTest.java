@@ -11,9 +11,11 @@ import org.springframework.test.context.ActiveProfiles;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.CategoryEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.ProductEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SubcategoryEntity;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.UserEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.category.CategoryRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product.ProductRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.subcategory.SubcategoryRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.user.UserRepository;
 
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -21,6 +23,9 @@ import reactor.test.StepVerifier;
 @ActiveProfiles("test")
 @DataR2dbcTest
 public class SaveAndFindProductTest {
+
+    @Autowired
+    UserRepository userRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -34,10 +39,19 @@ public class SaveAndFindProductTest {
     @Test
     public void test() {
         Samples samples = new Samples();
+        UserEntity userEntity = samples.user();
         AtomicReference<Long> subcategoryIdRef = new AtomicReference<>();
         CategoryEntity category = samples.category();
         SubcategoryEntity subcategory = samples.subcategory();
         ProductEntity product = samples.product();
+
+        Mono<Void> savedUser = userRepository.save(userEntity).doOnNext(u -> {
+            category.setUser_id(u.getId());
+            subcategory.setUser_id(u.getId());
+            product.setUser_id(u.getId());
+        }).then();
+
+        StepVerifier.create(savedUser).verifyComplete();
 
         Mono<ProductEntity> savedProductMono = categoryRepository.save(category)
                 .flatMap(savedCategory -> {

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mapera.inventory_system.application.security.AuthenticationService;
 import com.mapera.inventory_system.application.service.LocationApplicationService;
 import com.mapera.inventory_system.domain.entity.Location;
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.location.PatchLocationRequest;
@@ -31,44 +32,60 @@ public class LocationController {
     @Autowired
     LocationApplicationService locationApplicationService;
 
+    @Autowired
+    private AuthenticationService authService;
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<LocationEntity> registerLocation(
             @Valid @RequestBody RegisterLocationRequest request) {
-        if (request.getAddress() == null) {
+        return authService.getUserIdFromToken().flatMap(userId -> {
+            if (request.getAddress() == null) {
+                return locationApplicationService.registerLocation(
+                        userId, request.getName());
+            }
             return locationApplicationService.registerLocation(
-                    request.getName());
-        }
-        return locationApplicationService.registerLocation(
-                request.getName(), request.getAddress());
+                    userId, request.getName(), request.getAddress());
+        });
     }
 
     @GetMapping
     public Flux<LocationEntity> getLocations() {
-        return locationApplicationService.getLocations();
+        return authService.getUserIdFromToken().flatMapMany(userId -> {
+            return locationApplicationService.getLocations(userId);
+        });
     }
 
     @GetMapping("/{id}")
     public Mono<Location> findLocationById(@PathVariable Long id) {
-        return locationApplicationService.findLocationById(id);
+        return authService.getUserIdFromToken().flatMap(userId -> {
+            return locationApplicationService.findLocationById(userId, id);
+        });
     }
 
     @PatchMapping("/name")
     public Mono<LocationEntity> updateLocationName(
             @Valid @RequestBody PatchLocationRequest request) {
-        return locationApplicationService.updateLocationName(
-                request.getId(), request.getName());
+        return authService.getUserIdFromToken().flatMap(userId -> {
+            return locationApplicationService.updateLocationName(
+                    userId, request.getId(), request.getName());
+        });
+
     }
 
     @PatchMapping("/address")
     public Mono<LocationEntity> updateLocationAddress(
             @Valid @RequestBody PatchLocationRequest request) {
-        return locationApplicationService.updateLocationAddress(
-                request.getId(), request.getAddress());
+        return authService.getUserIdFromToken().flatMap(userId -> {
+            return locationApplicationService.updateLocationAddress(
+                    userId, request.getId(), request.getAddress());
+        });
     }
 
     @DeleteMapping("/{id}")
     public Mono<Void> deleteLocation(@PathVariable Long id) {
-        return locationApplicationService.deleteLocationById(id);
+        return authService.getUserIdFromToken().flatMap(userId -> {
+            return locationApplicationService.deleteLocationById(userId, id);
+        });
     }
 }

@@ -5,5 +5,5 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.e
 import reactor.core.publisher.Mono;
 
 public interface CategoryRepositoryCustom {
-    public Mono<CategoryEntity> updateCategoryName(Long categoryId, String name);
+    public Mono<CategoryEntity> updateCategoryName(Long userId, Long categoryId, String name);
 }

@@ -15,35 +15,39 @@ import reactor.core.publisher.Mono;
 
 public interface ProductCrudRepository extends ReactiveCrudRepository<ProductEntity, Long> {
 
-        @Query(ProductQuery.STANDARD_QUERY)
-        Flux<StandardProductDTO> findAllProducts();
+        @Query(ProductQuery.STANDARD_QUERY + "WHERE p.user_id = :userId")
+        Flux<StandardProductDTO> findAllProducts(Long userId);
 
         @Query(ProductQuery.FULL_QUERY)
-        Flux<FullProductDTO> findFullProductById(Long productId);
+        Flux<FullProductDTO> findFullProductById(Long userId, Long productId);
 
-        @Query(ProductQuery.STANDARD_QUERY + "WHERE c.id = :categoryId")
-        Flux<StandardProductDTO> findProductsByCategoryId(long categoryId);
+        @Query(ProductQuery.STANDARD_QUERY + "WHERE c.id = :categoryId AND p.user_id = :userId")
+        Flux<StandardProductDTO> findProductsByCategoryId(Long userId, long categoryId);
 
-        @Query(ProductQuery.STANDARD_QUERY + "WHERE s.id = :subcategoryId")
-        Flux<StandardProductDTO> findProductsBySubcategoryId(Long subcategoryId);
+        @Query(ProductQuery.STANDARD_QUERY + "WHERE s.id = :subcategoryId AND p.user_id = :userId")
+        Flux<StandardProductDTO> findProductsBySubcategoryId(Long userId, Long subcategoryId);
 
-        @Query(ProductQuery.SUPPLIER_QUERY + "WHERE su.id = :supplierId")
-        Flux<SupplierProductDTO> findProductsBySupplierId(Long supplierId);
+        @Query(ProductQuery.SUPPLIER_QUERY + "WHERE su.id = :supplierId AND p.user_id = :userId")
+        Flux<SupplierProductDTO> findProductsBySupplierId(Long userId, Long supplierId);
 
-        @Query(ProductQuery.LOCATION_QUERY + "WHERE l.id = :locationId")
-        Flux<LocationProductDTO> findProductsByLocationid(Long locationId);
+        @Query(ProductQuery.LOCATION_QUERY + "WHERE l.id = :locationId AND p.user_id = :userId")
+        Flux<LocationProductDTO> findProductsByLocationid(Long userId, Long locationId);
 
         @Query(ProductQuery.MINIMUM_STOCK_QUERY)
-        Flux<StockProductDTO> findProductsWithMinimumStock();
+        Flux<StockProductDTO> findProductsWithMinimumStock(Long userId);
 
         @Query(ProductQuery.STOCK_QUERY)
-        Mono<StockProductDTO> getProductStockById(Long productId);
+        Mono<StockProductDTO> getProductStockById(Long userId, Long productId);
 
         @Query(ProductQuery.STANDARD_QUERY + "WHERE p.price_currency_id = :currencyId AND " +
-                        "p.retail_price >= :min AND p.retail_price <= :max")
-        Flux<StandardProductDTO> findProductsBySellingRetailPrice(Long currencyId, Double min, Double max);
+                        "p.retail_price >= :min AND p.retail_price <= :max " +
+                        "AND p.user_id = :userId")
+        Flux<StandardProductDTO> findProductsBySellingRetailPrice(
+                        Long userId, Long currencyId, Double min, Double max);
 
         @Query(ProductQuery.STANDARD_QUERY + "WHERE p.price_currency_id = :currencyId AND " +
-                        "p.wholesale_price >= :min AND p.wholesale_price <= :max")
-        Flux<StandardProductDTO> findProductsBySellingWholesalePrice(Long currencyId, Double min, Double max);
+                        "p.wholesale_price >= :min AND p.wholesale_price <= :max " +
+                        "AND p.user_id = :userId")
+        Flux<StandardProductDTO> findProductsBySellingWholesalePrice(
+                        Long userId, Long currencyId, Double min, Double max);
 }

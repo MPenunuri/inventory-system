@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mapera.inventory_system.application.security.AuthenticationService;
 import com.mapera.inventory_system.application.service.ProductSupplierApplicationService;
 import com.mapera.inventory_system.application.service.SupplierApplicationService;
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.supplier.ProductSupplierRelationRequest;
@@ -37,42 +38,63 @@ public class SupplierController {
     @Autowired
     ProductSupplierApplicationService productSupplierApplicationService;
 
+    @Autowired
+    private AuthenticationService authService;
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<SupplierEntity> registerSupplier(
             @Valid @RequestBody SupplierRegisterRequest request) {
-        return supplierApplicationService.registerSupplier(request.getName());
+        return authService.getUserIdFromToken().flatMap(userId -> {
+            return supplierApplicationService.registerSupplier(
+                    userId, request.getName());
+        });
     }
 
     @GetMapping
     public Flux<SupplierEntity> getSuppliers() {
-        return supplierApplicationService.getSuppliers();
+        return authService.getUserIdFromToken().flatMapMany(userId -> {
+            return supplierApplicationService.getSuppliers(userId);
+        });
     }
 
     @PatchMapping
     public Mono<SupplierEntity> renameSupplier(
             @Valid @RequestBody SupplierPatchRequest request) {
-        return supplierApplicationService.renameSupplier(request.getId(), request.getName());
+        return authService.getUserIdFromToken().flatMap(userId -> {
+            return supplierApplicationService.renameSupplier(
+                    userId, request.getId(), request.getName());
+        });
     }
 
     @DeleteMapping("/{id}")
     public Mono<Void> deleteSupplier(@PathVariable Long id) {
-        return supplierApplicationService.deleteSupplier(id);
+        return authService.getUserIdFromToken().flatMap(userId -> {
+            return supplierApplicationService.deleteSupplier(userId, id);
+        });
     }
 
     @PostMapping("/product")
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<Boolean> addProductSupplierRelation(
             @Valid @RequestBody ProductSupplierRelationRequest request) {
-        return productSupplierApplicationService.addProductSupplierRelation(
-                request.getProductId(), request.getSupplierId());
+        return authService.getUserIdFromToken().flatMap(userId -> {
+            return productSupplierApplicationService.addProductSupplierRelation(
+                    userId,
+                    request.getProductId(), request.getSupplierId());
+        });
+
     }
 
     @DeleteMapping("/product")
     public Mono<Boolean> deleteProductSupplierRelation(
             @RequestParam Long productId, @RequestParam Long supplierId) {
-        return productSupplierApplicationService.deleteProductSupplierRelation(
-                productId, supplierId);
+        return authService.getUserIdFromToken().flatMap(userId -> {
+            return productSupplierApplicationService.deleteProductSupplierRelation(
+                    userId,
+                    productId, supplierId);
+        });
+
     }
 
 }

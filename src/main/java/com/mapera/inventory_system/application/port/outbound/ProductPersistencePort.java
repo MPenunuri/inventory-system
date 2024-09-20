@@ -12,41 +12,41 @@ import reactor.core.publisher.Mono;
 
 public interface ProductPersistencePort {
 
-    Mono<ProductEntity> registerProduct(String name);
+    Mono<ProductEntity> registerProduct(Long userId, String name);
 
-    Flux<StandardProductDTO> findAllProducts();
+    Flux<StandardProductDTO> findAllProducts(Long userId);
 
-    Mono<InventoryProduct> findProductById(Long productId);
+    Mono<InventoryProduct> findProductById(Long userId, Long productId);
 
-    Flux<StandardProductDTO> findProductsByCategoryId(long categoryId);
+    Flux<StandardProductDTO> findProductsByCategoryId(Long userId, long categoryId);
 
-    Flux<StandardProductDTO> findProductsBySubcategoryId(Long subcategoryId);
+    Flux<StandardProductDTO> findProductsBySubcategoryId(Long userId, Long subcategoryId);
 
-    Flux<SupplierProductDTO> findProductsBySupplierId(Long supplierId);
+    Flux<SupplierProductDTO> findProductsBySupplierId(Long userId, Long supplierId);
 
-    Flux<LocationProductDTO> findProductsByLocationid(Long locationId);
+    Flux<LocationProductDTO> findProductsByLocationid(Long userId, Long locationId);
 
-    Flux<StockProductDTO> findProductsWithMinimumStock();
+    Flux<StockProductDTO> findProductsWithMinimumStock(Long userId);
 
-    Mono<StockProductDTO> getProductStockById(Long productId);
+    Mono<StockProductDTO> getProductStockById(Long userId, Long productId);
 
-    Flux<StandardProductDTO> findProductsBySellingRetailPrice(Long currencyId, Double min, Double max);
+    Flux<StandardProductDTO> findProductsBySellingRetailPrice(Long userId, Long currencyId, Double min, Double max);
 
-    Flux<StandardProductDTO> findProductsBySellingWholesalePrice(Long currencyId, Double min, Double max);
+    Flux<StandardProductDTO> findProductsBySellingWholesalePrice(Long userId, Long currencyId, Double min, Double max);
 
-    Mono<ProductEntity> updateProductName(Long productId, String name);
+    Mono<ProductEntity> updateProductName(Long userId, Long productId, String name);
 
-    Mono<ProductEntity> updateSubcategory(Long productId, Long subcategoryId);
+    Mono<ProductEntity> updateSubcategory(Long userId, Long productId, Long subcategoryId);
 
-    Mono<ProductEntity> updateProductPresentation(Long productId, String productPresentation);
+    Mono<ProductEntity> updateProductPresentation(Long userId, Long productId, String productPresentation);
 
-    Mono<ProductEntity> updateMinimumStock(Long productId, int minimumStock);
+    Mono<ProductEntity> updateMinimumStock(Long userId, Long productId, int minimumStock);
 
-    Mono<ProductEntity> updateRetailPrice(Long productId, Double price);
+    Mono<ProductEntity> updateRetailPrice(Long userId, Long productId, Double price);
 
-    Mono<ProductEntity> updateWholesalePrice(Long productId, Double price);
+    Mono<ProductEntity> updateWholesalePrice(Long userId, Long productId, Double price);
 
-    Mono<ProductEntity> updatePriceCurrency(Long productId, Long priceCurrencyId);
+    Mono<ProductEntity> updatePriceCurrency(Long userId, Long productId, Long priceCurrencyId);
 
-    Mono<Void> deleteProductById(Long productId);
+    Mono<Void> deleteProductById(Long userId, Long productId);
 }

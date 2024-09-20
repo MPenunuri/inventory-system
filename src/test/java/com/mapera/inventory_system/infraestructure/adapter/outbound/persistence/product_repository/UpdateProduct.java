@@ -12,10 +12,12 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.e
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.CurrencyEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.ProductEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SubcategoryEntity;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.UserEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.category.CategoryRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.currency.CurrencyRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product.ProductRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.subcategory.SubcategoryRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.user.UserRepository;
 
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -24,6 +26,9 @@ import reactor.test.StepVerifier;
 
 @DataR2dbcTest
 public class UpdateProduct {
+
+    @Autowired
+    UserRepository userRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -40,6 +45,7 @@ public class UpdateProduct {
     @Test
     public void test() {
         Samples samples = new Samples();
+        UserEntity userEntity = samples.user();
         AtomicReference<Long> nextSubcategoryIdRef = new AtomicReference<>();
         CategoryEntity category = samples.category();
         SubcategoryEntity prevSubcategory = samples.subcategory();
@@ -53,6 +59,17 @@ public class UpdateProduct {
         AtomicReference<Long> nextCurrencyIdRef = new AtomicReference<>();
         CurrencyEntity currency2 = new CurrencyEntity();
         currency2.setName("MXN");
+
+        Mono<Void> savedUser = userRepository.save(userEntity).doOnNext(u -> {
+            category.setUser_id(u.getId());
+            prevSubcategory.setUser_id(u.getId());
+            nextSubcategory.setUser_id(u.getId());
+            product.setUser_id(u.getId());
+            currency1.setUser_id(u.getId());
+            currency2.setUser_id(u.getId());
+        }).then();
+
+        StepVerifier.create(savedUser).verifyComplete();
 
         Mono<Void> savedPrevCurrency = currencyRepository.save(currency1)
                 .doOnNext(c -> prevCurrencyIdRef.set(c.getId())).then();
@@ -84,28 +101,35 @@ public class UpdateProduct {
 
         Mono<ProductEntity> updatedProduct = savedProductId
                 .flatMap(productId -> {
-                    return productRepository.updateProductName(productId, "Fanta light")
+                    return productRepository.updateProductName(
+                            product.getUser_id(), productId, "Fanta light")
                             .thenReturn(productId);
                 })
                 .flatMap(productId -> {
-                    return productRepository.updateSubcategory(productId, nextSubcategoryIdRef.get())
+                    return productRepository.updateSubcategory(
+                            product.getUser_id(), productId, nextSubcategoryIdRef.get())
                             .thenReturn(productId);
                 })
                 .flatMap(productId -> {
-                    return productRepository.updateProductPresentation(productId, "Plastic bottle 600ml")
+                    return productRepository.updateProductPresentation(
+                            product.getUser_id(), productId, "Plastic bottle 600ml")
                             .thenReturn(productId);
                 })
                 .flatMap(productId -> {
-                    return productRepository.updateMinimumStock(productId, 30).thenReturn(productId);
+                    return productRepository.updateMinimumStock(
+                            product.getUser_id(), productId, 30).thenReturn(productId);
                 })
                 .flatMap(productId -> {
-                    return productRepository.updateRetailPrice(productId, 1.25).thenReturn(productId);
+                    return productRepository.updateRetailPrice(
+                            product.getUser_id(), productId, 1.25).thenReturn(productId);
                 })
                 .flatMap(productId -> {
-                    return productRepository.updateWholesalePrice(productId, 1.00).thenReturn(productId);
+                    return productRepository.updateWholesalePrice(
+                            product.getUser_id(), productId, 1.00).thenReturn(productId);
                 })
                 .flatMap(productId -> {
-                    return productRepository.updatePriceCurrency(productId, nextCurrencyIdRef.get());
+                    return productRepository.updatePriceCurrency(
+                            product.getUser_id(), productId, nextCurrencyIdRef.get());
                 });
 
         Mono<ProductEntity> updated = savedPrevCurrency.then(savedNextCurrency).then(updatedProduct);

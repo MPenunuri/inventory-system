@@ -6,16 +6,20 @@ import reactor.core.publisher.Mono;
 
 public interface StockRepositoryCustom {
 
-    public Mono<Boolean> addProductStockInLocation(long locationId, long product_id, int quantity,
-            Integer maximum_storage);
+        public Mono<Boolean> addProductStockInLocation(
+                        Long userId, long locationId, long product_id,
+                        int quantity, Integer maximum_storage);
 
-    public Mono<Boolean> removeProductStockInLocation(Long locationId, Long product_id);
+        public Mono<Boolean> removeProductStockInLocation(
+                        Long userId, Long locationId, Long product_id);
 
-    public Mono<StockEntity> increseStockByLocationAndProduct(Long locationId, Long product_id, int increse);
+        public Mono<StockEntity> increseStockByLocationAndProduct(
+                        Long userId, Long locationId, Long product_id, int increse);
 
-    public Mono<StockEntity> decreseStockByLocationAndProduct(Long locationId, Long product_id, int decrese);
+        public Mono<StockEntity> decreseStockByLocationAndProduct(
+                        Long userId, Long locationId, Long product_id, int decrese);
 
-    public Mono<StockEntity> increseQuantityInStock(Long stockId, int increse);
+        public Mono<StockEntity> increseQuantityInStock(Long stockId, int increse);
 
-    public Mono<StockEntity> decreseQuantityInStock(Long stockId, int decrese);
+        public Mono<StockEntity> decreseQuantityInStock(Long stockId, int decrese);
 }

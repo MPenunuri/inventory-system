@@ -7,11 +7,11 @@ import reactor.core.publisher.Mono;
 
 public interface CategoryPersitencePort {
 
-    public Mono<CategoryEntity> registerCategory(String name);
+    public Mono<CategoryEntity> registerCategory(Long userId, String name);
 
-    public Flux<CategoryEntity> getCategories();
+    public Flux<CategoryEntity> getCategories(Long userId);
 
-    public Mono<CategoryEntity> updateCategoryName(Long categoryId, String name);
+    public Mono<CategoryEntity> updateCategoryName(Long userId, Long categoryId, String name);
 
-    public Mono<Void> deleteCategoryById(Long categoryId);
+    public Mono<Void> deleteCategoryById(Long userId, Long categoryId);
 }

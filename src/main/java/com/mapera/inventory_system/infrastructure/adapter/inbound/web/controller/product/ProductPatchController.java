@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mapera.inventory_system.application.security.AuthenticationService;
 import com.mapera.inventory_system.application.service.ProductApplicationService;
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.product.ProductUpdateRequest;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.ProductEntity;
@@ -22,53 +23,70 @@ public class ProductPatchController {
         @Autowired
         private ProductApplicationService productApplicationService;
 
+        @Autowired
+        private AuthenticationService authService;
+
         @PatchMapping("/name")
         public Mono<ProductEntity> updateProductName(
                         @Valid @RequestBody ProductUpdateRequest updateRequest) {
-                return productApplicationService.updateProductName(
-                                updateRequest.getId(), updateRequest.getName());
+                return authService.getUserIdFromToken().flatMap(userId -> {
+                        return productApplicationService.updateProductName(
+                                        userId, updateRequest.getId(), updateRequest.getName());
+                });
         }
 
         @PatchMapping("/subcategory")
         public Mono<ProductEntity> updateSubcategory(
                         @Valid @RequestBody ProductUpdateRequest updateRequest) {
-                return productApplicationService.updateSubcategory(
-                                updateRequest.getId(), updateRequest.getSubcategoryId());
+                return authService.getUserIdFromToken().flatMap(userId -> {
+                        return productApplicationService.updateSubcategory(
+                                        userId, updateRequest.getId(), updateRequest.getSubcategoryId());
+                });
         }
 
         @PatchMapping("/presentation")
         public Mono<ProductEntity> updateProductPresentation(
                         @Valid @RequestBody ProductUpdateRequest updateRequest) {
-                return productApplicationService.updateProductPresentation(
-                                updateRequest.getId(), updateRequest.getProductPresentation());
+                return authService.getUserIdFromToken().flatMap(userId -> {
+                        return productApplicationService.updateProductPresentation(
+                                        userId, updateRequest.getId(), updateRequest.getProductPresentation());
+                });
         }
 
         @PatchMapping("/minimumStock")
         public Mono<ProductEntity> updateMinimumStock(
                         @Valid @RequestBody ProductUpdateRequest updateRequest) {
-                return productApplicationService.updateMinimumStock(
-                                updateRequest.getId(), updateRequest.getMinimumStock());
+                return authService.getUserIdFromToken().flatMap(userId -> {
+                        return productApplicationService.updateMinimumStock(
+                                        userId, updateRequest.getId(), updateRequest.getMinimumStock());
+                });
         }
 
         @PatchMapping("/retailprice")
         public Mono<ProductEntity> updateRetailPrice(
                         @Valid @RequestBody ProductUpdateRequest updateRequest) {
-                return productApplicationService.updateRetailPrice(
-                                updateRequest.getId(), updateRequest.getRetailPrice());
+                return authService.getUserIdFromToken().flatMap(userId -> {
+                        return productApplicationService.updateRetailPrice(
+                                        userId, updateRequest.getId(), updateRequest.getRetailPrice());
+                });
         }
 
         @PatchMapping("/wholesale")
         public Mono<ProductEntity> updateWholesalePrice(
                         @Valid @RequestBody ProductUpdateRequest updateRequest) {
-                return productApplicationService.updateWholesalePrice(
-                                updateRequest.getId(), updateRequest.getWholesalePrice());
+                return authService.getUserIdFromToken().flatMap(userId -> {
+                        return productApplicationService.updateWholesalePrice(
+                                        userId, updateRequest.getId(), updateRequest.getWholesalePrice());
+                });
         }
 
         @PatchMapping("/currency")
         public Mono<ProductEntity> updatePriceCurrency(
                         @Valid @RequestBody ProductUpdateRequest updateRequest) {
-                return productApplicationService.updatePriceCurrency(
-                                updateRequest.getId(), updateRequest.getPriceCurrencyId());
+                return authService.getUserIdFromToken().flatMap(userId -> {
+                        return productApplicationService.updatePriceCurrency(
+                                        userId, updateRequest.getId(), updateRequest.getPriceCurrencyId());
+                });
         }
 
 }

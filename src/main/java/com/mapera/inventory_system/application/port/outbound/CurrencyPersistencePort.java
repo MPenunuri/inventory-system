@@ -7,13 +7,13 @@ import reactor.core.publisher.Mono;
 
 public interface CurrencyPersistencePort {
 
-    public Flux<CurrencyEntity> getCurrencies();
+    public Flux<CurrencyEntity> getCurrencies(Long userId);
 
-    public Mono<CurrencyEntity> registerCurrency(String name);
+    public Mono<CurrencyEntity> registerCurrency(Long userId, String name);
 
-    public Mono<String> getCurrencyNameById(Long currencyId);
+    public Mono<String> getCurrencyNameById(Long userId, Long currencyId);
 
-    public Mono<CurrencyEntity> renameCurrency(Long currencyId, String name);
+    public Mono<CurrencyEntity> renameCurrency(Long userId, Long currencyId, String name);
 
-    public Mono<Void> deleteCurrency(Long currencyId);
+    public Mono<Void> deleteCurrency(Long userId, Long currencyId);
 }

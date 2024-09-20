@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 @Table(name = "stock_list")
 public class StockEntity {
+    private Long user_id;
     @Id
     private Long id;
     private Long location_id;

@@ -6,5 +6,5 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.e
 import reactor.core.publisher.Mono;
 
 public interface CurrencyRepositoryCustom {
-    public Mono<CurrencyEntity> renameCurrency(Long currencyId, String name);
+    public Mono<CurrencyEntity> renameCurrency(Long userId, Long currencyId, String name);
 }

@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 @Table(name = "subcategories")
 public class SubcategoryEntity {
+    private Long user_id;
     @Id
     private Long id;
     private Long category_id;

@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 @Table(name = "product_supplier")
 public class ProductSupplierEntity {
+    private Long user_id;
     @Id
     private Long id;
     private Long productId;

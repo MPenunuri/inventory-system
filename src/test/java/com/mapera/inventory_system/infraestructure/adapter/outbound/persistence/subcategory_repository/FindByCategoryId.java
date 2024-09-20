@@ -6,15 +6,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.mapera.inventory_system.infraestructure.adapter.outbound.persistence.product_repository.Samples;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.CategoryEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SubcategoryEntity;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.UserEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.category.CategoryRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.currency.CurrencyRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.location.LocationRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.movement.MovementRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product.ProductRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product_supplier.ProductSupplierRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.stock.StockRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.subcategory.SubcategoryRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.supplier.SupplierRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.user.UserRepository;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -25,25 +30,34 @@ import reactor.test.StepVerifier;
 public class FindByCategoryId {
 
     @Autowired
-    private MovementRepository movementRepository;
+    UserRepository userRepository;
 
     @Autowired
-    private ProductRepository productRepository;
+    CategoryRepository categoryRepository;
 
     @Autowired
-    private CategoryRepository categoryRepository;
+    SubcategoryRepository subcategoryRepository;
 
     @Autowired
-    private SubcategoryRepository subcategoryRepository;
+    ProductRepository productRepository;
 
     @Autowired
-    private StockRepository stockRepository;
+    SupplierRepository supplierRepository;
 
     @Autowired
-    private SupplierRepository supplierRepository;
+    ProductSupplierRepository productSupplierRepository;
 
     @Autowired
-    private ProductSupplierRepository productSupplierRepository;
+    LocationRepository locationRepository;
+
+    @Autowired
+    CurrencyRepository currencyRepository;
+
+    @Autowired
+    MovementRepository movementRepository;
+
+    @Autowired
+    StockRepository stockRepository;
 
     @BeforeEach
     void setUp() {
@@ -54,6 +68,9 @@ public class FindByCategoryId {
         Mono<Void> deleteProducts = productRepository.deleteAll();
         Mono<Void> deleteSubcategories = subcategoryRepository.deleteAll();
         Mono<Void> deleteCategories = categoryRepository.deleteAll();
+        Mono<Void> deleteCurrencies = currencyRepository.deleteAll();
+        Mono<Void> deleteLocations = locationRepository.deleteAll();
+        Mono<Void> deleteUsers = userRepository.deleteAll();
 
         Mono<Void> setup = deleteProductSupplier
                 .then(deleteStocklist)
@@ -61,19 +78,32 @@ public class FindByCategoryId {
                 .then(deleteSuppliers)
                 .then(deleteProducts)
                 .then(deleteSubcategories)
-                .then(deleteCategories);
+                .then(deleteCategories)
+                .then(deleteCurrencies)
+                .then(deleteLocations)
+                .then(deleteUsers);
 
         setup.block();
     }
 
     @Test
     public void test() {
+        Samples samples = new Samples();
+        UserEntity userEntity = samples.user();
         CategoryEntity category = new CategoryEntity();
         category.setName("Electronics");
         SubcategoryEntity subcategory1 = new SubcategoryEntity();
         subcategory1.setName("Laptops");
         SubcategoryEntity subcategory2 = new SubcategoryEntity();
         subcategory2.setName("Smartphones");
+
+        Mono<Void> savedUser = userRepository.save(userEntity).doOnNext(u -> {
+            category.setUser_id(u.getId());
+            subcategory1.setUser_id(u.getId());
+            subcategory2.setUser_id(u.getId());
+        }).then();
+
+        StepVerifier.create(savedUser).verifyComplete();
 
         Mono<Long> savedCategoryId = categoryRepository.save(category).map(c -> c.getId());
         // savedSubcategories return categoryId
@@ -89,7 +119,8 @@ public class FindByCategoryId {
 
         // savedSubcategories return categoryId
         Flux<SubcategoryEntity> found = savedSubcategories
-                .flatMapMany(id -> subcategoryRepository.findSubcategoriesByCategoryId(id));
+                .flatMapMany(id -> subcategoryRepository.findSubcategoriesByCategoryId(
+                        category.getUser_id(), id));
 
         StepVerifier.create(found).expectNextCount(2).verifyComplete();
 

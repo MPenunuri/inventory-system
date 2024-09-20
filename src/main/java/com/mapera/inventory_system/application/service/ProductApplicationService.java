@@ -23,80 +23,84 @@ public class ProductApplicationService {
         this.productPersistencePort = productPersistencePort;
     }
 
-    public Mono<ProductEntity> registerProduct(String name) {
-        return productPersistencePort.registerProduct(name);
+    public Mono<ProductEntity> registerProduct(Long userId, String name) {
+        return productPersistencePort.registerProduct(userId, name);
     }
 
-    public Flux<StandardProductDTO> findAllProducts() {
-        return productPersistencePort.findAllProducts();
+    public Flux<StandardProductDTO> findAllProducts(Long userId) {
+        return productPersistencePort.findAllProducts(userId);
     };
 
-    public Mono<InventoryProduct> findProductById(Long productId) {
-        return productPersistencePort.findProductById(productId);
+    public Mono<InventoryProduct> findProductById(Long userId, Long productId) {
+        return productPersistencePort.findProductById(userId, productId);
     };
 
-    public Flux<StandardProductDTO> findProductsByCategoryId(long categoryId) {
-        return productPersistencePort.findProductsByCategoryId(categoryId);
+    public Flux<StandardProductDTO> findProductsByCategoryId(Long userId, long categoryId) {
+        return productPersistencePort.findProductsByCategoryId(userId, categoryId);
     };
 
-    public Flux<StandardProductDTO> findProductsBySubcategoryId(Long subcategoryId) {
-        return productPersistencePort.findProductsBySubcategoryId(subcategoryId);
+    public Flux<StandardProductDTO> findProductsBySubcategoryId(Long userId, Long subcategoryId) {
+        return productPersistencePort.findProductsBySubcategoryId(userId, subcategoryId);
     };
 
-    public Flux<SupplierProductDTO> findProductsBySupplierId(Long supplierId) {
-        return productPersistencePort.findProductsBySupplierId(supplierId);
+    public Flux<SupplierProductDTO> findProductsBySupplierId(Long userId, Long supplierId) {
+        return productPersistencePort.findProductsBySupplierId(userId, supplierId);
     };
 
-    public Flux<LocationProductDTO> findProductsByLocationid(Long locationId) {
-        return productPersistencePort.findProductsByLocationid(locationId);
+    public Flux<LocationProductDTO> findProductsByLocationid(Long userId, Long locationId) {
+        return productPersistencePort.findProductsByLocationid(userId, locationId);
     };
 
-    public Flux<StockProductDTO> findProductsWithMinimumStock() {
-        return productPersistencePort.findProductsWithMinimumStock();
+    public Flux<StockProductDTO> findProductsWithMinimumStock(Long userId) {
+        return productPersistencePort.findProductsWithMinimumStock(userId);
     };
 
-    public Mono<StockProductDTO> getProductStockById(Long productId) {
-        return productPersistencePort.getProductStockById(productId);
+    public Mono<StockProductDTO> getProductStockById(Long userId, Long productId) {
+        return productPersistencePort.getProductStockById(userId, productId);
     };
 
-    public Flux<StandardProductDTO> findProductsBySellingRetailPrice(Long currencyId, Double min, Double max) {
-        return productPersistencePort.findProductsBySellingRetailPrice(currencyId, min, max);
+    public Flux<StandardProductDTO> findProductsBySellingRetailPrice(
+            Long userId, Long currencyId, Double min, Double max) {
+        return productPersistencePort.findProductsBySellingRetailPrice(userId, currencyId, min, max);
     };
 
-    public Flux<StandardProductDTO> findProductsBySellingWholesalePrice(Long currencyId, Double min, Double max) {
-        return productPersistencePort.findProductsBySellingWholesalePrice(currencyId, min, max);
+    public Flux<StandardProductDTO> findProductsBySellingWholesalePrice(
+            Long userId, Long currencyId, Double min, Double max) {
+        return productPersistencePort.findProductsBySellingWholesalePrice(userId, currencyId, min, max);
     };
 
-    public Mono<ProductEntity> updateProductName(Long productId, String name) {
-        return productPersistencePort.updateProductName(productId, name);
+    public Mono<ProductEntity> updateProductName(Long userId, Long productId, String name) {
+        return productPersistencePort.updateProductName(userId, productId, name);
     };
 
-    public Mono<ProductEntity> updateSubcategory(Long productId, Long subcategoryId) {
-        return productPersistencePort.updateSubcategory(productId, subcategoryId);
+    public Mono<ProductEntity> updateSubcategory(Long userId, Long productId, Long subcategoryId) {
+        return productPersistencePort.updateSubcategory(userId, productId, subcategoryId);
     };
 
-    public Mono<ProductEntity> updateProductPresentation(Long productId, String productPresentation) {
-        return productPersistencePort.updateProductPresentation(productId, productPresentation);
+    public Mono<ProductEntity> updateProductPresentation(
+            Long userId, Long productId, String productPresentation) {
+        return productPersistencePort.updateProductPresentation(userId, productId, productPresentation);
     };
 
-    public Mono<ProductEntity> updateMinimumStock(Long productId, int minimumStock) {
-        return productPersistencePort.updateMinimumStock(productId, minimumStock);
+    public Mono<ProductEntity> updateMinimumStock(
+            Long userId, Long productId, int minimumStock) {
+        return productPersistencePort.updateMinimumStock(userId, productId, minimumStock);
     };
 
-    public Mono<ProductEntity> updateRetailPrice(Long productId, Double price) {
-        return productPersistencePort.updateRetailPrice(productId, price);
+    public Mono<ProductEntity> updateRetailPrice(Long userId, Long productId, Double price) {
+        return productPersistencePort.updateRetailPrice(userId, productId, price);
     };
 
-    public Mono<ProductEntity> updateWholesalePrice(Long productId, Double price) {
-        return productPersistencePort.updateWholesalePrice(productId, price);
+    public Mono<ProductEntity> updateWholesalePrice(Long userId, Long productId, Double price) {
+        return productPersistencePort.updateWholesalePrice(userId, productId, price);
     };
 
-    public Mono<ProductEntity> updatePriceCurrency(Long productId, Long priceCurrencyId) {
-        return productPersistencePort.updatePriceCurrency(productId, priceCurrencyId);
+    public Mono<ProductEntity> updatePriceCurrency(Long userId, Long productId, Long priceCurrencyId) {
+        return productPersistencePort.updatePriceCurrency(userId, productId, priceCurrencyId);
     };
 
-    public Mono<Void> deleteProductById(Long productId) {
-        return productPersistencePort.deleteProductById(productId);
+    public Mono<Void> deleteProductById(Long userId, Long productId) {
+        return productPersistencePort.deleteProductById(userId, productId);
     };
 
 }

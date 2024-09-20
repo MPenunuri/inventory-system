@@ -8,17 +8,17 @@ import reactor.core.publisher.Mono;
 
 public interface LocationPersistencePort {
 
-    public Flux<LocationEntity> getLocations();
+    public Flux<LocationEntity> getLocations(Long userId);
 
-    public Mono<LocationEntity> registerLocation(String name);
+    public Mono<LocationEntity> registerLocation(Long userId, String name);
 
-    public Mono<LocationEntity> registerLocation(String name, String address);
+    public Mono<LocationEntity> registerLocation(Long userId, String name, String address);
 
-    public Mono<Location> findLocationById(Long locationId);
+    public Mono<Location> findLocationById(Long userId, Long locationId);
 
-    public Mono<LocationEntity> updateLocationName(Long locationId, String name);
+    public Mono<LocationEntity> updateLocationName(Long userId, Long locationId, String name);
 
-    public Mono<LocationEntity> updateLocationAddress(Long locationId, String address);
+    public Mono<LocationEntity> updateLocationAddress(Long userId, Long locationId, String address);
 
-    public Mono<Void> deleteLocationById(Long locationId);
+    public Mono<Void> deleteLocationById(Long userId, Long locationId);
 }

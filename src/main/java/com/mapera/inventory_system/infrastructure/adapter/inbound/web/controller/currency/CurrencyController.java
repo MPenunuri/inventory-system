@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mapera.inventory_system.application.security.AuthenticationService;
 import com.mapera.inventory_system.application.service.CurrencyApplicationService;
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.currency.PatchCurrencyRequest;
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.currency.RegisterCurrencyRequest;
@@ -30,28 +31,40 @@ public class CurrencyController {
     @Autowired
     CurrencyApplicationService currencyApplicationService;
 
+    @Autowired
+    private AuthenticationService authService;
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<CurrencyEntity> registerCurrency(
             @Valid @RequestBody RegisterCurrencyRequest request) {
-        return currencyApplicationService.registerCurrency(request.getName());
+        return authService.getUserIdFromToken().flatMap(userId -> {
+            return currencyApplicationService.registerCurrency(
+                    userId, request.getName());
+        });
     }
 
     @GetMapping
     public Flux<CurrencyEntity> getCurrencies() {
-        return currencyApplicationService.getCurrencies();
+        return authService.getUserIdFromToken().flatMapMany(userId -> {
+            return currencyApplicationService.getCurrencies(userId);
+        });
     }
 
     @PatchMapping
     public Mono<CurrencyEntity> renameCurrency(
             @Valid @RequestBody PatchCurrencyRequest request) {
-        return currencyApplicationService.renameCurrency(
-                request.getId(), request.getName());
+        return authService.getUserIdFromToken().flatMap(userId -> {
+            return currencyApplicationService.renameCurrency(
+                    userId, request.getId(), request.getName());
+        });
     }
 
     @DeleteMapping("/{id}")
     public Mono<Void> deleteCurrency(@PathVariable Long id) {
-        return currencyApplicationService.deleteCurrency(id);
+        return authService.getUserIdFromToken().flatMap(userId -> {
+            return currencyApplicationService.deleteCurrency(userId, id);
+        });
     }
 
 }

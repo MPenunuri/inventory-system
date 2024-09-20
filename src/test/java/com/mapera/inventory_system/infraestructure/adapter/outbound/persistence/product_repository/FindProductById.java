@@ -18,6 +18,7 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.e
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.StockEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SubcategoryEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SupplierEntity;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.UserEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.category.CategoryRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.currency.CurrencyRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.location.LocationRepository;
@@ -27,6 +28,7 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.r
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.stock.StockRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.subcategory.SubcategoryRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.supplier.SupplierRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.user.UserRepository;
 
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -35,6 +37,9 @@ import reactor.test.StepVerifier;
 
 @DataR2dbcTest
 public class FindProductById {
+
+        @Autowired
+        UserRepository userRepository;
 
         @Autowired
         private ProductPersistencePort productRepository;
@@ -77,6 +82,7 @@ public class FindProductById {
                 Mono<Void> deleteCategories = categoryRepository.deleteAll();
                 Mono<Void> deleteCurrencies = currencyRepository.deleteAll();
                 Mono<Void> deleteLocations = locationRepository.deleteAll();
+                Mono<Void> deleteUsers = userRepository.deleteAll();
 
                 Mono<Void> setup = deleteProductSupplier
                                 .then(deleteStocklist)
@@ -86,7 +92,8 @@ public class FindProductById {
                                 .then(deleteSubcategories)
                                 .then(deleteCategories)
                                 .then(deleteCurrencies)
-                                .then(deleteLocations);
+                                .then(deleteLocations)
+                                .then(deleteUsers);
 
                 setup.block();
         }
@@ -95,6 +102,9 @@ public class FindProductById {
         public void test() {
 
                 Samples samples = new Samples();
+
+                UserEntity userEntity = samples.user();
+                AtomicReference<Long> userIdRef = new AtomicReference<>();
 
                 CategoryEntity category = samples.category();
                 AtomicReference<Long> subcategoryIdRef = new AtomicReference<>();
@@ -126,6 +136,22 @@ public class FindProductById {
                 SupplierEntity supplier2 = new SupplierEntity();
                 supplier2.setName("Supplier 2");
 
+                Mono<Void> savedUser = userRepository.save(userEntity).doOnNext(u -> {
+                        userIdRef.set(u.getId());
+                        category.setUser_id(u.getId());
+                        subcategory.setUser_id(u.getId());
+                        product.setUser_id(u.getId());
+                        currency.setUser_id(u.getId());
+                        location1.setUser_id(u.getId());
+                        location2.setUser_id(u.getId());
+                        stock1.setUser_id(u.getId());
+                        stock2.setUser_id(u.getId());
+                        supplier1.setUser_id(u.getId());
+                        supplier2.setUser_id(u.getId());
+                }).then();
+
+                StepVerifier.create(savedUser).verifyComplete();
+
                 Mono<Void> savedLocations = locationRepository.save(location1)
                                 .doOnNext(loc1 -> location1IdRef.set(loc1.getId()))
                                 .then(locationRepository.save(location2)
@@ -156,44 +182,65 @@ public class FindProductById {
 
                 StepVerifier.create(savedSubcategoryId).verifyComplete();
 
-                Mono<Void> savedProduct = productRepository.registerProduct(product.getName()).doOnNext(
-                                p -> productIdRef.set(p.getId())).then();
+                Mono<Void> savedProduct = productRepository
+                                .registerProduct(userIdRef.get(), product.getName())
+                                .doOnNext(p -> productIdRef.set(p.getId()))
+                                .then();
 
                 StepVerifier.create(savedProduct).verifyComplete();
 
-                Mono<InventoryProduct> foundProduct = productRepository.findProductById(productIdRef.get());
+                Mono<InventoryProduct> foundProduct = productRepository.findProductById(
+                                userIdRef.get(), productIdRef.get());
 
                 StepVerifier.create(foundProduct).expectNextMatches(p -> p.getName().equals(
                                 product.getName())).verifyComplete();
 
                 Mono<Void> updatedProduct = productRepository
-                                .updateSubcategory(productIdRef.get(), subcategoryIdRef.get())
-                                .then(productRepository.updateProductPresentation(productIdRef.get(),
+                                .updateSubcategory(userIdRef.get(), productIdRef.get(), subcategoryIdRef.get())
+                                .then(productRepository.updateProductPresentation(
+                                                userIdRef.get(),
+                                                productIdRef.get(),
                                                 product.getProductPresentation()))
-                                .then(productRepository.updateMinimumStock(productIdRef.get(),
+                                .then(productRepository.updateMinimumStock(
+                                                userIdRef.get(),
+                                                productIdRef.get(),
                                                 product.getMinimumStock()))
-                                .then(productRepository.updateRetailPrice(productIdRef.get(),
+                                .then(productRepository.updateRetailPrice(
+                                                userIdRef.get(),
+                                                productIdRef.get(),
                                                 product.getRetail_price()))
-                                .then(productRepository.updateWholesalePrice(productIdRef.get(),
+                                .then(productRepository.updateWholesalePrice(
+                                                userIdRef.get(),
+                                                productIdRef.get(),
                                                 product.getWholesale_price()))
-                                .then(productRepository.updatePriceCurrency(productIdRef.get(),
+                                .then(productRepository.updatePriceCurrency(
+                                                userIdRef.get(),
+                                                productIdRef.get(),
                                                 currencyIdRef.get()))
                                 .then();
 
                 StepVerifier.create(updatedProduct).verifyComplete();
 
                 Mono<Void> savedSuppliersRelations = productSupplierRepository
-                                .addProductSupplierRelation(productIdRef.get(), supplier1IdRef.get())
+                                .addProductSupplierRelation(
+                                                userIdRef.get(),
+                                                productIdRef.get(),
+                                                supplier1IdRef.get())
                                 .then(productSupplierRepository
-                                                .addProductSupplierRelation(productIdRef.get(), supplier2IdRef.get()))
+                                                .addProductSupplierRelation(
+                                                                userIdRef.get(),
+                                                                productIdRef.get(),
+                                                                supplier2IdRef.get()))
                                 .then();
 
                 StepVerifier.create(savedSuppliersRelations).verifyComplete();
 
                 Mono<Boolean> savedStock1 = stockRepository.addProductStockInLocation(
+                                userIdRef.get(),
                                 location1IdRef.get(), productIdRef.get(), 20, 20);
 
                 Mono<Boolean> savedStock2 = stockRepository.addProductStockInLocation(
+                                userIdRef.get(),
                                 location2IdRef.get(), productIdRef.get(), 15, null);
 
                 StepVerifier.create(savedStock1).expectNext(true).verifyComplete();

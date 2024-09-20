@@ -18,13 +18,14 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom, Locatio
     private LocationCrudRepository locationCrudRepository;
 
     @Override
-    public Mono<LocationEntity> registerLocation(String name) {
-        return registerLocation(name, null);
+    public Mono<LocationEntity> registerLocation(Long userId, String name) {
+        return registerLocation(userId, name, null);
     }
 
     @Override
-    public Mono<LocationEntity> registerLocation(String name, String address) {
+    public Mono<LocationEntity> registerLocation(Long userId, String name, String address) {
         LocationEntity locationEntity = new LocationEntity();
+        locationEntity.setUser_id(userId);
         locationEntity.setName(name);
         if (address != null) {
             locationEntity.setAddress(address);
@@ -33,9 +34,12 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom, Locatio
     }
 
     @Override
-    public Mono<LocationEntity> updateLocationName(Long locationId, String name) {
+    public Mono<LocationEntity> updateLocationName(Long userId, Long locationId, String name) {
         return locationCrudRepository.findById(locationId)
                 .flatMap(location -> {
+                    if (!location.getUser_id().equals(userId)) {
+                        throw new IllegalArgumentException("Invalid credentials");
+                    }
                     location.setName(name);
                     return locationCrudRepository.save(location);
                 })
@@ -43,9 +47,12 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom, Locatio
     }
 
     @Override
-    public Mono<LocationEntity> updateLocationAddress(Long locationId, String address) {
+    public Mono<LocationEntity> updateLocationAddress(Long userId, Long locationId, String address) {
         return locationCrudRepository.findById(locationId)
                 .flatMap(location -> {
+                    if (!location.getUser_id().equals(userId)) {
+                        throw new IllegalArgumentException("Invalid credentials");
+                    }
                     location.setAddress(address);
                     return locationCrudRepository.save(location);
                 })
@@ -53,9 +60,12 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom, Locatio
     }
 
     @Override
-    public Mono<Location> findLocationById(Long locationId) {
+    public Mono<Location> findLocationById(Long userId, Long locationId) {
         return locationCrudRepository.findById(locationId).flatMap(
                 savedLoc -> {
+                    if (!savedLoc.getUser_id().equals(userId)) {
+                        throw new IllegalArgumentException("Invalid credentials");
+                    }
                     Location location = new Location(
                             savedLoc.getId(),
                             savedLoc.getName(),
@@ -66,24 +76,31 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom, Locatio
     }
 
     @Override
-    public Mono<Void> deleteLocationById(Long locationId) {
-        return locationCrudRepository.deleteById(locationId).onErrorMap(error -> {
-            if (error instanceof DataIntegrityViolationException) {
-                return new IllegalStateException(
-                        "Failed to delete location with ID: " + locationId + ". " +
-                                "The location is associated with other records and cannot be deleted. "
-                                +
-                                "Please remove any related registry before attempting to delete this location.",
-                        error);
-            }
-            return new IllegalArgumentException(
-                    "Failed to delete location with ID: " + locationId + ". Unexpected error occurred.");
-        });
+    public Mono<Void> deleteLocationById(Long userId, Long locationId) {
+        return locationCrudRepository.findById(locationId)
+                .switchIfEmpty(Mono.error(new RuntimeException("Location not found")))
+                .flatMap(l -> {
+                    if (!l.getUser_id().equals(userId)) {
+                        throw new IllegalArgumentException("Invalid credentials");
+                    }
+                    return locationCrudRepository.delete(l);
+                })
+                .onErrorMap(error -> {
+                    if (error instanceof DataIntegrityViolationException) {
+                        return new IllegalStateException(
+                                "Failed to delete location with ID: " + locationId + ". " +
+                                        "The location is associated with other records and cannot be deleted. "
+                                        +
+                                        "Please remove any related registry before attempting to delete this location.");
+                    }
+                    return new IllegalArgumentException(
+                            "Failed to delete location with ID: " + locationId + ". Unexpected error occurred.");
+                });
     }
 
     @Override
-    public Flux<LocationEntity> getLocations() {
-        return locationCrudRepository.findAll()
+    public Flux<LocationEntity> getLocations(Long userId) {
+        return locationCrudRepository.findAllUserLocations(userId)
                 .switchIfEmpty(Mono.error(new RuntimeException("No locations found")));
     }
 }

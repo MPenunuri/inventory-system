@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mapera.inventory_system.application.security.AuthenticationService;
 import com.mapera.inventory_system.application.service.ProductApplicationService;
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.product.ProductPostRequest;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.ProductEntity;
@@ -24,11 +25,18 @@ public class ProductPostController {
     @Autowired
     private ProductApplicationService productApplicationService;
 
+    @Autowired
+    private AuthenticationService authService;
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<ProductEntity> registerProduct(
             @Valid @RequestBody ProductPostRequest productRequest) {
-        return productApplicationService.registerProduct(productRequest.getName());
+        return authService.getUserIdFromToken().flatMap(userId -> {
+            return productApplicationService
+                    .registerProduct(userId, productRequest.getName());
+        });
+
     }
 
 }

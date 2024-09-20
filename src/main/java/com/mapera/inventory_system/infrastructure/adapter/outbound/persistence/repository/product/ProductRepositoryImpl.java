@@ -25,21 +25,23 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
     private ProductMapper productMapper = new ProductMapper();
 
     @Override
-    public Mono<ProductEntity> registerProduct(String name) {
+    public Mono<ProductEntity> registerProduct(Long userId, String name) {
         ProductEntity productEntity = new ProductEntity();
+        productEntity.setUser_id(userId);
         productEntity.setName(name);
         return productCrudRepository.save(productEntity);
     }
 
     @Override
-    public Flux<StandardProductDTO> findAllProducts() {
-        return productCrudRepository.findAllProducts()
-                .switchIfEmpty(Mono.error(new RuntimeException("No products found")));
+    public Flux<StandardProductDTO> findAllProducts(Long userId) {
+        return productCrudRepository.findAllProducts(userId)
+                .switchIfEmpty(Mono.error(
+                        new RuntimeException("No products found")));
     }
 
     @Override
-    public Mono<InventoryProduct> findProductById(Long productId) {
-        return productCrudRepository.findFullProductById(productId)
+    public Mono<InventoryProduct> findProductById(Long userId, Long productId) {
+        return productCrudRepository.findFullProductById(userId, productId)
                 .collectList()
                 .map(dtoList -> {
                     InventoryProduct product = productMapper.toDomain(dtoList);
@@ -49,57 +51,63 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
     }
 
     @Override
-    public Flux<StandardProductDTO> findProductsByCategoryId(long categoryId) {
-        return productCrudRepository.findProductsByCategoryId(categoryId)
+    public Flux<StandardProductDTO> findProductsByCategoryId(Long userId, long categoryId) {
+        return productCrudRepository.findProductsByCategoryId(userId, categoryId)
                 .switchIfEmpty(Mono.error(new RuntimeException("No products found")));
     }
 
     @Override
-    public Flux<StandardProductDTO> findProductsBySubcategoryId(Long subcategoryId) {
-        return productCrudRepository.findProductsBySubcategoryId(subcategoryId)
+    public Flux<StandardProductDTO> findProductsBySubcategoryId(Long userId, Long subcategoryId) {
+        return productCrudRepository.findProductsBySubcategoryId(userId, subcategoryId)
                 .switchIfEmpty(Mono.error(new RuntimeException("No products found")));
     }
 
     @Override
-    public Flux<SupplierProductDTO> findProductsBySupplierId(Long supplierId) {
-        return productCrudRepository.findProductsBySupplierId(supplierId)
+    public Flux<SupplierProductDTO> findProductsBySupplierId(Long userId, Long supplierId) {
+        return productCrudRepository.findProductsBySupplierId(userId, supplierId)
                 .switchIfEmpty(Mono.error(new RuntimeException("No products found")));
     }
 
     @Override
-    public Flux<LocationProductDTO> findProductsByLocationid(Long locationId) {
-        return productCrudRepository.findProductsByLocationid(locationId)
+    public Flux<LocationProductDTO> findProductsByLocationid(Long userId, Long locationId) {
+        return productCrudRepository.findProductsByLocationid(userId, locationId)
                 .switchIfEmpty(Mono.error(new RuntimeException("No products found")));
     }
 
     @Override
-    public Flux<StockProductDTO> findProductsWithMinimumStock() {
-        return productCrudRepository.findProductsWithMinimumStock()
+    public Flux<StockProductDTO> findProductsWithMinimumStock(Long userId) {
+        return productCrudRepository.findProductsWithMinimumStock(userId)
                 .switchIfEmpty(Mono.error(new RuntimeException("No products found")));
     }
 
     @Override
-    public Mono<StockProductDTO> getProductStockById(Long productId) {
-        return productCrudRepository.getProductStockById(productId)
+    public Mono<StockProductDTO> getProductStockById(Long userId, Long productId) {
+        return productCrudRepository.getProductStockById(userId, productId)
                 .switchIfEmpty(Mono.error(new RuntimeException("No product found")));
     }
 
     @Override
-    public Flux<StandardProductDTO> findProductsBySellingRetailPrice(Long currencyId, Double min, Double max) {
-        return productCrudRepository.findProductsBySellingRetailPrice(currencyId, min, max)
+    public Flux<StandardProductDTO> findProductsBySellingRetailPrice(
+            Long userId, Long currencyId, Double min, Double max) {
+        return productCrudRepository.findProductsBySellingRetailPrice(userId, currencyId, min, max)
                 .switchIfEmpty(Mono.error(new RuntimeException("No products found")));
     }
 
     @Override
-    public Flux<StandardProductDTO> findProductsBySellingWholesalePrice(Long currencyId, Double min, Double max) {
-        return productCrudRepository.findProductsBySellingWholesalePrice(currencyId, min, max)
+    public Flux<StandardProductDTO> findProductsBySellingWholesalePrice(
+            Long userId, Long currencyId, Double min, Double max) {
+        return productCrudRepository.findProductsBySellingWholesalePrice(userId, currencyId, min, max)
                 .switchIfEmpty(Mono.error(new RuntimeException("No products found")));
     }
 
     @Override
-    public Mono<ProductEntity> updateProductName(Long productId, String name) {
+    public Mono<ProductEntity> updateProductName(
+            Long userId, Long productId, String name) {
         return productCrudRepository.findById(productId)
                 .flatMap(product -> {
+                    if (!product.getUser_id().equals(userId)) {
+                        throw new IllegalArgumentException("Invalid credentials");
+                    }
                     product.setName(name);
                     return productCrudRepository.save(product);
                 })
@@ -107,9 +115,13 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
     }
 
     @Override
-    public Mono<ProductEntity> updateSubcategory(Long productId, Long subcategoryId) {
+    public Mono<ProductEntity> updateSubcategory(
+            Long userId, Long productId, Long subcategoryId) {
         return productCrudRepository.findById(productId)
                 .flatMap(product -> {
+                    if (!product.getUser_id().equals(userId)) {
+                        throw new IllegalArgumentException("Invalid credentials");
+                    }
                     product.setSubcategory_id(subcategoryId);
                     return productCrudRepository.save(product);
                 })
@@ -117,9 +129,13 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
     }
 
     @Override
-    public Mono<ProductEntity> updateProductPresentation(Long productId, String productPresentation) {
+    public Mono<ProductEntity> updateProductPresentation(
+            Long userId, Long productId, String productPresentation) {
         return productCrudRepository.findById(productId)
                 .flatMap(product -> {
+                    if (!product.getUser_id().equals(userId)) {
+                        throw new IllegalArgumentException("Invalid credentials");
+                    }
                     product.setProductPresentation(productPresentation);
                     return productCrudRepository.save(product);
                 })
@@ -127,9 +143,13 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
     }
 
     @Override
-    public Mono<ProductEntity> updateMinimumStock(Long productId, int minimumStock) {
+    public Mono<ProductEntity> updateMinimumStock(
+            Long userId, Long productId, int minimumStock) {
         return productCrudRepository.findById(productId)
                 .flatMap(product -> {
+                    if (!product.getUser_id().equals(userId)) {
+                        throw new IllegalArgumentException("Invalid credentials");
+                    }
                     product.setMinimumStock(minimumStock);
                     return productCrudRepository.save(product);
                 })
@@ -137,9 +157,13 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
     }
 
     @Override
-    public Mono<ProductEntity> updateRetailPrice(Long productId, Double price) {
+    public Mono<ProductEntity> updateRetailPrice(
+            Long userId, Long productId, Double price) {
         return productCrudRepository.findById(productId)
                 .flatMap(product -> {
+                    if (!product.getUser_id().equals(userId)) {
+                        throw new IllegalArgumentException("Invalid credentials");
+                    }
                     product.setRetail_price(price);
                     return productCrudRepository.save(product);
                 })
@@ -147,9 +171,13 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
     }
 
     @Override
-    public Mono<ProductEntity> updateWholesalePrice(Long productId, Double price) {
+    public Mono<ProductEntity> updateWholesalePrice(
+            Long userId, Long productId, Double price) {
         return productCrudRepository.findById(productId)
                 .flatMap(product -> {
+                    if (!product.getUser_id().equals(userId)) {
+                        throw new IllegalArgumentException("Invalid credentials");
+                    }
                     product.setWholesale_price(price);
                     return productCrudRepository.save(product);
                 })
@@ -157,9 +185,13 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
     }
 
     @Override
-    public Mono<ProductEntity> updatePriceCurrency(Long productId, Long priceCurrencyId) {
+    public Mono<ProductEntity> updatePriceCurrency(
+            Long userId, Long productId, Long priceCurrencyId) {
         return productCrudRepository.findById(productId)
                 .flatMap(product -> {
+                    if (!product.getUser_id().equals(userId)) {
+                        throw new IllegalArgumentException("Invalid credentials");
+                    }
                     product.setPrice_currency_id(priceCurrencyId);
                     return productCrudRepository.save(product);
                 })
@@ -167,16 +199,22 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
     }
 
     @Override
-    public Mono<Void> deleteProductById(Long productId) {
-        return productCrudRepository.deleteById(productId)
-                .onErrorMap(error -> {
+    public Mono<Void> deleteProductById(
+            Long userId, Long productId) {
+        return productCrudRepository.findById(productId)
+                .switchIfEmpty(Mono.error(new RuntimeException("No product found")))
+                .flatMap(p -> {
+                    if (!p.getUser_id().equals(userId)) {
+                        throw new IllegalArgumentException("Invalid credentials");
+                    }
+                    return productCrudRepository.delete(p);
+                }).onErrorMap(error -> {
                     if (error instanceof DataIntegrityViolationException) {
                         return new IllegalStateException(
                                 "Failed to delete product with ID: " + productId + ". " +
                                         "The product is associated with other records and cannot be deleted. "
                                         +
-                                        "Please remove any related registry before attempting to delete this product.",
-                                error);
+                                        "Please remove any related registry before attempting to delete this product.");
                     }
                     return new IllegalArgumentException(
                             "Failed to delete product with ID: " + productId + ". Unexpected error occurred.");

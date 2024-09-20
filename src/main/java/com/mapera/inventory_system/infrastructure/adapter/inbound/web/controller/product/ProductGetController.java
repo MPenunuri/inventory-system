@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mapera.inventory_system.application.security.AuthenticationService;
 import com.mapera.inventory_system.application.service.ProductApplicationService;
 import com.mapera.inventory_system.domain.aggregate.inventory_product.InventoryProduct;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.LocationProductDTO;
@@ -24,44 +25,63 @@ public class ProductGetController {
     @Autowired
     private ProductApplicationService productApplicationService;
 
+    @Autowired
+    private AuthenticationService authService;
+
     @GetMapping("/{productId}")
     public Mono<InventoryProduct> getProductById(@PathVariable Long productId) {
-        return productApplicationService.findProductById(productId);
+        return authService.getUserIdFromToken().flatMap(userId -> {
+            return productApplicationService.findProductById(userId, productId);
+        });
     }
 
     @GetMapping("/all")
     public Flux<StandardProductDTO> getAllProducts() {
-        return productApplicationService.findAllProducts();
+        return authService.getUserIdFromToken().flatMapMany(userId -> {
+            return productApplicationService.findAllProducts(userId);
+        });
     }
 
     @GetMapping("/category/{categoryId}")
     public Flux<StandardProductDTO> getProductsByCategoryId(@PathVariable long categoryId) {
-        return productApplicationService.findProductsByCategoryId(categoryId);
+        return authService.getUserIdFromToken().flatMapMany(userId -> {
+            return productApplicationService.findProductsByCategoryId(userId, categoryId);
+        });
     }
 
     @GetMapping("/subcategory/{subcategoryId}")
     public Flux<StandardProductDTO> getProductsBySubcategoryId(@PathVariable long subcategoryId) {
-        return productApplicationService.findProductsBySubcategoryId(subcategoryId);
+        return authService.getUserIdFromToken().flatMapMany(userId -> {
+            return productApplicationService.findProductsBySubcategoryId(userId, subcategoryId);
+        });
     }
 
     @GetMapping("/supplier/{supplierId}")
     public Flux<SupplierProductDTO> getProductsBySupplierId(@PathVariable long supplierId) {
-        return productApplicationService.findProductsBySupplierId(supplierId);
+        return authService.getUserIdFromToken().flatMapMany(userId -> {
+            return productApplicationService.findProductsBySupplierId(userId, supplierId);
+        });
     }
 
     @GetMapping("/location/{locationId}")
     public Flux<LocationProductDTO> getProductsByLocationId(@PathVariable long locationId) {
-        return productApplicationService.findProductsByLocationid(locationId);
+        return authService.getUserIdFromToken().flatMapMany(userId -> {
+            return productApplicationService.findProductsByLocationid(userId, locationId);
+        });
     }
 
     @GetMapping("/stock/minimum")
     public Flux<StockProductDTO> findProductsWithMinimumStock() {
-        return productApplicationService.findProductsWithMinimumStock();
+        return authService.getUserIdFromToken().flatMapMany(userId -> {
+            return productApplicationService.findProductsWithMinimumStock(userId);
+        });
     }
 
     @GetMapping("/stock/{productId}")
     public Mono<StockProductDTO> getProductStockById(@PathVariable Long productId) {
-        return productApplicationService.getProductStockById(productId);
+        return authService.getUserIdFromToken().flatMap(userId -> {
+            return productApplicationService.getProductStockById(userId, productId);
+        });
     }
 
     @GetMapping("/price/retail")
@@ -72,7 +92,9 @@ public class ProductGetController {
         if (min > max) {
             throw new IllegalArgumentException("min should not be greater than max");
         }
-        return productApplicationService.findProductsBySellingRetailPrice(currencyId, min, max);
+        return authService.getUserIdFromToken().flatMapMany(userId -> {
+            return productApplicationService.findProductsBySellingRetailPrice(userId, currencyId, min, max);
+        });
     }
 
     @GetMapping("/price/wholesale")
@@ -83,7 +105,8 @@ public class ProductGetController {
         if (min > max) {
             throw new IllegalArgumentException("min should not be greater than max");
         }
-        return productApplicationService.findProductsBySellingWholesalePrice(currencyId, min, max);
+        return authService.getUserIdFromToken().flatMapMany(userId -> {
+            return productApplicationService.findProductsBySellingWholesalePrice(userId, currencyId, min, max);
+        });
     }
-
 }

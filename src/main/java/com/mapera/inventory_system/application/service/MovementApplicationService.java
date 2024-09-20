@@ -55,126 +55,130 @@ public class MovementApplicationService {
         this.currencyPersistencePort = currencyPersistencePort;
     }
 
-    public Flux<StandardMovementDTO> getMovements() {
-        return movementPersistencePort.getMovements();
+    public Flux<StandardMovementDTO> getMovements(Long userId) {
+        return movementPersistencePort.getMovements(userId);
     }
 
-    public Flux<EntryMovementDTO> getEntries() {
-        return movementPersistencePort.getEntries();
+    public Flux<EntryMovementDTO> getEntries(Long userId) {
+        return movementPersistencePort.getEntries(userId);
     }
 
-    public Flux<OutputMovementDTO> getOutputs() {
-        return movementPersistencePort.getOutputs();
+    public Flux<OutputMovementDTO> getOutputs(Long userId) {
+        return movementPersistencePort.getOutputs(userId);
     }
 
-    public Flux<TransferMovementDTO> getTransfers() {
-        return movementPersistencePort.getTransfers();
+    public Flux<TransferMovementDTO> getTransfers(Long userId) {
+        return movementPersistencePort.getTransfers(userId);
     }
 
-    public Flux<AcquisitionDTO> getAcquisitions() {
-        return movementPersistencePort.getAcquisitions();
+    public Flux<AcquisitionDTO> getAcquisitions(Long userId) {
+        return movementPersistencePort.getAcquisitions(userId);
     }
 
-    public Flux<CustomerReturnDTO> getCustomerReturns() {
-        return movementPersistencePort.getCustomerReturns();
+    public Flux<CustomerReturnDTO> getCustomerReturns(Long userId) {
+        return movementPersistencePort.getCustomerReturns(userId);
     }
 
-    public Flux<EntryMovementDTO> getEntryInventoryAdjustments() {
-        return movementPersistencePort.getEntryInventoryAdjustments();
+    public Flux<EntryMovementDTO> getEntryInventoryAdjustments(Long userId) {
+        return movementPersistencePort.getEntryInventoryAdjustments(userId);
     }
 
-    public Flux<ProductionDTO> getProductions() {
-        return movementPersistencePort.getProductions();
+    public Flux<ProductionDTO> getProductions(Long userId) {
+        return movementPersistencePort.getProductions(userId);
     }
 
-    public Flux<SaleDTO> getSales() {
-        return movementPersistencePort.getSales();
+    public Flux<SaleDTO> getSales(Long userId) {
+        return movementPersistencePort.getSales(userId);
     }
 
-    public Flux<SupplierReturnDTO> getSupplierReturns() {
-        return movementPersistencePort.getSupplierReturns();
+    public Flux<SupplierReturnDTO> getSupplierReturns(Long userId) {
+        return movementPersistencePort.getSupplierReturns(userId);
     }
 
-    public Flux<OutputMovementDTO> getOutputInventoryAdjustments() {
-        return movementPersistencePort.getOutputInventoryAdjustments();
+    public Flux<OutputMovementDTO> getOutputInventoryAdjustments(Long userId) {
+        return movementPersistencePort.getOutputInventoryAdjustments(userId);
     }
 
-    public Flux<OutputMovementDTO> getInternalConsumptionMovements() {
-        return movementPersistencePort.getInternalConsumptionMovements();
+    public Flux<OutputMovementDTO> getInternalConsumptionMovements(Long userId) {
+        return movementPersistencePort.getInternalConsumptionMovements(userId);
     }
 
-    public Flux<StandardMovementDTO> getMovementsByProductId(Long productId) {
-        return movementPersistencePort.getMovementsByProductId(productId);
+    public Flux<StandardMovementDTO> getMovementsByProductId(Long userId, Long productId) {
+        return movementPersistencePort.getMovementsByProductId(userId, productId);
     }
 
-    public Flux<AcquisitionDTO> getAcquisitionsBySupplierId(Long supplierId) {
-        return movementPersistencePort.getAcquisitionsBySupplierId(supplierId);
+    public Flux<AcquisitionDTO> getAcquisitionsBySupplierId(Long userId, Long supplierId) {
+        return movementPersistencePort.getAcquisitionsBySupplierId(userId, supplierId);
     }
 
-    public Flux<AcquisitionDTO> findAcquisitionsByCostAndYear(String costType,
+    public Flux<AcquisitionDTO> findAcquisitionsByCostAndYear(Long userId, String costType,
             Long currencyId, double minCost, double maxCost, int fromYear, int toYear) {
-        return movementPersistencePort.findAcquisitionsByCostAndYear(costType,
+        return movementPersistencePort.findAcquisitionsByCostAndYear(userId, costType,
                 currencyId, minCost, maxCost, fromYear, toYear);
     }
 
     public Flux<AverageCostProductDTO> getAvgUnitCostByAcquisition(
-            Long productId,
+            Long userId, Long productId,
             Long currencyId, int fromYear, int toYear) {
         return movementPersistencePort.getAvgUnitCostByAcquisition(
-                productId, currencyId, fromYear, toYear);
+                userId, productId, currencyId, fromYear, toYear);
     }
 
     public Flux<AverageCostProductDTO> getAvgTotalCostByAcquisition(
-            Long productId,
+            Long userId, Long productId,
             Long currencyId, int fromYear, int toYear) {
         return movementPersistencePort.getAvgTotalCostByAcquisition(
-                productId, currencyId, fromYear, toYear);
+                userId, productId, currencyId, fromYear, toYear);
     }
 
-    public Flux<ProductionDTO> findProductionByCostAndYear(String costType,
+    public Flux<ProductionDTO> findProductionByCostAndYear(
+            Long userId, String costType,
             Long currencyId, double minCost, double maxCost,
             int fromYear, int toYear) {
-        return movementPersistencePort.findProductionByCostAndYear(costType,
-                currencyId, minCost, maxCost, fromYear, toYear);
+        return movementPersistencePort.findProductionByCostAndYear(
+                userId, costType, currencyId, minCost,
+                maxCost, fromYear, toYear);
     }
 
-    public Flux<AverageCostProductDTO> getAvgUnitProductionCost(
+    public Flux<AverageCostProductDTO> getAvgUnitProductionCost(Long userId,
             Long productId, Long currencyId, int fromYear, int toYear) {
         return movementPersistencePort.getAvgUnitProductionCost(
-                productId, currencyId, fromYear, toYear);
+                userId, productId, currencyId, fromYear, toYear);
     }
 
-    public Flux<AverageCostProductDTO> getAvgTotalProductionCost(
+    public Flux<AverageCostProductDTO> getAvgTotalProductionCost(Long userId,
             Long productId, Long currencyId, int fromYear, int toYear) {
         return movementPersistencePort.getAvgTotalProductionCost(
-                productId, currencyId, fromYear, toYear);
+                userId, productId, currencyId, fromYear, toYear);
     }
 
-    public Flux<SaleDTO> findSalesByValueAndYear(String sellType,
-            Long currencyId, double minValue, double maxValue, int fromYear, int toYear) {
-        return movementPersistencePort.findSalesByValueAndYear(sellType,
-                currencyId, minValue, maxValue, fromYear, toYear);
+    public Flux<SaleDTO> findSalesByValueAndYear(
+            Long userId, String sellType,
+            Long currencyId, double minValue, double maxValue,
+            int fromYear, int toYear) {
+        return movementPersistencePort.findSalesByValueAndYear(userId,
+                sellType, currencyId, minValue, maxValue, fromYear, toYear);
     }
 
-    public Flux<AverageSellProductDTO> getAvgUnitSellValue(
+    public Flux<AverageSellProductDTO> getAvgUnitSellValue(Long userId,
             Long productId, Long currencyId, int fromYear, int toYear) {
         return movementPersistencePort.getAvgUnitSellValue(
-                productId, currencyId, fromYear, toYear);
+                userId, productId, currencyId, fromYear, toYear);
     }
 
-    public Flux<AverageSellProductDTO> getAvgTotalSellValue(
+    public Flux<AverageSellProductDTO> getAvgTotalSellValue(Long userId,
             Long productId, Long currencyId, int fromYear, int toYear) {
         return movementPersistencePort.getAvgTotalSellValue(
-                productId, currencyId, fromYear, toYear);
+                userId, productId, currencyId, fromYear, toYear);
     }
 
-    public Mono<MovementEntity> addAcquisitionEntryMovement(
+    public Mono<MovementEntity> addAcquisitionEntryMovement(Long userId,
             Long productId, LocalDateTime dateTime, String reason,
             String comment, int quantity, Long supplierId, Long toLocationId,
             String transactionSubtype, double transactionValue, Long transactionCurrencyId) {
-        Mono<InventoryProduct> findProduct = productPersistencePort.findProductById(productId);
-        Mono<Location> findLocation = locationPersistencePort.findLocationById(toLocationId);
-        Mono<String> getCurrencyName = currencyPersistencePort.getCurrencyNameById(transactionCurrencyId);
+        Mono<InventoryProduct> findProduct = productPersistencePort.findProductById(userId, productId);
+        Mono<Location> findLocation = locationPersistencePort.findLocationById(userId, toLocationId);
+        Mono<String> getCurrencyName = currencyPersistencePort.getCurrencyNameById(userId, transactionCurrencyId);
         Mono<Void> checkDomainLogic = findProduct.flatMap(product -> {
             return getCurrencyName.flatMap(currency -> {
                 return findLocation.map(location -> {
@@ -187,18 +191,19 @@ public class MovementApplicationService {
             }).then();
         }).then();
         return checkDomainLogic.then(movementPersistencePort.addAcquisitionEntryMovement(
+                userId,
                 productId, dateTime, reason, comment, quantity,
                 supplierId, toLocationId, transactionSubtype, transactionValue,
                 transactionCurrencyId));
     }
 
-    public Mono<MovementEntity> addCustomerReturnEntryMovement(
+    public Mono<MovementEntity> addCustomerReturnEntryMovement(Long userId,
             Long productId, LocalDateTime dateTime, String reason,
             String comment, int quantity, Long toLocationId,
             String transactionSubtype, double transactionValue, Long transactionCurrencyId) {
-        Mono<InventoryProduct> findProduct = productPersistencePort.findProductById(productId);
-        Mono<Location> findLocation = locationPersistencePort.findLocationById(toLocationId);
-        Mono<String> getCurrencyName = currencyPersistencePort.getCurrencyNameById(transactionCurrencyId);
+        Mono<InventoryProduct> findProduct = productPersistencePort.findProductById(userId, productId);
+        Mono<Location> findLocation = locationPersistencePort.findLocationById(userId, toLocationId);
+        Mono<String> getCurrencyName = currencyPersistencePort.getCurrencyNameById(userId, transactionCurrencyId);
         Mono<Void> checkDomainLogic = findProduct.flatMap(product -> {
             return getCurrencyName.flatMap(currency -> {
                 return findLocation.map(location -> {
@@ -212,16 +217,17 @@ public class MovementApplicationService {
             }).then();
         }).then();
         return checkDomainLogic.then(movementPersistencePort.addCustomerReturnEntryMovement(
+                userId,
                 productId, dateTime, reason, comment, quantity,
                 toLocationId, transactionSubtype, transactionValue,
                 transactionCurrencyId));
     }
 
-    public Mono<MovementEntity> addInventoryAdjustmentEntryMovement(
+    public Mono<MovementEntity> addInventoryAdjustmentEntryMovement(Long userId,
             Long productId, LocalDateTime dateTime,
             String reason, String comment, int quantity, Long toLocationId) {
-        Mono<InventoryProduct> findProduct = productPersistencePort.findProductById(productId);
-        Mono<Location> findLocation = locationPersistencePort.findLocationById(toLocationId);
+        Mono<InventoryProduct> findProduct = productPersistencePort.findProductById(userId, productId);
+        Mono<Location> findLocation = locationPersistencePort.findLocationById(userId, toLocationId);
         Mono<Void> checkDomainLogic = findProduct.flatMap(product -> {
             return findLocation.map(location -> {
                 InventoryEntryMovement movement = new InventoryEntryMovement(
@@ -231,18 +237,19 @@ public class MovementApplicationService {
             });
         }).then();
         return checkDomainLogic.then(movementPersistencePort.addInventoryAdjustmentEntryMovement(
+                userId,
                 productId, dateTime, reason, comment,
                 quantity, toLocationId));
     }
 
-    public Mono<MovementEntity> addProductionEntryMovement(
+    public Mono<MovementEntity> addProductionEntryMovement(Long userId,
             Long productId, LocalDateTime dateTime, String reason,
             String comment, int quantity, Long toLocationId,
             String transactionSubtype, double transactionValue,
             Long transactionCurrencyId) {
-        Mono<InventoryProduct> findProduct = productPersistencePort.findProductById(productId);
-        Mono<Location> findLocation = locationPersistencePort.findLocationById(toLocationId);
-        Mono<String> getCurrencyName = currencyPersistencePort.getCurrencyNameById(transactionCurrencyId);
+        Mono<InventoryProduct> findProduct = productPersistencePort.findProductById(userId, productId);
+        Mono<Location> findLocation = locationPersistencePort.findLocationById(userId, toLocationId);
+        Mono<String> getCurrencyName = currencyPersistencePort.getCurrencyNameById(userId, transactionCurrencyId);
         Mono<Void> checkDomainLogic = findProduct.flatMap(product -> {
             return getCurrencyName.flatMap(currency -> {
                 return findLocation.map(location -> {
@@ -256,19 +263,20 @@ public class MovementApplicationService {
             }).then();
         }).then();
         return checkDomainLogic.then(movementPersistencePort.addProductionEntryMovement(
+                userId,
                 productId, dateTime, reason, comment, quantity,
                 toLocationId, transactionSubtype, transactionValue,
                 transactionCurrencyId));
     }
 
-    public Mono<MovementEntity> addSalesOutputMovement(
+    public Mono<MovementEntity> addSalesOutputMovement(Long userId,
             Long productId, LocalDateTime dateTime, String reason,
             String comment, int quantity, Long fromLocationId,
             String transactionSubtype, double transactionValue,
             Long transactionCurrencyId) {
-        Mono<InventoryProduct> findProduct = productPersistencePort.findProductById(productId);
-        Mono<Location> findLocation = locationPersistencePort.findLocationById(fromLocationId);
-        Mono<String> getCurrencyName = currencyPersistencePort.getCurrencyNameById(transactionCurrencyId);
+        Mono<InventoryProduct> findProduct = productPersistencePort.findProductById(userId, productId);
+        Mono<Location> findLocation = locationPersistencePort.findLocationById(userId, fromLocationId);
+        Mono<String> getCurrencyName = currencyPersistencePort.getCurrencyNameById(userId, transactionCurrencyId);
         Mono<Void> checkDomainLogic = findProduct.flatMap(product -> {
             return getCurrencyName.flatMap(currency -> {
                 return findLocation.map(location -> {
@@ -282,19 +290,20 @@ public class MovementApplicationService {
             }).then();
         }).then();
         return checkDomainLogic.then(movementPersistencePort.addSalesOutputMovement(
+                userId,
                 productId, dateTime, reason, comment, quantity,
                 fromLocationId, transactionSubtype, transactionValue,
                 transactionCurrencyId));
     }
 
-    public Mono<MovementEntity> addSupplierReturnOutputMovement(
+    public Mono<MovementEntity> addSupplierReturnOutputMovement(Long userId,
             Long productId, LocalDateTime dateTime, String reason,
             String comment, int quantity, Long supplierId,
             Long fromLocationId, String transactionSubtype,
             double transactionValue, Long transactionCurrencyId) {
-        Mono<InventoryProduct> findProduct = productPersistencePort.findProductById(productId);
-        Mono<Location> findLocation = locationPersistencePort.findLocationById(fromLocationId);
-        Mono<String> getCurrencyName = currencyPersistencePort.getCurrencyNameById(transactionCurrencyId);
+        Mono<InventoryProduct> findProduct = productPersistencePort.findProductById(userId, productId);
+        Mono<Location> findLocation = locationPersistencePort.findLocationById(userId, fromLocationId);
+        Mono<String> getCurrencyName = currencyPersistencePort.getCurrencyNameById(userId, transactionCurrencyId);
         Mono<Void> checkDomainLogic = findProduct.flatMap(product -> {
             return getCurrencyName.flatMap(currency -> {
                 return findLocation.map(location -> {
@@ -308,17 +317,18 @@ public class MovementApplicationService {
             }).then();
         }).then();
         return checkDomainLogic.then(movementPersistencePort.addSupplierReturnOutputMovement(
+                userId,
                 productId, dateTime, reason, comment, quantity,
                 supplierId, fromLocationId, transactionSubtype,
                 transactionValue, transactionCurrencyId));
     }
 
-    public Mono<MovementEntity> addInventoryAdjustmentOutputMovement(
+    public Mono<MovementEntity> addInventoryAdjustmentOutputMovement(Long userId,
             Long productId, LocalDateTime dateTime,
             String reason, String comment, int quantity,
             Long fromLocationId) {
-        Mono<InventoryProduct> findProduct = productPersistencePort.findProductById(productId);
-        Mono<Location> findLocation = locationPersistencePort.findLocationById(fromLocationId);
+        Mono<InventoryProduct> findProduct = productPersistencePort.findProductById(userId, productId);
+        Mono<Location> findLocation = locationPersistencePort.findLocationById(userId, fromLocationId);
         Mono<Void> checkDomainLogic = findProduct.flatMap(product -> {
             return findLocation.map(location -> {
                 InventoryOutputMovement movement = new InventoryOutputMovement(
@@ -329,15 +339,16 @@ public class MovementApplicationService {
             });
         }).then();
         return checkDomainLogic.then(movementPersistencePort.addInventoryAdjustmentOutputMovement(
+                userId,
                 productId, dateTime, reason, comment,
                 quantity, fromLocationId));
     }
 
-    public Mono<MovementEntity> addInternalConsumptionOutputMovement(
+    public Mono<MovementEntity> addInternalConsumptionOutputMovement(Long userId,
             Long productId, LocalDateTime dateTime,
             String reason, String comment, int quantity, Long fromLocationId) {
-        Mono<InventoryProduct> findProduct = productPersistencePort.findProductById(productId);
-        Mono<Location> findLocation = locationPersistencePort.findLocationById(fromLocationId);
+        Mono<InventoryProduct> findProduct = productPersistencePort.findProductById(userId, productId);
+        Mono<Location> findLocation = locationPersistencePort.findLocationById(userId, fromLocationId);
         Mono<Void> checkDomainLogic = findProduct.flatMap(product -> {
             return findLocation.map(location -> {
                 InventoryOutputMovement movement = new InventoryOutputMovement(
@@ -348,16 +359,17 @@ public class MovementApplicationService {
             });
         }).then();
         return checkDomainLogic.then(movementPersistencePort.addInternalConsumptionOutputMovement(
+                userId,
                 productId, dateTime, reason, comment,
                 quantity, fromLocationId));
     }
 
-    public Mono<MovementEntity> addTransferMovement(
+    public Mono<MovementEntity> addTransferMovement(Long userId,
             Long productId, LocalDateTime dateTime, String reason,
             String comment, int quantity, Long fromLocationId, Long toLocationId) {
-        Mono<InventoryProduct> findProduct = productPersistencePort.findProductById(productId);
-        Mono<Location> findFromLocation = locationPersistencePort.findLocationById(fromLocationId);
-        Mono<Location> findToLocation = locationPersistencePort.findLocationById(toLocationId);
+        Mono<InventoryProduct> findProduct = productPersistencePort.findProductById(userId, productId);
+        Mono<Location> findFromLocation = locationPersistencePort.findLocationById(userId, fromLocationId);
+        Mono<Location> findToLocation = locationPersistencePort.findLocationById(userId, toLocationId);
         Mono<Void> checkDomainLogic = findProduct.flatMap(product -> {
             return findFromLocation.flatMap(fromLocation -> {
                 return findToLocation.map(toLocation -> {
@@ -368,13 +380,13 @@ public class MovementApplicationService {
                 });
             }).then();
         }).then();
-        return checkDomainLogic.then(movementPersistencePort.addTransferMovement(
+        return checkDomainLogic.then(movementPersistencePort.addTransferMovement(userId,
                 productId, dateTime, reason, comment, quantity,
                 fromLocationId, toLocationId));
     }
 
-    public Mono<Boolean> cancelMovementById(Long movementId) {
-        return movementPersistencePort.cancelMovementById(movementId);
+    public Mono<Boolean> cancelMovementById(Long userId, Long movementId) {
+        return movementPersistencePort.cancelMovementById(userId, movementId);
     }
 
 }

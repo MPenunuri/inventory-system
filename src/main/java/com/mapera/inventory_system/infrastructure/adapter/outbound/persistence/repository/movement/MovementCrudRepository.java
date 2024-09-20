@@ -21,83 +21,91 @@ import reactor.core.publisher.Flux;
 public interface MovementCrudRepository extends ReactiveCrudRepository<MovementEntity, Long> {
 
         @Query(MovementQuery.ALL_QUERY)
-        Flux<StandardMovementDTO> getMovements();
+        Flux<StandardMovementDTO> getMovements(Long userId);
 
         @Query(MovementQuery.ENTRY_QUERY)
-        Flux<EntryMovementDTO> getEntries();
+        Flux<EntryMovementDTO> getEntries(Long userId);
 
         @Query(MovementQuery.OUTPUT_QUERY)
-        Flux<OutputMovementDTO> getOutputs();
+        Flux<OutputMovementDTO> getOutputs(Long userId);
 
         @Query(MovementQuery.TRANSFER_QUERY)
-        Flux<TransferMovementDTO> getTransfers();
+        Flux<TransferMovementDTO> getTransfers(Long userId);
 
         @Query(MovementQuery.ACQUISITION_QUERY)
-        Flux<AcquisitionDTO> getAcquisitions();
+        Flux<AcquisitionDTO> getAcquisitions(Long userId);
 
         @Query(MovementQuery.CUSTOMER_RETURN_QUERY)
-        Flux<CustomerReturnDTO> getCustomerReturns();
+        Flux<CustomerReturnDTO> getCustomerReturns(Long userId);
 
         @Query(MovementQuery.ENTRY_ADJUSMENT_QUERY)
-        Flux<EntryMovementDTO> getEntryInventoryAdjustments();
+        Flux<EntryMovementDTO> getEntryInventoryAdjustments(Long userId);
 
         @Query(MovementQuery.PRODUCTION_QUERY)
-        Flux<ProductionDTO> getProductions();
+        Flux<ProductionDTO> getProductions(Long userId);
 
         @Query(MovementQuery.SALES_QUERY)
-        Flux<SaleDTO> getSales();
+        Flux<SaleDTO> getSales(Long userId);
 
         @Query(MovementQuery.SUPPLIER_RETURN_QUERY)
-        Flux<SupplierReturnDTO> getSupplierReturns();
+        Flux<SupplierReturnDTO> getSupplierReturns(Long userId);
 
         @Query(MovementQuery.OUTPUT_ADJUSMENT_QUERY)
-        Flux<OutputMovementDTO> getOutputInventoryAdjustments();
+        Flux<OutputMovementDTO> getOutputInventoryAdjustments(Long userId);
 
         @Query(MovementQuery.INTERNAL_CONSUMPTION_QUERY)
-        Flux<OutputMovementDTO> getInternalConsumptionMovements();
+        Flux<OutputMovementDTO> getInternalConsumptionMovements(Long userId);
 
         @Query(MovementQuery.PRODUCT_QUERY)
-        Flux<StandardMovementDTO> getMovementsByProductId(Long productId);
+        Flux<StandardMovementDTO> getMovementsByProductId(Long userId, Long productId);
 
         @Query(MovementQuery.SUPPLIER_QUERY)
-        Flux<AcquisitionDTO> getAcquisitionsBySupplierId(Long supplierId);
+        Flux<AcquisitionDTO> getAcquisitionsBySupplierId(Long userId, Long supplierId);
 
         @Query(MovementQuery.ACQUISITION_COST_QUERY)
-        Flux<AcquisitionDTO> findAcquisitionsByCostAndYear(
+        Flux<AcquisitionDTO> findAcquisitionsByCostAndYear(Long userId,
                         String costType, Long currencyId, double minCost,
                         double maxCost, int fromYear, int toYear);
 
         @Query(MovementQuery.AVERAGE_COST_PERUNIT_ACQUISITION)
-        Flux<AverageCostProductDTO> getAvgUnitCostByAcquisition(Long productId, Long currencyId,
+        Flux<AverageCostProductDTO> getAvgUnitCostByAcquisition(
+                        Long userId, Long productId, Long currencyId,
                         int fromYear, int toYear);
 
         @Query(MovementQuery.AVERAGE_COST_OVERALL_ACQUISITION)
-        Flux<AverageCostProductDTO> getAvgTotalCostByAcquisition(Long productId, Long currencyId,
+        Flux<AverageCostProductDTO> getAvgTotalCostByAcquisition(
+                        Long userId, Long productId, Long currencyId,
                         int fromYear, int toYear);
 
         @Query(MovementQuery.PRODUCTION_COST_QUERY)
-        Flux<ProductionDTO> findProductionByCostAndYear(String costType,
+        Flux<ProductionDTO> findProductionByCostAndYear(
+                        Long userId, String costType,
                         Long currencyId, double minCost, double maxCost,
                         int fromYear, int toYear);
 
         @Query(MovementQuery.AVERAGE_COST_PERUNIT_PRODUCTION)
-        Flux<AverageCostProductDTO> getAvgUnitProductionCost(Long productId, Long currencyId,
+        Flux<AverageCostProductDTO> getAvgUnitProductionCost(
+                        Long userId, Long productId, Long currencyId,
                         int fromYear, int toYear);
 
         @Query(MovementQuery.AVERAGE_COST_OVERALL_PRODUCTION)
-        Flux<AverageCostProductDTO> getAvgTotalProductionCost(Long productId, Long currencyId,
+        Flux<AverageCostProductDTO> getAvgTotalProductionCost(
+                        Long userId, Long productId, Long currencyId,
                         int fromYear, int toYear);
 
         @Query(MovementQuery.SALES_VALUE_QUERY)
-        Flux<SaleDTO> findSalesByValueAndYear(
-                        String sellType, Long currencyId, double minValue, double maxValue,
+        Flux<SaleDTO> findSalesByValueAndYear(Long userId,
+                        String sellType, Long currencyId,
+                        double minValue, double maxValue,
                         int fromYear, int toYear);
 
         @Query(MovementQuery.AVERAGE_SELL_RETAIL)
-        Flux<AverageSellProductDTO> getAvgUnitSellValue(Long productId, Long currencyId,
+        Flux<AverageSellProductDTO> getAvgUnitSellValue(
+                        Long userId, Long productId, Long currencyId,
                         int fromYear, int toYear);
 
         @Query(MovementQuery.AVERAGE_SELL_WHOLESALE)
-        Flux<AverageSellProductDTO> getAvgTotalSellValue(Long productId, Long currencyId,
+        Flux<AverageSellProductDTO> getAvgTotalSellValue(
+                        Long userId, Long productId, Long currencyId,
                         int fromYear, int toYear);
 }

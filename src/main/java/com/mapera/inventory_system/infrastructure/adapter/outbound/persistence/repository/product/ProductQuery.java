@@ -59,7 +59,8 @@ public class ProductQuery {
                         "LEFT JOIN StockData sd ON sd.product_id = p.id " +
                         "LEFT JOIN SupplierData su ON su.product_id = p.id " +
                         "LEFT JOIN currencies pc ON pc.id = p.price_currency_id " +
-                        "WHERE p.id = :productId ";
+                        "WHERE p.id = :productId " +
+                        "AND p.user_id = :userId ";
 
         public static final String SUPPLIER_QUERY = PRODUCT_ATTRIBUTES_SELECTION +
                         "s.name AS subcategory_name, " +
@@ -97,14 +98,15 @@ public class ProductQuery {
                         "IFNULL(SUM(sl.quantity), 0) AS total_stock " +
                         "FROM products p " +
                         "LEFT JOIN stock_list sl ON sl.product_id = p.id " +
+                        "WHERE p.user_id = :userId " +
                         "GROUP BY p.id " +
                         "HAVING (p.minimum_stock IS NOT NULL AND total_stock < p.minimum_stock) " +
-                        " OR (p.minimum_stock IS NOT NULL AND total_stock = 0)";
+                        " OR (p.minimum_stock IS NOT NULL AND total_stock = 0) ";
 
         public static final String STOCK_QUERY = "SELECT p.id, p.name, p.product_presentation, p.minimum_stock, " +
                         "SUM(sl.quantity) AS total_stock " +
                         "FROM products p " +
                         "LEFT JOIN stock_list sl ON sl.product_id = p.id " +
-                        "WHERE p.id = :productId " +
+                        "WHERE p.id = :productId AND p.user_id = :userId " +
                         "GROUP BY p.id ";
 }

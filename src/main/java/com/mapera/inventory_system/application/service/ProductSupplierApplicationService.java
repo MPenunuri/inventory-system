@@ -13,11 +13,11 @@ public class ProductSupplierApplicationService {
     @Autowired
     private ProductSupplierPersistencePort productSupplierPersistencePort;
 
-    public Mono<Boolean> addProductSupplierRelation(Long productId, Long supplierId) {
-        return productSupplierPersistencePort.addProductSupplierRelation(productId, supplierId);
+    public Mono<Boolean> addProductSupplierRelation(Long userId, Long productId, Long supplierId) {
+        return productSupplierPersistencePort.addProductSupplierRelation(userId, productId, supplierId);
     }
 
-    public Mono<Boolean> deleteProductSupplierRelation(Long productId, Long supplierId) {
-        return productSupplierPersistencePort.deleteProductSupplierRelation(productId, supplierId);
+    public Mono<Boolean> deleteProductSupplierRelation(Long userId, Long productId, Long supplierId) {
+        return productSupplierPersistencePort.deleteProductSupplierRelation(userId, productId, supplierId);
     }
 }

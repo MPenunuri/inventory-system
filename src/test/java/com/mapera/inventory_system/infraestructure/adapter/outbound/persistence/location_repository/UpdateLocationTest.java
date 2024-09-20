@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.mapera.inventory_system.infraestructure.adapter.outbound.persistence.product_repository.Samples;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.LocationEntity;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.UserEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.category.CategoryRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.currency.CurrencyRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.location.*;
@@ -17,6 +19,7 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.r
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.stock.StockRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.subcategory.SubcategoryRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.supplier.SupplierRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.user.UserRepository;
 
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -25,6 +28,9 @@ import reactor.test.StepVerifier;
 
 @DataR2dbcTest
 public class UpdateLocationTest {
+
+        @Autowired
+        UserRepository userRepository;
 
         @Autowired
         CategoryRepository categoryRepository;
@@ -63,7 +69,8 @@ public class UpdateLocationTest {
                 Mono<Void> deleteSubcategories = subcategoryRepository.deleteAll();
                 Mono<Void> deleteCategories = categoryRepository.deleteAll();
                 Mono<Void> deleteCurrencies = currencyRepository.deleteAll();
-                Mono<Void> deleteLocations = currencyRepository.deleteAll();
+                Mono<Void> deleteLocations = locationRepository.deleteAll();
+                Mono<Void> deleteUsers = userRepository.deleteAll();
 
                 Mono<Void> setup = deleteProductSupplier
                                 .then(deleteStocklist)
@@ -73,32 +80,42 @@ public class UpdateLocationTest {
                                 .then(deleteSubcategories)
                                 .then(deleteCategories)
                                 .then(deleteCurrencies)
-                                .then(deleteLocations);
+                                .then(deleteLocations)
+                                .then(deleteUsers);
 
                 setup.block();
         }
 
         @Test
         public void test() {
+                Samples samples = new Samples();
+                UserEntity userEntity = samples.user();
                 String name = "Central warehouse";
                 String address = "Liberty 183, San Diego, USA";
                 LocationEntity location = new LocationEntity();
                 location.setName("Default");
+
+                Mono<Void> savedUser = userRepository.save(userEntity).doOnNext(u -> {
+                        location.setUser_id(u.getId());
+                }).then();
+
+                StepVerifier.create(savedUser).verifyComplete();
 
                 Mono<Long> savedLocationIdMono = locationRepository.save(location)
                                 .map(savedLocation -> savedLocation.getId());
 
                 Mono<LocationEntity> updatedLocation = savedLocationIdMono.flatMap(
                                 locationId -> locationRepository.updateLocationName(
+                                                location.getUser_id(),
                                                 locationId,
                                                 name))
                                 .flatMap(locationWithUpdatedName -> locationRepository.updateLocationAddress(
+                                                location.getUser_id(),
                                                 locationWithUpdatedName.getId(),
                                                 address));
 
                 StepVerifier.create(updatedLocation).expectNextMatches(loc -> loc.getAddress().equals(address) &&
-                                loc.getName().equals(
-                                                name))
+                                loc.getName().equals(name))
                                 .verifyComplete();
 
         }

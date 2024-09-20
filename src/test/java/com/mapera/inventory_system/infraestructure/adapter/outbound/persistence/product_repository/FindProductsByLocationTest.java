@@ -15,12 +15,17 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.e
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.ProductEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.StockEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SubcategoryEntity;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.UserEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.category.CategoryRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.currency.CurrencyRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.location.LocationRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.movement.MovementRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product.ProductRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product_supplier.ProductSupplierRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.stock.StockRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.subcategory.SubcategoryRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.supplier.SupplierRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.user.UserRepository;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -31,38 +36,58 @@ import reactor.test.StepVerifier;
 public class FindProductsByLocationTest {
 
         @Autowired
-        private ProductSupplierRepository productSupplierRepository;
+        UserRepository userRepository;
 
         @Autowired
-        private ProductRepository productRepository;
+        CategoryRepository categoryRepository;
 
         @Autowired
-        private CategoryRepository categoryRepository;
+        SubcategoryRepository subcategoryRepository;
 
         @Autowired
-        private SubcategoryRepository subcategoryRepository;
+        ProductRepository productRepository;
 
         @Autowired
-        private LocationRepository locationRepository;
+        SupplierRepository supplierRepository;
 
         @Autowired
-        private StockRepository stockRepository;
+        ProductSupplierRepository productSupplierRepository;
+
+        @Autowired
+        LocationRepository locationRepository;
+
+        @Autowired
+        CurrencyRepository currencyRepository;
+
+        @Autowired
+        MovementRepository movementRepository;
+
+        @Autowired
+        StockRepository stockRepository;
 
         @BeforeEach
         void setUp() {
-                Mono<Void> deleteProdutSupplier = productSupplierRepository.deleteAll();
+                Mono<Void> deleteMovements = movementRepository.deleteAll();
+                Mono<Void> deleteProductSupplier = productSupplierRepository.deleteAll();
+                Mono<Void> deleteSuppliers = supplierRepository.deleteAll();
                 Mono<Void> deleteStocklist = stockRepository.deleteAll();
-                Mono<Void> deleteLocations = locationRepository.deleteAll();
                 Mono<Void> deleteProducts = productRepository.deleteAll();
                 Mono<Void> deleteSubcategories = subcategoryRepository.deleteAll();
                 Mono<Void> deleteCategories = categoryRepository.deleteAll();
+                Mono<Void> deleteCurrencies = currencyRepository.deleteAll();
+                Mono<Void> deleteLocations = locationRepository.deleteAll();
+                Mono<Void> deleteUsers = userRepository.deleteAll();
 
-                Mono<Void> setup = deleteStocklist
-                                .then(deleteLocations)
-                                .then(deleteProdutSupplier)
+                Mono<Void> setup = deleteProductSupplier
+                                .then(deleteStocklist)
+                                .then(deleteMovements)
+                                .then(deleteSuppliers)
                                 .then(deleteProducts)
                                 .then(deleteSubcategories)
-                                .then(deleteCategories);
+                                .then(deleteCategories)
+                                .then(deleteCurrencies)
+                                .then(deleteLocations)
+                                .then(deleteUsers);
 
                 setup.block();
         }
@@ -71,6 +96,7 @@ public class FindProductsByLocationTest {
         public void test() {
                 AtomicReference<Long> locationIdRef = new AtomicReference<>();
                 Samples samples = new Samples();
+                UserEntity userEntity = samples.user();
                 CategoryEntity category = samples.category();
                 SubcategoryEntity subcategory = samples.subcategory();
                 LocationEntity location = new LocationEntity();
@@ -82,6 +108,18 @@ public class FindProductsByLocationTest {
                 products[0] = samples.product();
                 products[1] = samples.product();
                 products[2] = samples.product();
+
+                Mono<Void> savedUser = userRepository.save(userEntity).doOnNext(u -> {
+                        category.setUser_id(u.getId());
+                        subcategory.setUser_id(u.getId());
+                        location.setUser_id(u.getId());
+                        stockList.setUser_id(u.getId());
+                        products[0].setUser_id(u.getId());
+                        products[1].setUser_id(u.getId());
+                        products[2].setUser_id(u.getId());
+                }).then();
+
+                StepVerifier.create(savedUser).verifyComplete();
 
                 Flux<ProductEntity> productFlux = Flux.fromArray(products);
 
@@ -120,7 +158,8 @@ public class FindProductsByLocationTest {
 
                 StepVerifier.create(saveProductsMono).verifyComplete();
 
-                Flux<LocationProductDTO> found = productRepository.findProductsByLocationid(locationIdRef.get());
+                Flux<LocationProductDTO> found = productRepository.findProductsByLocationid(
+                                location.getUser_id(), locationIdRef.get());
 
                 StepVerifier.create(found)
                                 .expectNextCount(3)

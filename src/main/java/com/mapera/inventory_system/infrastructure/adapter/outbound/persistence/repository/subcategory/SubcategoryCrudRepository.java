@@ -9,6 +9,9 @@ import reactor.core.publisher.Flux;
 
 public interface SubcategoryCrudRepository extends ReactiveCrudRepository<SubcategoryEntity, Long> {
 
-    @Query("SELECT * FROM subcategories WHERE category_id = :categoryId")
-    public Flux<SubcategoryEntity> findSubcategoriesByCategoryId(long categoryId);
+    @Query("SELECT * FROM subcategories s WHERE s.user_id = :userId ")
+    public Flux<SubcategoryEntity> findAllUserSubcategories(Long userId);
+
+    @Query("SELECT * FROM subcategories s WHERE s.category_id = :categoryId AND s.user_id = :userId ")
+    public Flux<SubcategoryEntity> findSubcategoriesByCategoryId(Long userId, long categoryId);
 }

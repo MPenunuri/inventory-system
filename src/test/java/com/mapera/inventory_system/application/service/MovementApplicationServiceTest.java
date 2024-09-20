@@ -14,6 +14,7 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.e
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.LocationEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.ProductEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SupplierEntity;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.UserEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.category.CategoryRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.currency.CurrencyRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.location.LocationRepository;
@@ -23,6 +24,7 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.r
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.stock.StockRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.subcategory.SubcategoryRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.supplier.SupplierRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.user.UserRepository;
 
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -30,6 +32,9 @@ import reactor.test.StepVerifier;
 @SpringBootTest
 @ActiveProfiles("test")
 public class MovementApplicationServiceTest {
+
+        @Autowired
+        UserRepository userRepository;
 
         @Autowired
         MovementApplicationService movementApplicationService;
@@ -72,6 +77,7 @@ public class MovementApplicationServiceTest {
                 Mono<Void> deleteCategories = categoryRepository.deleteAll();
                 Mono<Void> deleteCurrencies = currencyRepository.deleteAll();
                 Mono<Void> deleteLocations = locationRepository.deleteAll();
+                Mono<Void> deleteUsers = userRepository.deleteAll();
 
                 Mono<Void> setup = deleteProductSupplier
                                 .then(deleteStocklist)
@@ -81,7 +87,8 @@ public class MovementApplicationServiceTest {
                                 .then(deleteSubcategories)
                                 .then(deleteCategories)
                                 .then(deleteCurrencies)
-                                .then(deleteLocations);
+                                .then(deleteLocations)
+                                .then(deleteUsers);
 
                 setup.block();
         }
@@ -91,6 +98,7 @@ public class MovementApplicationServiceTest {
 
                 // Set up entry data
                 Samples samples = new Samples();
+                UserEntity userEntity = samples.user();
                 ProductEntity productEntity = samples.product();
                 SupplierEntity supplierEntity = new SupplierEntity();
                 supplierEntity.setName("International corporative");
@@ -103,6 +111,7 @@ public class MovementApplicationServiceTest {
 
                 // Define atomic references for id entities
 
+                AtomicReference<Long> userId = new AtomicReference<>();
                 AtomicReference<Long> productId = new AtomicReference<>();
                 AtomicReference<Long> supplierId = new AtomicReference<>();
                 AtomicReference<Long> location1Id = new AtomicReference<>();
@@ -110,6 +119,17 @@ public class MovementApplicationServiceTest {
                 AtomicReference<Long> currencyId = new AtomicReference<>();
 
                 // Saved entry data on corresponding repositories and set up atomic references
+
+                Mono<Void> savedUser = userRepository.save(userEntity).doOnNext(u -> {
+                        userId.set(u.getId());
+                        productEntity.setUser_id(u.getId());
+                        supplierEntity.setUser_id(u.getId());
+                        locationEntity1.setUser_id(u.getId());
+                        locationEntity2.setUser_id(u.getId());
+                        currencyEntity.setUser_id(u.getId());
+                }).then();
+
+                StepVerifier.create(savedUser).verifyComplete();
 
                 Mono<Void> savedCurrency = currencyRepository.save(currencyEntity)
                                 .doOnNext(c -> currencyId.set(c.getId())).then();
@@ -135,7 +155,7 @@ public class MovementApplicationServiceTest {
                 StepVerifier.create(savedProduct).verifyComplete();
 
                 Mono<Void> executeAcquisition = movementApplicationService
-                                .addAcquisitionEntryMovement(
+                                .addAcquisitionEntryMovement(userId.get(),
                                                 productId.get(), LocalDateTime.now(), "Regular acquisition",
                                                 "No comment", 20, supplierId.get(), location1Id.get(),
                                                 "OVERALL",
@@ -145,7 +165,7 @@ public class MovementApplicationServiceTest {
                 StepVerifier.create(executeAcquisition).verifyComplete();
 
                 Mono<Void> executeCustomerReturn = movementApplicationService
-                                .addCustomerReturnEntryMovement(
+                                .addCustomerReturnEntryMovement(userId.get(),
                                                 productId.get(), LocalDateTime.now(),
                                                 "Product damaged", "No comment",
                                                 20, location1Id.get(),
@@ -156,7 +176,7 @@ public class MovementApplicationServiceTest {
                 StepVerifier.create(executeCustomerReturn).verifyComplete();
 
                 Mono<Void> executeEntryAdjusment = movementApplicationService
-                                .addInventoryAdjustmentEntryMovement(
+                                .addInventoryAdjustmentEntryMovement(userId.get(),
                                                 productId.get(), LocalDateTime.now(), "Product finded",
                                                 "No comment", 20, location1Id.get())
                                 .then();
@@ -164,7 +184,7 @@ public class MovementApplicationServiceTest {
                 StepVerifier.create(executeEntryAdjusment).verifyComplete();
 
                 Mono<Void> executeProduction = movementApplicationService
-                                .addProductionEntryMovement(
+                                .addProductionEntryMovement(userId.get(),
                                                 productId.get(), LocalDateTime.now(), "Regular production",
                                                 "No comment", 20, location1Id.get(),
                                                 "PER_UNIT", .5,
@@ -174,7 +194,7 @@ public class MovementApplicationServiceTest {
                 StepVerifier.create(executeProduction).verifyComplete();
 
                 Mono<Void> executeSale = movementApplicationService
-                                .addSalesOutputMovement(
+                                .addSalesOutputMovement(userId.get(),
                                                 productId.get(), LocalDateTime.now(), "Regular production",
                                                 "No comment", 20, location1Id.get(),
                                                 "WHOLESALE", productEntity.getWholesale_price(),
@@ -184,7 +204,7 @@ public class MovementApplicationServiceTest {
                 StepVerifier.create(executeSale).verifyComplete();
 
                 Mono<Void> executeSupplierReturn = movementApplicationService
-                                .addSupplierReturnOutputMovement(
+                                .addSupplierReturnOutputMovement(userId.get(),
                                                 productId.get(), LocalDateTime.now(), "Product damaged",
                                                 "No comment", 20, supplierId.get(), location1Id.get(),
                                                 "RETAIL", productEntity.getRetail_price(),
@@ -194,7 +214,7 @@ public class MovementApplicationServiceTest {
                 StepVerifier.create(executeSupplierReturn).verifyComplete();
 
                 Mono<Void> executeOutputAdjusment = movementApplicationService
-                                .addInventoryAdjustmentOutputMovement(
+                                .addInventoryAdjustmentOutputMovement(userId.get(),
                                                 productId.get(), LocalDateTime.now(), "Product damaged",
                                                 "No comment", 20, location1Id.get())
                                 .then();
@@ -202,7 +222,7 @@ public class MovementApplicationServiceTest {
                 StepVerifier.create(executeOutputAdjusment).verifyComplete();
 
                 Mono<Void> executeInternalConsumption = movementApplicationService
-                                .addInternalConsumptionOutputMovement(
+                                .addInternalConsumptionOutputMovement(userId.get(),
                                                 productId.get(), LocalDateTime.now(), "Boos party",
                                                 "No comment", 10, location1Id.get())
                                 .then();
@@ -210,14 +230,14 @@ public class MovementApplicationServiceTest {
                 StepVerifier.create(executeInternalConsumption).verifyComplete();
 
                 Mono<Long> transferId = movementApplicationService
-                                .addTransferMovement(productId.get(), LocalDateTime.now(), "Manager indication",
-                                                "No comment", 10,
-                                                location1Id.get(),
+                                .addTransferMovement(userId.get(),
+                                                productId.get(), LocalDateTime.now(), "Manager indication",
+                                                "No comment", 10, location1Id.get(),
                                                 location2Id.get())
                                 .map(t -> t.getId());
 
                 Mono<Boolean> cancelTransfer = transferId
-                                .flatMap(id -> movementApplicationService.cancelMovementById(id));
+                                .flatMap(id -> movementApplicationService.cancelMovementById(userId.get(), id));
 
                 StepVerifier.create(cancelTransfer).expectNext(true).verifyComplete();
         }

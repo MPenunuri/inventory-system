@@ -15,20 +15,20 @@ public class SupplierApplicationService {
     @Autowired
     private SupplierPersistencePort supplierPersistencePort;
 
-    public Mono<SupplierEntity> registerSupplier(String name) {
-        return supplierPersistencePort.registerSupplier(name);
+    public Mono<SupplierEntity> registerSupplier(Long userId, String name) {
+        return supplierPersistencePort.registerSupplier(userId, name);
     }
 
-    public Flux<SupplierEntity> getSuppliers() {
-        return supplierPersistencePort.getSuppliers();
+    public Flux<SupplierEntity> getSuppliers(Long userId) {
+        return supplierPersistencePort.getSuppliers(userId);
     }
 
-    public Mono<SupplierEntity> renameSupplier(Long supplierId, String name) {
-        return supplierPersistencePort.renameSupplier(supplierId, name);
+    public Mono<SupplierEntity> renameSupplier(Long userId, Long supplierId, String name) {
+        return supplierPersistencePort.renameSupplier(userId, supplierId, name);
     }
 
-    public Mono<Void> deleteSupplier(Long supplierId) {
-        return supplierPersistencePort.deleteSupplier(supplierId);
+    public Mono<Void> deleteSupplier(Long userId, Long supplierId) {
+        return supplierPersistencePort.deleteSupplier(userId, supplierId);
     }
 
 }

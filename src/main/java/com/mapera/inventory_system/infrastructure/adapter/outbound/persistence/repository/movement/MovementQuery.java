@@ -17,21 +17,24 @@ public class MovementQuery {
                         "JOIN products p ON p.id = m.product_id ";
 
         public static final String ALL_QUERY = STANDARD_SELECTION +
-                        STANDARD_QUERY;
+                        STANDARD_QUERY +
+                        "WHERE m.user_id = :userId ";
 
         public static final String ENTRY_QUERY = STANDARD_SELECTION +
                         ", m.to_location_id AS to_location_id, " +
                         "l.name AS to_location_name " +
                         STANDARD_QUERY +
                         "JOIN locations l ON l.id = m.to_location_id " +
-                        "WHERE m.type = 'Entry' ";
+                        "WHERE m.type = 'Entry' " +
+                        "AND m.user_id = :userId ";
 
         public static final String OUTPUT_QUERY = STANDARD_SELECTION +
                         ", m.from_location_id AS from_location_id, " +
                         "l.name AS from_location_name " +
                         STANDARD_QUERY +
                         "JOIN locations l ON l.id = m.from_location_id " +
-                        "WHERE m.type = 'Output' ";
+                        "WHERE m.type = 'Output' " +
+                        "AND m.user_id = :userId ";
 
         public static final String TRANSFER_QUERY = STANDARD_SELECTION +
                         ", m.from_location_id AS from_location_id, " +
@@ -41,7 +44,8 @@ public class MovementQuery {
                         STANDARD_QUERY +
                         "JOIN locations l_from ON l_from.id = m.from_location_id " +
                         "JOIN locations l_to ON l_to.id = m.to_location_id " +
-                        "WHERE m.type = 'Transfer' ";
+                        "WHERE m.type = 'Transfer' " +
+                        "AND m.user_id = :userId ";
 
         public static final String ACQUISITION_QUERY = STANDARD_SELECTION +
                         ", m.to_location_id AS to_location_id, " +
@@ -55,7 +59,8 @@ public class MovementQuery {
                         "JOIN locations l ON l.id = m.to_location_id " +
                         "JOIN suppliers s ON s.id = m.supplier_id " +
                         "JOIN currencies c ON c.id = m.transaction_currency_id " +
-                        "WHERE m.subtype = 'Acquisition' ";
+                        "WHERE m.subtype = 'Acquisition' " +
+                        "AND m.user_id = :userId ";
 
         public static final String CUSTOMER_RETURN_QUERY = STANDARD_SELECTION +
                         ", m.to_location_id AS to_location_id, " +
@@ -66,10 +71,12 @@ public class MovementQuery {
                         STANDARD_QUERY +
                         "JOIN locations l ON l.id = m.to_location_id " +
                         "JOIN currencies c ON c.id = m.transaction_currency_id " +
-                        "WHERE m.subtype = 'Customer return' ";
+                        "WHERE m.subtype = 'Customer return' " +
+                        "AND m.user_id = :userId ";
 
         public static final String ENTRY_ADJUSMENT_QUERY = ENTRY_QUERY +
-                        "AND m.subtype = 'Inventory adjustment' ";
+                        "AND m.subtype = 'Inventory adjustment' " +
+                        "AND m.user_id = :userId ";
 
         public static final String PRODUCTION_QUERY = STANDARD_SELECTION +
                         ", m.to_location_id AS to_location_id, " +
@@ -80,7 +87,8 @@ public class MovementQuery {
                         STANDARD_QUERY +
                         "JOIN locations l ON l.id = m.to_location_id " +
                         "JOIN currencies c ON c.id = m.transaction_currency_id " +
-                        "WHERE m.subtype = 'Production' ";
+                        "WHERE m.subtype = 'Production' " +
+                        "AND m.user_id = :userId ";
 
         public static final String OUTPUT_ADJUSMENT_QUERY = OUTPUT_QUERY +
                         "AND m.subtype = 'Inventory adjustment' ";
@@ -94,7 +102,8 @@ public class MovementQuery {
                         STANDARD_QUERY +
                         "JOIN locations l ON l.id = m.from_location_id " +
                         "JOIN currencies c ON c.id = m.transaction_currency_id " +
-                        "WHERE m.subtype = 'Sales' ";
+                        "WHERE m.subtype = 'Sales' " +
+                        "AND m.user_id = :userId ";
 
         public static final String SUPPLIER_RETURN_QUERY = STANDARD_SELECTION +
                         ", m.from_location_id AS from_location_id, " +
@@ -108,14 +117,16 @@ public class MovementQuery {
                         "JOIN locations l ON l.id = m.from_location_id " +
                         "JOIN suppliers s ON s.id = m.supplier_id " +
                         "JOIN currencies c ON c.id = m.transaction_currency_id " +
-                        "WHERE m.subtype = 'Supplier Return' ";
+                        "WHERE m.subtype = 'Supplier Return' " +
+                        "AND m.user_id = :userId ";
 
         public static final String INTERNAL_CONSUMPTION_QUERY = OUTPUT_QUERY +
                         "AND m.subtype = 'Internal Consumption' ";
 
         public static final String PRODUCT_QUERY = STANDARD_SELECTION +
                         STANDARD_QUERY +
-                        "WHERE p.id = :productId ";
+                        "WHERE p.id = :productId " +
+                        "AND m.user_id = :userId ";
 
         public static final String SUPPLIER_QUERY = ACQUISITION_QUERY +
                         "AND m.supplier_id = :supplierId ";
@@ -143,7 +154,8 @@ public class MovementQuery {
                         "LEFT JOIN categories c ON c.id = s.category_id " +
                         "LEFT JOIN currencies cur ON cur.id = m.transaction_currency_id " +
                         "WHERE m.product_id = :productId AND m.transaction_currency_id = :currencyId " +
-                        "AND YEAR(m.date_time) >= :fromYear AND YEAR(m.date_time) <= :toYear ";
+                        "AND YEAR(m.date_time) >= :fromYear AND YEAR(m.date_time) <= :toYear " +
+                        "AND m.user_id = :userId ";
 
         public static final String AVERAGE_COST_PERUNIT_QUERY = AVERAGE_COST_QUERY +
                         "AND m.transaction_subtype = 'PER_UNIT' ";
@@ -175,8 +187,8 @@ public class MovementQuery {
                         "AND m.transaction_subtype = :costType";
 
         public static final String SALES_VALUE_QUERY = SALES_QUERY +
-                        "AND m.transaction_value >= :minCost " +
-                        "AND m.transaction_value <= :maxCost " +
+                        "AND m.transaction_value >= :minValue " +
+                        "AND m.transaction_value <= :maxValue " +
                         "AND m.transaction_currency_id = :currencyId " +
                         "AND YEAR(m.date_time) >= :fromYear AND YEAR(m.date_time) <= :toYear " +
                         "AND m.transaction_subtype = :sellType ";
@@ -199,7 +211,8 @@ public class MovementQuery {
                         "LEFT JOIN currencies cur ON cur.id = m.transaction_currency_id " +
                         "WHERE m.product_id = :productId AND m.transaction_currency_id = :currencyId " +
                         "AND YEAR(m.date_time) >= :fromYear AND YEAR(m.date_time) <= :toYear " +
-                        "AND m.subtype = 'Sales' ";
+                        "AND m.subtype = 'Sales' " +
+                        "AND m.user_id = :userId ";
 
         public static final String AVERAGE_SELL_RETAIL = AVERAGE_SELL_QUERY +
                         "AND m.transaction_subtype = 'RETAIL' " +

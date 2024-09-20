@@ -14,7 +14,8 @@ public class StockRepositoryImpl implements StockRepositoryCustom {
     StockCrudRepository stockCrudRepository;
 
     @Override
-    public Mono<Boolean> addProductStockInLocation(long locationId, long productId, int quantity,
+    public Mono<Boolean> addProductStockInLocation(Long userId,
+            long locationId, long productId, int quantity,
             Integer maximumStorage) {
         return stockCrudRepository.findProductStockInLocation(productId, locationId)
                 .flatMap(stock -> {
@@ -22,6 +23,7 @@ public class StockRepositoryImpl implements StockRepositoryCustom {
                 })
                 .switchIfEmpty(Mono.defer(() -> {
                     StockEntity stockEntity = new StockEntity();
+                    stockEntity.setUser_id(userId);
                     stockEntity.setLocation_id(locationId);
                     stockEntity.setProduct_id(productId);
                     stockEntity.setQuantity(quantity);
@@ -34,12 +36,17 @@ public class StockRepositoryImpl implements StockRepositoryCustom {
     }
 
     @Override
-    public Mono<Boolean> removeProductStockInLocation(Long locationId, Long product_id) {
+    public Mono<Boolean> removeProductStockInLocation(Long userId,
+            Long locationId, Long product_id) {
         // Check first if there is a current stock
         return stockCrudRepository.findProductStockInLocation(product_id, locationId)
                 .flatMap(stock -> {
+                    if (!stock.getUser_id().equals(userId)) {
+                        throw new IllegalArgumentException("Invalid credentials");
+                    }
                     // Delete stock and return Mono with true
-                    return stockCrudRepository.deleteById(stock.getId()).then(Mono.just(true));
+                    return stockCrudRepository.deleteById(
+                            stock.getId()).then(Mono.just(true));
                 })
                 .switchIfEmpty(Mono.defer(() -> {
                     // Return Mono with false if stock does not exists
@@ -66,16 +73,21 @@ public class StockRepositoryImpl implements StockRepositoryCustom {
     }
 
     @Override
-    public Mono<StockEntity> increseStockByLocationAndProduct(Long locationId, Long product_id, int increse) {
+    public Mono<StockEntity> increseStockByLocationAndProduct(
+            Long userId, Long locationId, Long product_id, int increse) {
         // Check if there is a current stock
         return stockCrudRepository.findProductStockInLocation(product_id, locationId)
                 // If there is, increse stock quantity
                 .flatMap(stock -> {
+                    if (!stock.getUser_id().equals(userId)) {
+                        throw new IllegalArgumentException("Invalid credentials");
+                    }
                     stock.setQuantity(stock.getQuantity() + increse);
                     return stockCrudRepository.save(stock);
                 }).switchIfEmpty(Mono.defer(() -> {
                     // If not, create stock and set increase as quantity
                     StockEntity stockEntity = new StockEntity();
+                    stockEntity.setUser_id(userId);
                     stockEntity.setLocation_id(locationId);
                     stockEntity.setProduct_id(product_id);
                     stockEntity.setQuantity(increse);
@@ -84,9 +96,13 @@ public class StockRepositoryImpl implements StockRepositoryCustom {
     }
 
     @Override
-    public Mono<StockEntity> decreseStockByLocationAndProduct(Long locationId, Long product_id, int decrese) {
+    public Mono<StockEntity> decreseStockByLocationAndProduct(
+            Long userId, Long locationId, Long product_id, int decrese) {
         return stockCrudRepository.findProductStockInLocation(product_id, locationId)
                 .flatMap(stock -> {
+                    if (!stock.getUser_id().equals(userId)) {
+                        throw new IllegalArgumentException("Invalid credentials");
+                    }
                     stock.setQuantity(stock.getQuantity() - decrese);
                     return stockCrudRepository.save(stock);
                 });

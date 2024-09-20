@@ -9,12 +9,12 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.r
 import reactor.core.publisher.Mono;
 
 public class AddTransferMovement {
-        public static Mono<MovementEntity> execute(
+        public static Mono<MovementEntity> execute(Long userId,
                         MovementCrudRepository movementRepository, StockRepository stockRepository,
                         long productId, LocalDateTime dateTime, String reason, String comment,
                         int quantity, long fromLocationId, long toLocationId) {
-
                 MovementEntity movement = new MovementEntity();
+                movement.setUser_id(userId);
                 movement.setProduct_id(productId);
                 movement.setDate_time(dateTime);
                 movement.setType("Transfer");
@@ -24,11 +24,10 @@ public class AddTransferMovement {
                 movement.setQuantity(quantity);
                 movement.setFrom_location_id(fromLocationId);
                 movement.setTo_location_id(toLocationId);
-                return stockRepository.decreseStockByLocationAndProduct(
+                return stockRepository.decreseStockByLocationAndProduct(userId,
                                 fromLocationId, productId, quantity)
-                                .then(
-                                                stockRepository.increseStockByLocationAndProduct(
-                                                                toLocationId, productId, quantity))
+                                .then(stockRepository.increseStockByLocationAndProduct(userId,
+                                                toLocationId, productId, quantity))
                                 .then(movementRepository.save(movement));
         }
 }

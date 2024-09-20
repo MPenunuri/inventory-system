@@ -14,13 +14,17 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.e
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.ProductEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.StockEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SubcategoryEntity;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.UserEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.category.CategoryRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.currency.CurrencyRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.location.LocationRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.movement.MovementRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product.ProductRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product_supplier.ProductSupplierRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.stock.StockRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.subcategory.SubcategoryRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.supplier.SupplierRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.user.UserRepository;
 
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -30,58 +34,84 @@ import reactor.test.StepVerifier;
 public class StockRepositoryCustomMethods {
 
         @Autowired
-        private MovementRepository movementRepository;
+        UserRepository userRepository;
 
         @Autowired
-        private ProductRepository productRepository;
+        CategoryRepository categoryRepository;
 
         @Autowired
-        private CategoryRepository categoryRepository;
+        SubcategoryRepository subcategoryRepository;
 
         @Autowired
-        private SubcategoryRepository subcategoryRepository;
+        ProductRepository productRepository;
 
         @Autowired
-        private LocationRepository locationRepository;
+        SupplierRepository supplierRepository;
 
         @Autowired
-        private StockRepository stockRepository;
+        ProductSupplierRepository productSupplierRepository;
 
         @Autowired
-        private ProductSupplierRepository productSupplierRepository;
+        LocationRepository locationRepository;
+
+        @Autowired
+        CurrencyRepository currencyRepository;
+
+        @Autowired
+        MovementRepository movementRepository;
+
+        @Autowired
+        StockRepository stockRepository;
 
         @BeforeEach
         void setUp() {
                 Mono<Void> deleteMovements = movementRepository.deleteAll();
                 Mono<Void> deleteProductSupplier = productSupplierRepository.deleteAll();
+                Mono<Void> deleteSuppliers = supplierRepository.deleteAll();
                 Mono<Void> deleteStocklist = stockRepository.deleteAll();
-                Mono<Void> deleteLocations = locationRepository.deleteAll();
                 Mono<Void> deleteProducts = productRepository.deleteAll();
                 Mono<Void> deleteSubcategories = subcategoryRepository.deleteAll();
                 Mono<Void> deleteCategories = categoryRepository.deleteAll();
+                Mono<Void> deleteCurrencies = currencyRepository.deleteAll();
+                Mono<Void> deleteLocations = locationRepository.deleteAll();
+                Mono<Void> deleteUsers = userRepository.deleteAll();
 
                 Mono<Void> setup = deleteProductSupplier
-
-                                .then(deleteMovements)
                                 .then(deleteStocklist)
-                                .then(deleteLocations)
+                                .then(deleteMovements)
+                                .then(deleteSuppliers)
                                 .then(deleteProducts)
                                 .then(deleteSubcategories)
-                                .then(deleteCategories);
+                                .then(deleteCategories)
+                                .then(deleteCurrencies)
+                                .then(deleteLocations)
+                                .then(deleteUsers);
 
                 setup.block();
         }
 
         @Test
         public void test() {
+                AtomicReference<Long> userIdRef = new AtomicReference<>();
                 AtomicReference<Long> productIdRef = new AtomicReference<>();
                 AtomicReference<Long> locationIdRef = new AtomicReference<>();
                 Samples samples = new Samples();
+                UserEntity userEntity = samples.user();
                 CategoryEntity category = samples.category();
                 SubcategoryEntity subcategory = samples.subcategory();
                 ProductEntity product = samples.product();
                 LocationEntity location = new LocationEntity();
                 location.setName("Location sample");
+
+                Mono<Void> savedUser = userRepository.save(userEntity).doOnNext(u -> {
+                        userIdRef.set(u.getId());
+                        category.setUser_id(u.getId());
+                        subcategory.setUser_id(u.getId());
+                        product.setUser_id(u.getId());
+                        location.setUser_id(u.getId());
+                }).then();
+
+                StepVerifier.create(savedUser).verifyComplete();
 
                 Mono<Long> savedSubcategoryId = categoryRepository.save(category)
                                 .flatMap(savedCategory -> {
@@ -109,11 +139,15 @@ public class StockRepositoryCustomMethods {
                 StepVerifier.create(savedLocation).verifyComplete();
 
                 Mono<Boolean> addedStock = stockRepository
-                                .addProductStockInLocation(locationIdRef.get(),
-                                                productIdRef.get(), 20, 30);
+                                .addProductStockInLocation(userIdRef.get(),
+                                                locationIdRef.get(),
+                                                productIdRef.get(),
+                                                20,
+                                                30);
 
                 Mono<Boolean> removedStock = stockRepository
-                                .removeProductStockInLocation(locationIdRef.get(),
+                                .removeProductStockInLocation(userIdRef.get(),
+                                                locationIdRef.get(),
                                                 productIdRef.get());
 
                 StepVerifier.create(addedStock).expectNext(true).verifyComplete();

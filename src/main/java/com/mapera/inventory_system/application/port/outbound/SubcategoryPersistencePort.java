@@ -7,15 +7,15 @@ import reactor.core.publisher.Mono;
 
 public interface SubcategoryPersistencePort {
 
-    public Mono<SubcategoryEntity> registerSubcategory(long categoryId, String name);
+    public Mono<SubcategoryEntity> registerSubcategory(Long userId, long categoryId, String name);
 
-    public Flux<SubcategoryEntity> findSubcategoriesByCategoryId(long categoryId);
+    public Flux<SubcategoryEntity> findSubcategoriesByCategoryId(Long userId, long categoryId);
 
-    public Flux<SubcategoryEntity> getAllSubcategories();
+    public Flux<SubcategoryEntity> getAllSubcategories(Long userId);
 
-    public Mono<SubcategoryEntity> changeSubcategoryCategory(Long subcategoryId, Long newCategoryId);
+    public Mono<SubcategoryEntity> changeSubcategoryCategory(Long userId, Long subcategoryId, Long newCategoryId);
 
-    public Mono<SubcategoryEntity> renameSubcategory(Long subcategoryId, String newName);
+    public Mono<SubcategoryEntity> renameSubcategory(Long userId, Long subcategoryId, String newName);
 
-    public Mono<Void> deleteSubcategory(Long subcategoryId);
+    public Mono<Void> deleteSubcategory(Long userId, Long subcategoryId);
 }

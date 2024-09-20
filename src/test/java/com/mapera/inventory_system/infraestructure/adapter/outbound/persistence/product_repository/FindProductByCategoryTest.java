@@ -9,13 +9,17 @@ import org.springframework.test.context.ActiveProfiles;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.CategoryEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.ProductEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SubcategoryEntity;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.UserEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.category.CategoryRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.currency.CurrencyRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.location.LocationRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.movement.MovementRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product.ProductRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product_supplier.ProductSupplierRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.stock.StockRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.subcategory.SubcategoryRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.supplier.SupplierRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.user.UserRepository;
 
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -25,43 +29,58 @@ import reactor.test.StepVerifier;
 public class FindProductByCategoryTest {
 
     @Autowired
-    private ProductRepository productRepository;
+    UserRepository userRepository;
 
     @Autowired
-    private CategoryRepository categoryRepository;
+    CategoryRepository categoryRepository;
 
     @Autowired
-    private SubcategoryRepository subcategoryRepository;
+    SubcategoryRepository subcategoryRepository;
 
     @Autowired
-    private LocationRepository locationRepository;
+    ProductRepository productRepository;
 
     @Autowired
-    private StockRepository stockRepository;
+    SupplierRepository supplierRepository;
 
     @Autowired
-    private SupplierRepository supplierRepository;
+    ProductSupplierRepository productSupplierRepository;
 
     @Autowired
-    private ProductSupplierRepository productSupplierRepository;
+    LocationRepository locationRepository;
+
+    @Autowired
+    CurrencyRepository currencyRepository;
+
+    @Autowired
+    MovementRepository movementRepository;
+
+    @Autowired
+    StockRepository stockRepository;
 
     @BeforeEach
     void setUp() {
+        Mono<Void> deleteMovements = movementRepository.deleteAll();
         Mono<Void> deleteProductSupplier = productSupplierRepository.deleteAll();
         Mono<Void> deleteSuppliers = supplierRepository.deleteAll();
         Mono<Void> deleteStocklist = stockRepository.deleteAll();
-        Mono<Void> deleteLocations = locationRepository.deleteAll();
         Mono<Void> deleteProducts = productRepository.deleteAll();
         Mono<Void> deleteSubcategories = subcategoryRepository.deleteAll();
         Mono<Void> deleteCategories = categoryRepository.deleteAll();
+        Mono<Void> deleteCurrencies = currencyRepository.deleteAll();
+        Mono<Void> deleteLocations = locationRepository.deleteAll();
+        Mono<Void> deleteUsers = userRepository.deleteAll();
 
         Mono<Void> setup = deleteProductSupplier
-                .then(deleteSuppliers)
                 .then(deleteStocklist)
-                .then(deleteLocations)
+                .then(deleteMovements)
+                .then(deleteSuppliers)
                 .then(deleteProducts)
                 .then(deleteSubcategories)
-                .then(deleteCategories);
+                .then(deleteCategories)
+                .then(deleteCurrencies)
+                .then(deleteLocations)
+                .then(deleteUsers);
 
         setup.block();
     }
@@ -69,9 +88,18 @@ public class FindProductByCategoryTest {
     @Test
     public void test() {
         Samples samples = new Samples();
+        UserEntity userEntity = samples.user();
         CategoryEntity category = samples.category();
         SubcategoryEntity subcategory = samples.subcategory();
         ProductEntity product = samples.product();
+
+        Mono<Void> savedUser = userRepository.save(userEntity).doOnNext(u -> {
+            category.setUser_id(u.getId());
+            subcategory.setUser_id(u.getId());
+            product.setUser_id(u.getId());
+        }).then();
+
+        StepVerifier.create(savedUser).verifyComplete();
 
         categoryRepository.save(category)
                 .flatMap(savedCategory -> {
@@ -83,7 +111,8 @@ public class FindProductByCategoryTest {
                             });
                 })
                 .flatMapMany(categoryId -> productRepository.save(product)
-                        .thenMany(productRepository.findProductsByCategoryId(categoryId)))
+                        .thenMany(productRepository.findProductsByCategoryId(
+                                product.getUser_id(), categoryId)))
                 .as(StepVerifier::create)
                 .expectNextCount(1)
                 .verifyComplete();

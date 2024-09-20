@@ -10,6 +10,7 @@ import lombok.Data;
 @Data
 @Table(name = "movements")
 public class MovementEntity {
+    private Long user_id;
     @Id
     private Long id;
     private Long product_id;

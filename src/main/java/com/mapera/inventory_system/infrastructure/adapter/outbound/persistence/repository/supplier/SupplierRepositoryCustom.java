@@ -5,5 +5,5 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.e
 import reactor.core.publisher.Mono;
 
 public interface SupplierRepositoryCustom {
-    public Mono<SupplierEntity> renameSupplier(Long supplierId, String name);
+    public Mono<SupplierEntity> renameSupplier(Long userId, Long supplierId, String name);
 }

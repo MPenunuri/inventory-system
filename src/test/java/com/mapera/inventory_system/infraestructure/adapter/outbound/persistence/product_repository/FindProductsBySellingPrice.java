@@ -12,10 +12,12 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.e
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.CurrencyEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.ProductEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SubcategoryEntity;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.UserEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.category.CategoryRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.currency.CurrencyRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product.ProductRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.subcategory.SubcategoryRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.user.UserRepository;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -25,78 +27,97 @@ import reactor.test.StepVerifier;
 @DataR2dbcTest
 public class FindProductsBySellingPrice {
 
-    @Autowired
-    private ProductRepository productRepository;
+        @Autowired
+        UserRepository userRepository;
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+        @Autowired
+        private ProductRepository productRepository;
 
-    @Autowired
-    private SubcategoryRepository subcategoryRepository;
+        @Autowired
+        private CategoryRepository categoryRepository;
 
-    @Autowired
-    private CurrencyRepository currencyRepository;
+        @Autowired
+        private SubcategoryRepository subcategoryRepository;
 
-    @Test
-    public void test() {
-        Samples samples = new Samples();
+        @Autowired
+        private CurrencyRepository currencyRepository;
 
-        CategoryEntity category = samples.category();
-        AtomicReference<Long> subcategoryId = new AtomicReference<>();
-        SubcategoryEntity subcategory = samples.subcategory();
+        @Test
+        public void test() {
+                Samples samples = new Samples();
 
-        AtomicReference<Long> currencyId = new AtomicReference<>();
-        CurrencyEntity currency = new CurrencyEntity();
-        currency.setName("USD");
+                UserEntity userEntity = samples.user();
 
-        ProductEntity[] products = new ProductEntity[4];
-        products[0] = samples.product();
-        products[0].setRetail_price(.5);
-        products[0].setWholesale_price(.25);
-        products[1] = samples.product();
-        products[1].setRetail_price(1);
-        products[1].setWholesale_price(.5);
-        products[2] = samples.product();
-        products[2].setRetail_price(1.5);
-        products[2].setWholesale_price(.75);
-        products[3] = samples.product();
-        products[3].setWholesale_price(1);
-        products[3].setRetail_price(2);
+                CategoryEntity category = samples.category();
+                AtomicReference<Long> subcategoryId = new AtomicReference<>();
+                SubcategoryEntity subcategory = samples.subcategory();
 
-        Flux<ProductEntity> productFlux = Flux.fromArray(products);
+                AtomicReference<Long> currencyId = new AtomicReference<>();
+                CurrencyEntity currency = new CurrencyEntity();
+                currency.setName("USD");
 
-        Mono<Void> savedCurrencyId = currencyRepository.save(currency)
-                .doOnNext(c -> currencyId.set(c.getId())).then();
+                ProductEntity[] products = new ProductEntity[4];
+                products[0] = samples.product();
+                products[0].setRetail_price(.5);
+                products[0].setWholesale_price(.25);
+                products[1] = samples.product();
+                products[1].setRetail_price(1);
+                products[1].setWholesale_price(.5);
+                products[2] = samples.product();
+                products[2].setRetail_price(1.5);
+                products[2].setWholesale_price(.75);
+                products[3] = samples.product();
+                products[3].setWholesale_price(1);
+                products[3].setRetail_price(2);
 
-        Mono<Void> savedSubcategoryId = categoryRepository.save(category)
-                .flatMap(savedCategory -> {
-                    subcategory.setCategory_id(savedCategory.getId());
-                    return subcategoryRepository.save(subcategory)
-                            .doOnNext(s -> subcategoryId.set(s.getId())).then();
-                });
+                Mono<Void> savedUser = userRepository.save(userEntity).doOnNext(u -> {
+                        category.setUser_id(u.getId());
+                        subcategory.setUser_id(u.getId());
+                        currency.setUser_id(u.getId());
+                        products[0].setUser_id(u.getId());
+                        products[1].setUser_id(u.getId());
+                        products[2].setUser_id(u.getId());
+                        products[3].setUser_id(u.getId());
+                }).then();
 
-        Mono<Void> savedProducts = productFlux.flatMap(product -> {
-            product.setSubcategory_id(subcategoryId.get());
-            product.setPrice_currency_id(currencyId.get());
-            return productRepository.save(product).then();
-        }).then();
+                StepVerifier.create(savedUser).verifyComplete();
 
-        Mono<Void> saveItems = savedCurrencyId.then(savedSubcategoryId).then(savedProducts);
+                Flux<ProductEntity> productFlux = Flux.fromArray(products);
 
-        StepVerifier.create(saveItems).verifyComplete();
+                Mono<Void> savedCurrencyId = currencyRepository.save(currency)
+                                .doOnNext(c -> currencyId.set(c.getId())).then();
 
-        Flux<StandardProductDTO> retailFound = productRepository.findProductsBySellingRetailPrice(
-                currencyId.get(), 1.0, 1.5);
+                Mono<Void> savedSubcategoryId = categoryRepository.save(category)
+                                .flatMap(savedCategory -> {
+                                        subcategory.setCategory_id(savedCategory.getId());
+                                        return subcategoryRepository.save(subcategory)
+                                                        .doOnNext(s -> subcategoryId.set(s.getId())).then();
+                                });
 
-        StepVerifier.create(retailFound)
-                .expectNextCount(2)
-                .verifyComplete();
+                Mono<Void> savedProducts = productFlux.flatMap(product -> {
+                        product.setSubcategory_id(subcategoryId.get());
+                        product.setPrice_currency_id(currencyId.get());
+                        return productRepository.save(product).then();
+                }).then();
 
-        Flux<StandardProductDTO> wholesaleFound = productRepository.findProductsBySellingWholesalePrice(
-                currencyId.get(), .5, .75);
+                Mono<Void> saveItems = savedCurrencyId.then(savedSubcategoryId).then(savedProducts);
 
-        StepVerifier.create(wholesaleFound)
-                .expectNextCount(2)
-                .verifyComplete();
-    }
+                StepVerifier.create(saveItems).verifyComplete();
+
+                Flux<StandardProductDTO> retailFound = productRepository.findProductsBySellingRetailPrice(
+                                category.getUser_id(),
+                                currencyId.get(), 1.0, 1.5);
+
+                StepVerifier.create(retailFound)
+                                .expectNextCount(2)
+                                .verifyComplete();
+
+                Flux<StandardProductDTO> wholesaleFound = productRepository.findProductsBySellingWholesalePrice(
+                                category.getUser_id(),
+                                currencyId.get(), .5, .75);
+
+                StepVerifier.create(wholesaleFound)
+                                .expectNextCount(2)
+                                .verifyComplete();
+        }
 }

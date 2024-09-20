@@ -16,31 +16,37 @@ public class LocationApplicationService {
     @Autowired
     private LocationPersistencePort locationPersistencePort;
 
-    public Flux<LocationEntity> getLocations() {
-        return locationPersistencePort.getLocations();
+    public Flux<LocationEntity> getLocations(Long userId) {
+        return locationPersistencePort.getLocations(userId);
     }
 
-    public Mono<LocationEntity> registerLocation(String name) {
-        return locationPersistencePort.registerLocation(name);
+    public Mono<LocationEntity> registerLocation(
+            Long userId, String name) {
+        return locationPersistencePort.registerLocation(userId, name);
     }
 
-    public Mono<LocationEntity> registerLocation(String name, String address) {
-        return locationPersistencePort.registerLocation(name, address);
+    public Mono<LocationEntity> registerLocation(
+            Long userId, String name, String address) {
+        return locationPersistencePort.registerLocation(userId, name, address);
     }
 
-    public Mono<Location> findLocationById(Long locationId) {
-        return locationPersistencePort.findLocationById(locationId);
+    public Mono<Location> findLocationById(Long userId, Long locationId) {
+        return locationPersistencePort.findLocationById(userId, locationId);
     }
 
-    public Mono<LocationEntity> updateLocationName(Long locationId, String name) {
-        return locationPersistencePort.updateLocationName(locationId, name);
+    public Mono<LocationEntity> updateLocationName(
+            Long userId, Long locationId, String name) {
+        return locationPersistencePort.updateLocationName(
+                userId, locationId, name);
     }
 
-    public Mono<LocationEntity> updateLocationAddress(Long locationId, String address) {
-        return locationPersistencePort.updateLocationAddress(locationId, address);
+    public Mono<LocationEntity> updateLocationAddress(
+            Long userId, Long locationId, String address) {
+        return locationPersistencePort.updateLocationAddress(
+                userId, locationId, address);
     }
 
-    public Mono<Void> deleteLocationById(Long locationId) {
-        return locationPersistencePort.deleteLocationById(locationId);
+    public Mono<Void> deleteLocationById(Long userId, Long locationId) {
+        return locationPersistencePort.deleteLocationById(userId, locationId);
     }
 }
