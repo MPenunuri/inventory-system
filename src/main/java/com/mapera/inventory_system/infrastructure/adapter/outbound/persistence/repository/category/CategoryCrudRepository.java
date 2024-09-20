@@ -10,6 +10,9 @@ import reactor.core.publisher.Mono;
 
 public interface CategoryCrudRepository extends ReactiveCrudRepository<CategoryEntity, Long> {
 
+    @Query("SELECT COUNT(*) FROM categories c WHERE c.user_id = :userId")
+    Mono<Integer> countByUserId(Long userId);
+
     @Query("DELETE FROM categories c WHERE c.user_id = :userId")
     Mono<Void> deleteByUserId(Long userId);
 

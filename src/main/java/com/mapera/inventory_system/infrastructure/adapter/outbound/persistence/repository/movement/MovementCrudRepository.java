@@ -21,7 +21,10 @@ import reactor.core.publisher.Mono;
 
 public interface MovementCrudRepository extends ReactiveCrudRepository<MovementEntity, Long> {
 
-        @Query("DELETE FROM movements m WHERE m.user_id = :userId")
+        @Query("SELECT COUNT(*) FROM movements m WHERE m.user_id = :userId ")
+        Mono<Integer> countByUserId(Long userId);
+
+        @Query("DELETE FROM movements m WHERE m.user_id = :userId ")
         Mono<Void> deleteByUserId(Long userId);
 
         @Query(MovementQuery.ALL_QUERY)

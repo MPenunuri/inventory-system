@@ -5,7 +5,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mapera.inventory_system.application.service.AdminApplicationService;
+import com.mapera.inventory_system.application.security.AdminApplicationService;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.user.UserData;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.UserEntity;
 

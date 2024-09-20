@@ -10,7 +10,10 @@ import reactor.core.publisher.Mono;
 
 public interface SubcategoryCrudRepository extends ReactiveCrudRepository<SubcategoryEntity, Long> {
 
-    @Query("DELETE FROM subcategories s WHERE s.user_id = :userId")
+    @Query("SELECT COUNT(*) FROM subcategories s WHERE s.user_id = :userId ")
+    Mono<Integer> countByUserId(Long userId);
+
+    @Query("DELETE FROM subcategories s WHERE s.user_id = :userId ")
     Mono<Void> deleteByUserId(Long userId);
 
     @Query("SELECT * FROM subcategories s WHERE s.user_id = :userId ")

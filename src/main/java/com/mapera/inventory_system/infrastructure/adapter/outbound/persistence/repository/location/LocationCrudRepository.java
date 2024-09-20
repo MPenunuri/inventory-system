@@ -10,7 +10,10 @@ import reactor.core.publisher.Mono;
 
 public interface LocationCrudRepository extends ReactiveCrudRepository<LocationEntity, Long> {
 
-    @Query("DELETE FROM locations l WHERE l.user_id = :userId")
+    @Query("SELECT COUNT(*) FROM locations l WHERE l.user_id = :userId ")
+    Mono<Integer> countByUserId(Long userId);
+
+    @Query("DELETE FROM locations l WHERE l.user_id = :userId ")
     Mono<Void> deleteByUserId(Long userId);
 
     @Query("SELECT * FROM locations l WHERE l.user_id = :userId ")

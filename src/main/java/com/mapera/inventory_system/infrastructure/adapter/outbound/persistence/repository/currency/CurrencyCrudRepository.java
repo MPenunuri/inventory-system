@@ -10,7 +10,10 @@ import reactor.core.publisher.Mono;
 
 public interface CurrencyCrudRepository extends ReactiveCrudRepository<CurrencyEntity, Long> {
 
-    @Query("DELETE FROM currencies c WHERE c.user_id = :userId")
+    @Query("SELECT COUNT(*) FROM currencies c WHERE c.user_id = :userId ")
+    Mono<Integer> countByUserId(Long userId);
+
+    @Query("DELETE FROM currencies c WHERE c.user_id = :userId ")
     Mono<Void> deleteByUserId(Long userId);
 
     @Query("SELECT * FROM currencies c WHERE c.user_id = :userId ")

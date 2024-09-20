@@ -1,4 +1,4 @@
-package com.mapera.inventory_system.application.service;
+package com.mapera.inventory_system.application.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

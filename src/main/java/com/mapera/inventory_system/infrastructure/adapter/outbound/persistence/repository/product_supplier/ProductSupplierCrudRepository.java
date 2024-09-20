@@ -9,7 +9,10 @@ import reactor.core.publisher.Mono;
 
 public interface ProductSupplierCrudRepository extends ReactiveCrudRepository<ProductSupplierEntity, Long> {
 
-    @Query("DELETE FROM product_supplier ps WHERE ps.user_id = :userId")
+    @Query("SELECT COUNT(*) FROM product_supplier ps WHERE ps.user_id = :userId ")
+    Mono<Integer> countByUserId(Long userId);
+
+    @Query("DELETE FROM product_supplier ps WHERE ps.user_id = :userId ")
     Mono<Void> deleteByUserId(Long userId);
 
     @Query("SELECT * FROM product_supplier ps WHERE ps.product_id = :productId AND ps.supplier_id = :supplierId")

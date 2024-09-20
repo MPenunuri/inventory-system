@@ -15,6 +15,9 @@ import reactor.core.publisher.Mono;
 
 public interface ProductCrudRepository extends ReactiveCrudRepository<ProductEntity, Long> {
 
+        @Query("SELECT COUNT(*) FROM products p WHERE p.user_id = :userId")
+        Mono<Integer> countByUserId(Long userId);
+
         @Query("DELETE FROM products p WHERE p.user_id = :userId")
         Mono<Void> deleteByUserId(Long userId);
 
