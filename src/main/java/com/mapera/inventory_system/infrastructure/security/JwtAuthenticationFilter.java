@@ -33,8 +33,9 @@ public class JwtAuthenticationFilter extends AuthenticationWebFilter {
             }
         });
 
-        setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers("/api/secure/**"));
-        setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers("/api/admin/**"));
+        setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.matchers(
+                ServerWebExchangeMatchers.pathMatchers("/api/secure/**"),
+                ServerWebExchangeMatchers.pathMatchers("/api/admin/**")));
     }
 
 }
