@@ -6,8 +6,12 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.CategoryEntity;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface CategoryCrudRepository extends ReactiveCrudRepository<CategoryEntity, Long> {
+
+    @Query("DELETE FROM categories c WHERE c.user_id = :userId")
+    Mono<Void> deleteByUserId(Long userId);
 
     @Query("SELECT * FROM categories c WHERE c.user_id = :userId ")
     public Flux<CategoryEntity> findAllUserCategories(Long userId);

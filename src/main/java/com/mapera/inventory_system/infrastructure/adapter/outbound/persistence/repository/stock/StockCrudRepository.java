@@ -9,6 +9,9 @@ import reactor.core.publisher.Mono;
 
 public interface StockCrudRepository extends ReactiveCrudRepository<StockEntity, Long> {
 
+    @Query("DELETE FROM stock_list sl WHERE sl.user_id = :userId")
+    Mono<Void> deleteByUserId(Long userId);
+
     @Query("Select * FROM stock_list sl WHERE sl.product_id = :productId AND sl.location_id = :locationId")
     Mono<StockEntity> findProductStockInLocation(Long productId, Long locationId);
 }

@@ -6,8 +6,12 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SubcategoryEntity;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface SubcategoryCrudRepository extends ReactiveCrudRepository<SubcategoryEntity, Long> {
+
+    @Query("DELETE FROM subcategories s WHERE s.user_id = :userId")
+    Mono<Void> deleteByUserId(Long userId);
 
     @Query("SELECT * FROM subcategories s WHERE s.user_id = :userId ")
     public Flux<SubcategoryEntity> findAllUserSubcategories(Long userId);

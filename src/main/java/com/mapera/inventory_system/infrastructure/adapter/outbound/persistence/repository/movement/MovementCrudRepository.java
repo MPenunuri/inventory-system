@@ -17,8 +17,12 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.d
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.MovementEntity;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface MovementCrudRepository extends ReactiveCrudRepository<MovementEntity, Long> {
+
+        @Query("DELETE FROM movements m WHERE m.user_id = :userId")
+        Mono<Void> deleteByUserId(Long userId);
 
         @Query(MovementQuery.ALL_QUERY)
         Flux<StandardMovementDTO> getMovements(Long userId);

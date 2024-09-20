@@ -15,6 +15,9 @@ import reactor.core.publisher.Mono;
 
 public interface ProductCrudRepository extends ReactiveCrudRepository<ProductEntity, Long> {
 
+        @Query("DELETE FROM products p WHERE p.user_id = :userId")
+        Mono<Void> deleteByUserId(Long userId);
+
         @Query(ProductQuery.STANDARD_QUERY + "WHERE p.user_id = :userId")
         Flux<StandardProductDTO> findAllProducts(Long userId);
 

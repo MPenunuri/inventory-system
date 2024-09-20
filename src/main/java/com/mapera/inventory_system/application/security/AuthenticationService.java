@@ -55,4 +55,17 @@ public class AuthenticationService {
                 })
                 .doOnError(error -> Mono.error(new IllegalArgumentException("Invalid credentials")));
     }
+
+    public Mono<Boolean> isAdmin() {
+        return ReactiveSecurityContextHolder.getContext()
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("No auth context")))
+                .map(SecurityContext::getAuthentication)
+                .map(Authentication::getCredentials)
+                .cast(String.class)
+                .flatMap(token -> {
+                    List<String> roles = tokenProvider.getRolesFromToken(token);
+                    return Mono.just(roles.contains("ADMIN"));
+                })
+                .onErrorReturn(false);
+    }
 }

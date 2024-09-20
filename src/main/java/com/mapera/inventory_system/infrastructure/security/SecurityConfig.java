@@ -24,6 +24,8 @@ public class SecurityConfig {
                 .formLogin(formLogin -> formLogin.disable())
                 .authorizeExchange(exchange -> exchange
                         .pathMatchers("/api/auth/**").permitAll()
+                        .pathMatchers("/api/admin/**").hasAuthority("ADMIN")
+                        .pathMatchers("/api/secure/**").hasAuthority("USER")
                         .anyExchange().authenticated())
                 .addFilterAt(new SecurityHeadersFilter(), SecurityWebFiltersOrder.FIRST)
                 .addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
