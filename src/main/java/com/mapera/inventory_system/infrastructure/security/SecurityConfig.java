@@ -16,9 +16,12 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    @Autowired(required = false)
+    private RateLimitingFilter rateLimitingFilter;
+
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
-        return http
+        http
                 .csrf(csrf -> csrf.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(formLogin -> formLogin.disable())
@@ -27,8 +30,11 @@ public class SecurityConfig {
                         .pathMatchers("/api/admin/**").hasAuthority("ADMIN")
                         .pathMatchers("/api/secure/**").hasAuthority("USER")
                         .anyExchange().authenticated())
-                .addFilterAt(new SecurityHeadersFilter(), SecurityWebFiltersOrder.FIRST)
-                .addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
-                .build();
+                .addFilterAt(new SecurityHeadersFilter(), SecurityWebFiltersOrder.FIRST);
+        if (rateLimitingFilter != null) {
+            http.addFilterBefore(rateLimitingFilter, SecurityWebFiltersOrder.AUTHENTICATION);
+        }
+        http.addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION);
+        return http.build();
     }
 }
