@@ -14,6 +14,12 @@ public class UserRepositoryImpl
     @Autowired
     UserCrudRepository userCrudRepository;
 
+    public Mono<Boolean> registeredEmail(String email) {
+        return userCrudRepository.findUserByEmail(email)
+                .flatMap(existingUser -> Mono.just(true))
+                .switchIfEmpty(Mono.just(false));
+    };
+
     @Override
     public Mono<UserEntity> registerUser(String name, String email, String password) {
         UserEntity userEntity = new UserEntity();
@@ -21,7 +27,12 @@ public class UserRepositoryImpl
         userEntity.setEmail(email);
         userEntity.setPassword(password);
         userEntity.setRoles("USER");
-        return userCrudRepository.save(userEntity);
+        return registeredEmail(email).flatMap(registered -> {
+            if (registered) {
+                throw new IllegalArgumentException("Cannot register an email that is already registered");
+            }
+            return userCrudRepository.save(userEntity);
+        });
     }
 
     @Override

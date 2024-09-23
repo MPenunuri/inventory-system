@@ -2,6 +2,8 @@ package com.mapera.inventory_system.infrastructure.security;
 
 import java.util.Date;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -10,9 +12,11 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtTokenProvider {
 
-    private final String secretKey = "this_is_a_longer_secret_key_for_development";
+    @Value("${jwt.secret}")
+    private String secretKey;
 
     public String generateToken(Long userId, List<String> roles) {
+        System.out.println(secretKey);
         Claims claims = Jwts.claims().setSubject(userId.toString());
         claims.put("roles", roles);
 
