@@ -16,7 +16,6 @@ public class JwtTokenProvider {
     private String secretKey;
 
     public String generateToken(Long userId, List<String> roles) {
-        System.out.println(secretKey);
         Claims claims = Jwts.claims().setSubject(userId.toString());
         claims.put("roles", roles);
 

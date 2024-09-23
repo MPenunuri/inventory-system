@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import com.mapera.inventory_system.application.service.MovementApplicationService;
 import com.mapera.inventory_system.domain.aggregate.inventory_product.InventoryProduct;
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.category.RegisterCategoryRequest;
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.currency.RegisterCurrencyRequest;
@@ -29,10 +30,15 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.e
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.ProductEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SubcategoryEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SupplierEntity;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.category.CategoryRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.currency.CurrencyRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.location.LocationRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.movement.MovementRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product.ProductRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product_supplier.ProductSupplierRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.stock.StockRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.subcategory.SubcategoryRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.supplier.SupplierRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.user.UserRepository;
 
 import reactor.core.publisher.Mono;
@@ -54,31 +60,59 @@ public class ProductControllerTest {
         UserRepository userRepository;
 
         @Autowired
+        MovementApplicationService movementApplicationService;
+
+        @Autowired
+        CategoryRepository categoryRepository;
+
+        @Autowired
+        SubcategoryRepository subcategoryRepository;
+
+        @Autowired
         ProductRepository productRepository;
 
         @Autowired
-        StockRepository stockRepository;
+        SupplierRepository supplierRepository;
 
         @Autowired
         ProductSupplierRepository productSupplierRepository;
 
         @Autowired
+        LocationRepository locationRepository;
+
+        @Autowired
+        CurrencyRepository currencyRepository;
+
+        @Autowired
         MovementRepository movementRepository;
 
+        @Autowired
+        StockRepository stockRepository;
+
         @BeforeEach
-        public void setup() {
-                Mono<Void> deleteStocks = stockRepository.deleteAll();
-                Mono<Void> deleteProductSupplierRelations = productSupplierRepository.deleteAll();
+        void setUp() {
                 Mono<Void> deleteMovements = movementRepository.deleteAll();
+                Mono<Void> deleteProductSupplier = productSupplierRepository.deleteAll();
+                Mono<Void> deleteSuppliers = supplierRepository.deleteAll();
+                Mono<Void> deleteStocklist = stockRepository.deleteAll();
                 Mono<Void> deleteProducts = productRepository.deleteAll();
+                Mono<Void> deleteSubcategories = subcategoryRepository.deleteAll();
+                Mono<Void> deleteCategories = categoryRepository.deleteAll();
+                Mono<Void> deleteCurrencies = currencyRepository.deleteAll();
+                Mono<Void> deleteLocations = locationRepository.deleteAll();
                 Mono<Void> deleteUsers = userRepository.deleteAll();
 
-                Mono<Void> setup = deleteStocks
-                                .then(deleteProductSupplierRelations)
+                Mono<Void> setup = deleteProductSupplier
+                                .then(deleteStocklist)
                                 .then(deleteMovements)
+                                .then(deleteSuppliers)
                                 .then(deleteProducts)
-                                .then(deleteUsers)
-                                .then();
+                                .then(deleteSubcategories)
+                                .then(deleteCategories)
+                                .then(deleteCurrencies)
+                                .then(deleteLocations)
+                                .then(deleteUsers);
+
                 setup.block();
         }
 
