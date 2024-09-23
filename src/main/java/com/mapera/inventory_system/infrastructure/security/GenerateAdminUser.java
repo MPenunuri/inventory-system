@@ -17,10 +17,10 @@ public class GenerateAdminUser {
     @Autowired
     UserCrudRepository userCrudRepository;
 
-    @Value("${spring.r2dbc.username}")
-    private String username;
+    @Value("${admin.email}")
+    private String email;
 
-    @Value("${spring.r2dbc.password}")
+    @Value("${admin.password}")
     private String password;
 
     public Mono<Void> registerAdmin(String email, String psw) {
@@ -35,9 +35,10 @@ public class GenerateAdminUser {
 
     @PostConstruct
     public void init() {
-        userCrudRepository.findUserByEmail(username)
+        userCrudRepository.findUserByEmail(email)
                 .flatMap(existingUser -> Mono.empty())
-                .switchIfEmpty(registerAdmin(username, password))
+                .switchIfEmpty(registerAdmin(
+                        email, password))
                 .subscribe();
     }
 }

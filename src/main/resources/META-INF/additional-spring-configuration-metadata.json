@@ -4,6 +4,16 @@
       "name": "jwt.secret",
       "type": "java.lang.String",
       "description": "Secret key used for signing and validating JWT tokens"
+    },
+    {
+      "name": "admin.email",
+      "type": "java.lang.String",
+      "description": "Admin email"
+    },
+    {
+      "name": "admin.password",
+      "type": "java.lang.String",
+      "description": "Admin password"
     }
   ]
 }
