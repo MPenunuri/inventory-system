@@ -13,8 +13,8 @@ public class ProductEntity {
     private Long id;
     private String name;
     private Long subcategory_id;
-    private String productPresentation;
-    private int minimumStock;
+    private String product_presentation;
+    private int minimum_stock;
     private double retail_price;
     private double wholesale_price;
     private Long price_currency_id;

@@ -136,7 +136,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
                     if (!product.getUser_id().equals(userId)) {
                         throw new IllegalArgumentException("Invalid credentials");
                     }
-                    product.setProductPresentation(productPresentation);
+                    product.setProduct_presentation(productPresentation);
                     return productCrudRepository.save(product);
                 })
                 .switchIfEmpty(Mono.error(new RuntimeException("No product found")));
@@ -150,7 +150,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
                     if (!product.getUser_id().equals(userId)) {
                         throw new IllegalArgumentException("Invalid credentials");
                     }
-                    product.setMinimumStock(minimumStock);
+                    product.setMinimum_stock(minimumStock);
                     return productCrudRepository.save(product);
                 })
                 .switchIfEmpty(Mono.error(new RuntimeException("No product found")));

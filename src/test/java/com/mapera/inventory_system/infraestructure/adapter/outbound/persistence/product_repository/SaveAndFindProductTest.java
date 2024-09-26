@@ -123,10 +123,10 @@ public class SaveAndFindProductTest {
                 .expectNextMatches(foundProduct -> foundProduct.getName().equals("Coca cola")
                         &&
                         foundProduct.getSubcategory_id() == subcategoryIdRef.get() &&
-                        foundProduct.getMinimumStock() == 20 &&
+                        foundProduct.getMinimum_stock() == 20 &&
                         foundProduct.getRetail_price() == 1 &&
                         foundProduct.getWholesale_price() == 0.75 &&
-                        foundProduct.getProductPresentation().equals("Glass container 600 ml"))
+                        foundProduct.getProduct_presentation().equals("Glass container 600 ml"))
                 .verifyComplete();
     }
 }

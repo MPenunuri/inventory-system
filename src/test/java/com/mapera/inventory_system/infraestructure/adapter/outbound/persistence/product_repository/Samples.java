@@ -30,8 +30,8 @@ public class Samples {
     public ProductEntity product() {
         ProductEntity product = new ProductEntity();
         product.setName("Coca cola");
-        product.setProductPresentation("Glass container 600 ml");
-        product.setMinimumStock(20);
+        product.setProduct_presentation("Glass container 600 ml");
+        product.setMinimum_stock(20);
         product.setRetail_price(1);
         product.setWholesale_price(.75);
         return product;

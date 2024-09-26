@@ -96,11 +96,11 @@ public class FindProductsWithMinimumStock {
                 UserEntity userEntity = samples.user();
                 ProductEntity[] products = new ProductEntity[3];
                 products[0] = samples.product();
-                products[0].setMinimumStock(40);
+                products[0].setMinimum_stock(40);
                 products[1] = samples.product();
-                products[1].setMinimumStock(10);
+                products[1].setMinimum_stock(10);
                 products[2] = samples.product();
-                products[2].setMinimumStock(50);
+                products[2].setMinimum_stock(50);
                 CategoryEntity category = samples.category();
                 SubcategoryEntity subcategory = samples.subcategory();
                 LocationEntity location = new LocationEntity();

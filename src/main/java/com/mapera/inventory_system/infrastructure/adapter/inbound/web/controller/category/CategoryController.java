@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("api/secure/category")
+@RequestMapping("/api/secure/category")
 @Validated
 public class CategoryController {
 

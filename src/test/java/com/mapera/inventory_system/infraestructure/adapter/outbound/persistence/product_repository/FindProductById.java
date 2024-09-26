@@ -200,11 +200,11 @@ public class FindProductById {
                                 .then(productRepository.updateProductPresentation(
                                                 userIdRef.get(),
                                                 productIdRef.get(),
-                                                product.getProductPresentation()))
+                                                product.getProduct_presentation()))
                                 .then(productRepository.updateMinimumStock(
                                                 userIdRef.get(),
                                                 productIdRef.get(),
-                                                product.getMinimumStock()))
+                                                product.getMinimum_stock()))
                                 .then(productRepository.updateRetailPrice(
                                                 userIdRef.get(),
                                                 productIdRef.get(),
@@ -250,8 +250,8 @@ public class FindProductById {
                                 .expectNextMatches(p -> p.getSubcategory().getCategory().getName().equals(
                                                 category.getName()) &&
                                                 p.getSubcategory().getName().equals(subcategory.getName()) &&
-                                                p.getProductPresentation().equals(product.getProductPresentation()) &&
-                                                p.getMinimumStock().getStock() == product.getMinimumStock() &&
+                                                p.getProductPresentation().equals(product.getProduct_presentation()) &&
+                                                p.getMinimumStock().getStock() == product.getMinimum_stock() &&
                                                 p.getSellingPrice().getRetail() == product.getRetail_price() &&
                                                 p.getSellingPrice().getWholesale() == product.getWholesale_price() &&
                                                 p.getSellingPrice().getCurrency().equals(currency.getName()) &&

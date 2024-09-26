@@ -187,10 +187,10 @@ public class UpdateProduct {
                                 updated).expectNextMatches(
                                                 p -> p.getName().equals("Fanta light") &&
                                                                 p.getSubcategory_id() == nextSubcategoryIdRef.get() &&
-                                                                p.getProductPresentation()
+                                                                p.getProduct_presentation()
                                                                                 .equals("Plastic bottle 600ml")
                                                                 &&
-                                                                p.getMinimumStock() == 30 &&
+                                                                p.getMinimum_stock() == 30 &&
                                                                 p.getRetail_price() == 1.25 &&
                                                                 p.getWholesale_price() == 1.00 &&
                                                                 p.getPrice_currency_id() == nextCurrencyIdRef.get())
