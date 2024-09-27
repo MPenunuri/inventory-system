@@ -2,6 +2,7 @@ package com.mapera.inventory_system.infrastructure.security;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
@@ -9,7 +10,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -24,7 +27,7 @@ import reactor.core.publisher.Mono;
 public class RateLimitingFilter implements WebFilter {
 
     private final ConcurrentHashMap<String, ClientRequestInfo> clientRequests = new ConcurrentHashMap<>();
-    private static final int MAX_REQUESTS_PER_SECOND = 5;
+    private static final int MAX_REQUESTS_PER_SECOND = 10;
 
     @Override
     public @NonNull Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull WebFilterChain chain) {
@@ -38,7 +41,11 @@ public class RateLimitingFilter implements WebFilter {
         synchronized (requestInfo) {
             if (requestInfo.isRateLimitExceeded()) {
                 exchange.getResponse().setStatusCode(HttpStatus.TOO_MANY_REQUESTS);
-                return exchange.getResponse().setComplete();
+                String jsonResponse = "{\"error\": \"Too many requests\"}";
+                exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
+                DataBuffer buffer = exchange.getResponse().bufferFactory()
+                        .wrap(jsonResponse.getBytes(StandardCharsets.UTF_8));
+                return exchange.getResponse().writeWith(Mono.just(buffer));
             }
         }
         return chain.filter(exchange);
