@@ -1,6 +1,7 @@
 
 package com.mapera.inventory_system.infrastructure.security;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,6 +21,11 @@ public class JwtAuthenticationFilter extends AuthenticationWebFilter {
         setServerAuthenticationConverter(new ServerAuthenticationConverter() {
             @Override
             public Mono<Authentication> convert(ServerWebExchange exchange) {
+
+                if (HttpMethod.OPTIONS.equals(exchange.getRequest().getMethod())) {
+                    return Mono.empty(); // No realizar autenticación para OPTIONS
+                }
+
                 String token = extractToken(exchange);
                 return Mono.justOrEmpty(new UsernamePasswordAuthenticationToken(null, token));
             }

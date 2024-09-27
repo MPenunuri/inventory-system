@@ -27,9 +27,8 @@ public class SecurityConfig {
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(formLogin -> formLogin.disable())
                 .authorizeExchange(exchange -> exchange
-                        .pathMatchers(HttpMethod.OPTIONS,
-                                "/api/auth/**")
-                        .permitAll()
+                        .pathMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
+                        .pathMatchers("/api/auth/**").permitAll()
                         .pathMatchers("/api/admin/**").hasAuthority("ADMIN")
                         .pathMatchers("/api/secure/**").hasAuthority("USER")
                         .anyExchange().authenticated())

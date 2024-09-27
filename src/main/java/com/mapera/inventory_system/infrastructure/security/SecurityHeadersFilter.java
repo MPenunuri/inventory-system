@@ -1,5 +1,6 @@
 package com.mapera.inventory_system.infrastructure.security;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
@@ -18,6 +19,17 @@ public class SecurityHeadersFilter implements WebFilter {
         exchange.getResponse().getHeaders().add("Pragma", "no-cache");
         exchange.getResponse().getHeaders().add("Content-Security-Policy", "default-src 'self'");
         exchange.getResponse().getHeaders().add("Referrer-Policy", "no-referrer");
+
+        exchange.getResponse().getHeaders().add(
+                HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        exchange.getResponse().getHeaders().add(
+                HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS,
+                "GET, POST, PATCH, DELETE, OPTIONS");
+        exchange.getResponse().getHeaders().add(
+                HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS,
+                "Authorization, Content-Type");
+        exchange.getResponse().getHeaders().add(
+                HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
         return chain.filter(exchange);
     }
 }
