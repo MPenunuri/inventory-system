@@ -4,6 +4,7 @@ package com.mapera.inventory_system.infrastructure.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -26,7 +27,9 @@ public class SecurityConfig {
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(formLogin -> formLogin.disable())
                 .authorizeExchange(exchange -> exchange
-                        .pathMatchers("/api/auth/**").permitAll()
+                        .pathMatchers(HttpMethod.OPTIONS,
+                                "/api/auth/**")
+                        .permitAll()
                         .pathMatchers("/api/admin/**").hasAuthority("ADMIN")
                         .pathMatchers("/api/secure/**").hasAuthority("USER")
                         .anyExchange().authenticated())
