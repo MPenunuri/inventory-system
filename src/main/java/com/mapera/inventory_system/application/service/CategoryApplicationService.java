@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mapera.inventory_system.application.port.outbound.CategoryPersitencePort;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.category.CategoriesAndSubcategoriesDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.CategoryEntity;
 
 import reactor.core.publisher.Flux;
@@ -21,6 +22,10 @@ public class CategoryApplicationService {
 
     public Flux<CategoryEntity> getCategories(Long userId) {
         return categoryPersitencePort.getCategories(userId);
+    }
+
+    public Flux<CategoriesAndSubcategoriesDTO> getCategoriesAndSubcategories(Long userId) {
+        return categoryPersitencePort.getCategoriesAndSubcategories(userId);
     }
 
     public Mono<CategoryEntity> updateCategoryName(

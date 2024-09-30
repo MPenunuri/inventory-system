@@ -11,6 +11,7 @@ import com.mapera.inventory_system.application.security.AuthenticationService;
 import com.mapera.inventory_system.application.service.CategoryApplicationService;
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.category.PatchCategoryRequest;
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.category.RegisterCategoryRequest;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.category.CategoriesAndSubcategoriesDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.CategoryEntity;
 
 import jakarta.validation.Valid;
@@ -49,6 +50,13 @@ public class CategoryController {
     public Flux<CategoryEntity> getCategories() {
         return authService.getUserIdFromToken().flatMapMany(userId -> {
             return categoryApplicationService.getCategories(userId);
+        });
+    }
+
+    @GetMapping("/with-subcategories-info")
+    public Flux<CategoriesAndSubcategoriesDTO> getCategoriesAndSubcategories() {
+        return authService.getUserIdFromToken().flatMapMany(userId -> {
+            return categoryApplicationService.getCategoriesAndSubcategories(userId);
         });
     }
 

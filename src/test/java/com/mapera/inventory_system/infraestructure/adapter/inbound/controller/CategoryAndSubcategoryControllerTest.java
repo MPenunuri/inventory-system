@@ -19,6 +19,7 @@ import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.catego
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.category.RegisterCategoryRequest;
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.subcategory.PatchSubategoryRequest;
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.subcategory.RegisterSubcategoryRequest;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.category.CategoriesAndSubcategoriesDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.CategoryEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.category.CategoryRepository;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.currency.CurrencyRepository;
@@ -226,6 +227,15 @@ public class CategoryAndSubcategoryControllerTest {
                                 .bodyValue(patchSubcategoryRequest)
                                 .exchange()
                                 .expectStatus().isOk();
+
+                // Test get categories and subcategories method
+
+                webTestClient.get()
+                                .uri("/api/secure/category/with-subcategories-info")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.get()).exchange()
+                                .expectStatus().isOk()
+                                .expectBodyList(CategoriesAndSubcategoriesDTO.class)
+                                .hasSize(2);
 
                 // Test delete methods
 

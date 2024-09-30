@@ -6,6 +6,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
 import com.mapera.inventory_system.application.port.outbound.CategoryPersitencePort;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.category.CategoriesAndSubcategoriesDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.CategoryEntity;
 
 import reactor.core.publisher.Flux;
@@ -28,6 +29,12 @@ public class CategoryRepositoryImpl implements CategoryRepositoryCustom, Categor
     @Override
     public Flux<CategoryEntity> getCategories(Long userId) {
         return categoryCrudRepository.findAllUserCategories(userId)
+                .switchIfEmpty(Mono.error(new RuntimeException("No categories found")));
+    }
+
+    @Override
+    public Flux<CategoriesAndSubcategoriesDTO> getCategoriesAndSubcategories(Long userId) {
+        return categoryCrudRepository.getCategoriesAndSubcategories(userId)
                 .switchIfEmpty(Mono.error(new RuntimeException("No categories found")));
     }
 
