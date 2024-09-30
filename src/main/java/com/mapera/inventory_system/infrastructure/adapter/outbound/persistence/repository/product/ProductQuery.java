@@ -11,14 +11,20 @@ public class ProductQuery {
                         "p.wholesale_price AS wholesale_price, ";
 
         public static final String STANDARD_QUERY = PRODUCT_ATTRIBUTES_SELECTION +
+                        "p.user_id AS user_id, " +
                         "s.name AS subcategory_name, " +
                         "c.id AS category_id, " +
                         "c.name AS category_name, " +
-                        "pc.name AS price_currency " +
+                        "pc.name AS price_currency, " +
+                        "SUM(sl.quantity) AS total_stock " +
                         "FROM products p " +
                         "LEFT JOIN subcategories s ON p.subcategory_id = s.id " +
                         "LEFT JOIN categories c ON s.category_id = c.id " +
-                        "LEFT JOIN currencies pc ON pc.id = p.price_currency_id ";
+                        "LEFT JOIN currencies pc ON pc.id = p.price_currency_id " +
+                        "LEFT JOIN stock_list sl ON sl.product_id = p.id " +
+                        "GROUP BY p.id, p.user_id, p.name, p.subcategory_id, p.product_presentation, p.minimum_stock, "
+                        +
+                        "p.retail_price, p.wholesale_price, s.name, c.id, c.name, pc.name ";
 
         public static final String STOCK_DATA_CTE = "WITH StockData AS ( " +
                         "SELECT sl.product_id AS product_id, sl.id AS stock_id, " +
