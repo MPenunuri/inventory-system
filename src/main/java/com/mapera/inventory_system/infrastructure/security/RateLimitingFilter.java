@@ -27,7 +27,7 @@ import reactor.core.publisher.Mono;
 public class RateLimitingFilter implements WebFilter {
 
     private final ConcurrentHashMap<String, ClientRequestInfo> clientRequests = new ConcurrentHashMap<>();
-    private static final int MAX_REQUESTS_PER_SECOND = 10;
+    private static final int MAX_REQUESTS_PER_SECOND = 20;
 
     @Override
     public @NonNull Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull WebFilterChain chain) {
