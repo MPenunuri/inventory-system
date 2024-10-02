@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mapera.inventory_system.application.port.outbound.CurrencyPersistencePort;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.currency.CurrencyDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.CurrencyEntity;
 
 import reactor.core.publisher.Flux;
@@ -15,7 +16,7 @@ public class CurrencyApplicationService {
     @Autowired
     private CurrencyPersistencePort currencyPersistencePort;
 
-    public Flux<CurrencyEntity> getCurrencies(Long userId) {
+    public Flux<CurrencyDTO> getCurrencies(Long userId) {
         return currencyPersistencePort.getCurrencies(userId);
     }
 

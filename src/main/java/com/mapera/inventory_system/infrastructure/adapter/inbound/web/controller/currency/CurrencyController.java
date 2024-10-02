@@ -17,6 +17,7 @@ import com.mapera.inventory_system.application.security.AuthenticationService;
 import com.mapera.inventory_system.application.service.CurrencyApplicationService;
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.currency.PatchCurrencyRequest;
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.currency.RegisterCurrencyRequest;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.currency.CurrencyDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.CurrencyEntity;
 
 import jakarta.validation.Valid;
@@ -45,7 +46,7 @@ public class CurrencyController {
     }
 
     @GetMapping
-    public Flux<CurrencyEntity> getCurrencies() {
+    public Flux<CurrencyDTO> getCurrencies() {
         return authService.getUserIdFromToken().flatMapMany(userId -> {
             return currencyApplicationService.getCurrencies(userId);
         });
