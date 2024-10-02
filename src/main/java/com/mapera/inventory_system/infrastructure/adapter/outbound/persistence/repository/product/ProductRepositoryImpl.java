@@ -122,6 +122,9 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
                     if (!product.getUser_id().equals(userId)) {
                         throw new IllegalArgumentException("Invalid credentials");
                     }
+                    if (subcategoryId == null) {
+                        throw new IllegalArgumentException("Subcategory ID cannot be null");
+                    }
                     product.setSubcategory_id(subcategoryId);
                     return productCrudRepository.save(product);
                 })
@@ -191,6 +194,9 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
                 .flatMap(product -> {
                     if (!product.getUser_id().equals(userId)) {
                         throw new IllegalArgumentException("Invalid credentials");
+                    }
+                    if (priceCurrencyId == null) {
+                        throw new IllegalArgumentException("Currency ID cannot be null");
                     }
                     product.setPrice_currency_id(priceCurrencyId);
                     return productCrudRepository.save(product);
