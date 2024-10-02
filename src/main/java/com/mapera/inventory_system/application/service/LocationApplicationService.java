@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.mapera.inventory_system.application.port.outbound.LocationPersistencePort;
 import com.mapera.inventory_system.domain.entity.Location;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.location.LocationDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.LocationEntity;
 
 import reactor.core.publisher.Flux;
@@ -16,7 +17,7 @@ public class LocationApplicationService {
     @Autowired
     private LocationPersistencePort locationPersistencePort;
 
-    public Flux<LocationEntity> getLocations(Long userId) {
+    public Flux<LocationDTO> getLocations(Long userId) {
         return locationPersistencePort.getLocations(userId);
     }
 

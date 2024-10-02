@@ -18,6 +18,7 @@ import com.mapera.inventory_system.application.service.LocationApplicationServic
 import com.mapera.inventory_system.domain.entity.Location;
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.location.PatchLocationRequest;
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.location.RegisterLocationRequest;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.location.LocationDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.LocationEntity;
 
 import jakarta.validation.Valid;
@@ -50,7 +51,7 @@ public class LocationController {
     }
 
     @GetMapping
-    public Flux<LocationEntity> getLocations() {
+    public Flux<LocationDTO> getLocations() {
         return authService.getUserIdFromToken().flatMapMany(userId -> {
             return locationApplicationService.getLocations(userId);
         });
