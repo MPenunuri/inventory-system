@@ -15,6 +15,7 @@ public class ProductQuery {
                         "s.name AS subcategory_name, " +
                         "c.id AS category_id, " +
                         "c.name AS category_name, " +
+                        "pc.id AS price_currency_id, " +
                         "pc.name AS price_currency, " +
                         "SUM(sl.quantity) AS total_stock " +
                         "FROM products p " +

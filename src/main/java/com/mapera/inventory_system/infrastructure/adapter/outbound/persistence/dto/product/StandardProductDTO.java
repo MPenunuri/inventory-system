@@ -16,5 +16,6 @@ public class StandardProductDTO {
     private int totalStock;
     private double retailPrice;
     private double wholesalePrice;
+    private int priceCurrencyId;
     private String priceCurrency;
 }
