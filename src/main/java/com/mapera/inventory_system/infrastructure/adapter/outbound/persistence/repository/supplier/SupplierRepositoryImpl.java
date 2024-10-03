@@ -5,6 +5,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
 import com.mapera.inventory_system.application.port.outbound.SupplierPersistencePort;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.supplier.SupplierDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SupplierEntity;
 
 import reactor.core.publisher.Flux;
@@ -26,7 +27,7 @@ public class SupplierRepositoryImpl
     }
 
     @Override
-    public Flux<SupplierEntity> getSuppliers(Long userId) {
+    public Flux<SupplierDTO> getSuppliers(Long userId) {
         return supplierCrudRepository.findAllUserSuppliers(userId)
                 .switchIfEmpty(Mono.error(new RuntimeException("Not suppliers found")));
     }

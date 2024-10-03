@@ -14,6 +14,7 @@ import com.mapera.inventory_system.application.service.SupplierApplicationServic
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.supplier.ProductSupplierRelationRequest;
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.supplier.SupplierPatchRequest;
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.supplier.SupplierRegisterRequest;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.supplier.SupplierDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SupplierEntity;
 
 import jakarta.validation.Valid;
@@ -52,7 +53,7 @@ public class SupplierController {
     }
 
     @GetMapping
-    public Flux<SupplierEntity> getSuppliers() {
+    public Flux<SupplierDTO> getSuppliers() {
         return authService.getUserIdFromToken().flatMapMany(userId -> {
             return supplierApplicationService.getSuppliers(userId);
         });

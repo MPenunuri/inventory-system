@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mapera.inventory_system.application.port.outbound.SupplierPersistencePort;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.supplier.SupplierDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.SupplierEntity;
 
 import reactor.core.publisher.Flux;
@@ -19,7 +20,7 @@ public class SupplierApplicationService {
         return supplierPersistencePort.registerSupplier(userId, name);
     }
 
-    public Flux<SupplierEntity> getSuppliers(Long userId) {
+    public Flux<SupplierDTO> getSuppliers(Long userId) {
         return supplierPersistencePort.getSuppliers(userId);
     }
 
