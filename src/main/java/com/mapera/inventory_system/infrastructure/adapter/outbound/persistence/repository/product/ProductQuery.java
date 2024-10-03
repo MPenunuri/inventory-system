@@ -75,7 +75,7 @@ public class ProductQuery {
                         "c.name AS category_name, " +
                         "pc.name AS price_currency, " +
                         "su.id AS supplier_id, " +
-                        "su.name AS supplier_name, " +
+                        "su.name AS supplier_name " +
                         "FROM products p " +
                         "LEFT JOIN subcategories s ON p.subcategory_id = s.id " +
                         "LEFT JOIN categories c ON s.category_id = c.id  " +
