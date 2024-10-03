@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.mapera.inventory_system.application.port.outbound.ProductPersistencePort;
 import com.mapera.inventory_system.domain.aggregate.inventory_product.InventoryProduct;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.LocationProductDTO;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.NoSupplierProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.StandardProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.StockProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.SupplierProductDTO;
@@ -65,6 +66,12 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
     @Override
     public Flux<SupplierProductDTO> findProductsBySupplierId(Long userId, Long supplierId) {
         return productCrudRepository.findProductsBySupplierId(userId, supplierId)
+                .switchIfEmpty(Mono.error(new RuntimeException("No products found")));
+    }
+
+    @Override
+    public Flux<NoSupplierProductDTO> findProductsWithNoSupplierRelation(Long userId, Long supplierId) {
+        return productCrudRepository.findProductsWithNoSupplierRelation(userId, supplierId)
                 .switchIfEmpty(Mono.error(new RuntimeException("No products found")));
     }
 

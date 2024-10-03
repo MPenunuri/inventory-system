@@ -59,6 +59,13 @@ public class SupplierController {
         });
     }
 
+    @GetMapping("/no-product-relation/{productId}")
+    public Flux<SupplierEntity> getSuppliersWithNoProductRelation(@PathVariable Long productId) {
+        return authService.getUserIdFromToken().flatMapMany(userId -> {
+            return supplierApplicationService.getSuppliersWithNoProductRelation(userId, productId);
+        });
+    }
+
     @PatchMapping
     public Mono<SupplierEntity> renameSupplier(
             @Valid @RequestBody SupplierPatchRequest request) {

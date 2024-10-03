@@ -33,6 +33,12 @@ public class SupplierRepositoryImpl
     }
 
     @Override
+    public Flux<SupplierEntity> getSuppliersWithNoProductRelation(Long userId, Long productId) {
+        return supplierCrudRepository.getSuppliersWithNoProductRelation(userId, productId)
+                .switchIfEmpty(Mono.error(new RuntimeException("Not suppliers found")));
+    }
+
+    @Override
     public Mono<SupplierEntity> renameSupplier(Long userId, Long supplierId, String name) {
         return supplierCrudRepository.findById(supplierId).flatMap(s -> {
             if (!s.getUser_id().equals(userId)) {

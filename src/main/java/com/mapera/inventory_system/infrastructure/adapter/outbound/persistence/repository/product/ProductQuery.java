@@ -83,6 +83,19 @@ public class ProductQuery {
                         "LEFT JOIN suppliers su ON su.id = ps.supplier_id " +
                         "LEFT JOIN currencies pc ON pc.id = p.price_currency_id ";
 
+        public static final String NO_SUPPLIER_QUERY = "SELECT DISTINCT p.id AS product_id, " +
+                        "p.name AS product_name, " +
+                        "p.subcategory_id AS subcategory_id, " +
+                        "p.product_presentation AS product_presentation, " +
+                        "s.name AS subcategory_name, " +
+                        "c.id AS category_id, " +
+                        "c.name AS category_name " +
+                        "FROM products p " +
+                        "LEFT JOIN subcategories s ON p.subcategory_id = s.id " +
+                        "LEFT JOIN categories c ON s.category_id = c.id  " +
+                        "LEFT JOIN product_supplier ps ON ps.product_id = p.id " +
+                        "WHERE (ps.supplier_id IS NULL OR ps.supplier_id != :supplierId) AND p.user_id = :userId ";
+
         public static final String LOCATION_QUERY = PRODUCT_ATTRIBUTES_SELECTION +
                         "s.name AS subcategory_name, " +
                         "c.id AS category_id, " +

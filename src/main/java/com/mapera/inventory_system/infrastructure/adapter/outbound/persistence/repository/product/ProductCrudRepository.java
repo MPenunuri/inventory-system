@@ -5,6 +5,7 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.FullProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.LocationProductDTO;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.NoSupplierProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.StandardProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.StockProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.SupplierProductDTO;
@@ -35,6 +36,9 @@ public interface ProductCrudRepository extends ReactiveCrudRepository<ProductEnt
 
         @Query(ProductQuery.SUPPLIER_QUERY + "WHERE su.id = :supplierId AND p.user_id = :userId")
         Flux<SupplierProductDTO> findProductsBySupplierId(Long userId, Long supplierId);
+
+        @Query(ProductQuery.NO_SUPPLIER_QUERY)
+        Flux<NoSupplierProductDTO> findProductsWithNoSupplierRelation(Long userId, Long supplierId);
 
         @Query(ProductQuery.LOCATION_QUERY + "WHERE l.id = :locationId AND p.user_id = :userId")
         Flux<LocationProductDTO> findProductsByLocationid(Long userId, Long locationId);

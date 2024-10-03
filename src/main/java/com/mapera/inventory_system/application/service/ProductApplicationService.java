@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.mapera.inventory_system.application.port.outbound.ProductPersistencePort;
 import com.mapera.inventory_system.domain.aggregate.inventory_product.InventoryProduct;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.LocationProductDTO;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.NoSupplierProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.StandardProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.StockProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.SupplierProductDTO;
@@ -45,6 +46,10 @@ public class ProductApplicationService {
 
     public Flux<SupplierProductDTO> findProductsBySupplierId(Long userId, Long supplierId) {
         return productPersistencePort.findProductsBySupplierId(userId, supplierId);
+    };
+
+    public Flux<NoSupplierProductDTO> findProductsWithNoSupplierRelation(Long userId, Long supplierId) {
+        return productPersistencePort.findProductsWithNoSupplierRelation(userId, supplierId);
     };
 
     public Flux<LocationProductDTO> findProductsByLocationid(Long userId, Long locationId) {

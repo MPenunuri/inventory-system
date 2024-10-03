@@ -27,4 +27,11 @@ public interface SupplierCrudRepository extends ReactiveCrudRepository<SupplierE
             "WHERE s.user_id = :userId " +
             "GROUP BY s.id, s.name ")
     public Flux<SupplierDTO> findAllUserSuppliers(Long userId);
+
+    @Query("SELECT DISTINCT s.id AS supplier_id, " +
+            "s.name AS supplier_name " +
+            "FROM suppliers s " +
+            "LEFT JOIN product_supplier ps ON ps.supplier_id = s.id " +
+            "WHERE (ps.product_id IS NULL OR ps.product_id != :productId) AND p.user_id = :userId ")
+    Flux<SupplierEntity> getSuppliersWithNoProductRelation(Long userId, Long productId);
 }

@@ -11,6 +11,7 @@ import com.mapera.inventory_system.application.security.AuthenticationService;
 import com.mapera.inventory_system.application.service.ProductApplicationService;
 import com.mapera.inventory_system.domain.aggregate.inventory_product.InventoryProduct;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.LocationProductDTO;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.NoSupplierProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.StandardProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.StockProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.SupplierProductDTO;
@@ -60,6 +61,13 @@ public class ProductGetController {
     public Flux<SupplierProductDTO> getProductsBySupplierId(@PathVariable long supplierId) {
         return authService.getUserIdFromToken().flatMapMany(userId -> {
             return productApplicationService.findProductsBySupplierId(userId, supplierId);
+        });
+    }
+
+    @GetMapping("/no-supplier/{supplierId}")
+    public Flux<NoSupplierProductDTO> getProductsWithNoSupplierRelation(@PathVariable long supplierId) {
+        return authService.getUserIdFromToken().flatMapMany(userId -> {
+            return productApplicationService.findProductsWithNoSupplierRelation(userId, supplierId);
         });
     }
 

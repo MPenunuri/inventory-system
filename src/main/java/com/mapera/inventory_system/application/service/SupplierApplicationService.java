@@ -24,6 +24,10 @@ public class SupplierApplicationService {
         return supplierPersistencePort.getSuppliers(userId);
     }
 
+    public Flux<SupplierEntity> getSuppliersWithNoProductRelation(Long userId, Long productId) {
+        return supplierPersistencePort.getSuppliersWithNoProductRelation(userId, productId);
+    }
+
     public Mono<SupplierEntity> renameSupplier(Long userId, Long supplierId, String name) {
         return supplierPersistencePort.renameSupplier(userId, supplierId, name);
     }
