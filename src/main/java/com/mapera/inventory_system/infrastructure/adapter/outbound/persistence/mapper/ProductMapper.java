@@ -24,7 +24,7 @@ public class ProductMapper {
         Category category = new Category(dto.getCategoryId(), dto.getCategoryName());
 
         Subcategory subcategory = new Subcategory(
-                dto.getProductId(), category, dto.getSubcategoryName());
+                dto.getSubcategoryId(), category, dto.getSubcategoryName());
 
         InventoryProduct inventoryProduct = new InventoryProduct(dto.getProductName());
         inventoryProduct.setId(dto.getProductId());
