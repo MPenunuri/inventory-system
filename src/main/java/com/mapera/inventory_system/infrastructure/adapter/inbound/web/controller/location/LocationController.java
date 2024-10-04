@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,6 +21,7 @@ import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.locati
 import com.mapera.inventory_system.infrastructure.adapter.inbound.web.dto.location.RegisterLocationRequest;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.location.LocationDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.LocationEntity;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.stock.StockRepositoryImpl;
 
 import jakarta.validation.Valid;
 import reactor.core.publisher.Flux;
@@ -35,6 +37,9 @@ public class LocationController {
 
     @Autowired
     private AuthenticationService authService;
+
+    @Autowired
+    private StockRepositoryImpl stockRepositoryImpl;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -87,6 +92,13 @@ public class LocationController {
     public Mono<Void> deleteLocation(@PathVariable Long id) {
         return authService.getUserIdFromToken().flatMap(userId -> {
             return locationApplicationService.deleteLocationById(userId, id);
+        });
+    }
+
+    @DeleteMapping("/stock")
+    public Mono<Boolean> removeProductStockInLocation(@RequestParam Long locationId, @RequestParam Long productId) {
+        return authService.getUserIdFromToken().flatMap(userId -> {
+            return stockRepositoryImpl.removeProductStockInLocation(userId, locationId, productId);
         });
     }
 }
