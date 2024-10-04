@@ -92,9 +92,14 @@ public class ProductQuery {
                         "c.name AS category_name " +
                         "FROM products p " +
                         "LEFT JOIN subcategories s ON p.subcategory_id = s.id " +
-                        "LEFT JOIN categories c ON s.category_id = c.id  " +
-                        "LEFT JOIN product_supplier ps ON ps.product_id = p.id " +
-                        "WHERE (ps.supplier_id IS NULL OR ps.supplier_id != :supplierId) AND p.user_id = :userId ";
+                        "LEFT JOIN categories c ON s.category_id = c.id " +
+                        "WHERE p.user_id = :userId " +
+                        "AND NOT EXISTS ( " +
+                        "    SELECT 1 " +
+                        "    FROM product_supplier ps " +
+                        "    WHERE ps.product_id = p.id " +
+                        "    AND ps.supplier_id = :supplierId " +
+                        ")";
 
         public static final String LOCATION_QUERY = PRODUCT_ATTRIBUTES_SELECTION +
                         "s.name AS subcategory_name, " +
