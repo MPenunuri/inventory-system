@@ -17,7 +17,8 @@ public class StockRepositoryImpl implements StockRepositoryCustom {
     public Mono<Boolean> addProductStockInLocation(Long userId,
             long locationId, long productId, int quantity,
             Integer maximumStorage) {
-        return stockCrudRepository.findProductStockInLocation(productId, locationId)
+        return stockCrudRepository.findProductStockInLocation(productId, locationId,
+                userId)
                 .flatMap(stock -> {
                     return Mono.just(false);
                 })
@@ -35,11 +36,25 @@ public class StockRepositoryImpl implements StockRepositoryCustom {
 
     }
 
+    public Mono<Boolean> setMaximumStorageInLocation(Long userId,
+            long locationId, long productId, int quantity) {
+        return stockCrudRepository.findProductStockInLocation(productId, locationId, userId)
+                .flatMap(stock -> {
+                    stock.setMaximumStorage(quantity);
+                    return stockCrudRepository.save(stock).then(Mono.just(true));
+                })
+                .switchIfEmpty(Mono.defer(() -> {
+                    return Mono.just(false);
+                }));
+
+    }
+
     @Override
     public Mono<Boolean> removeProductStockInLocation(Long userId,
             Long locationId, Long product_id) {
         // Check first if there is a current stock
-        return stockCrudRepository.findProductStockInLocation(product_id, locationId)
+        return stockCrudRepository.findProductStockInLocation(product_id, locationId,
+                userId)
                 .flatMap(stock -> {
                     if (!stock.getUser_id().equals(userId)) {
                         throw new IllegalArgumentException("Invalid credentials");
@@ -76,7 +91,8 @@ public class StockRepositoryImpl implements StockRepositoryCustom {
     public Mono<StockEntity> increseStockByLocationAndProduct(
             Long userId, Long locationId, Long product_id, int increse) {
         // Check if there is a current stock
-        return stockCrudRepository.findProductStockInLocation(product_id, locationId)
+        return stockCrudRepository.findProductStockInLocation(product_id, locationId,
+                userId)
                 // If there is, increse stock quantity
                 .flatMap(stock -> {
                     if (!stock.getUser_id().equals(userId)) {
@@ -98,7 +114,8 @@ public class StockRepositoryImpl implements StockRepositoryCustom {
     @Override
     public Mono<StockEntity> decreseStockByLocationAndProduct(
             Long userId, Long locationId, Long product_id, int decrese) {
-        return stockCrudRepository.findProductStockInLocation(product_id, locationId)
+        return stockCrudRepository.findProductStockInLocation(product_id, locationId,
+                userId)
                 .flatMap(stock -> {
                     if (!stock.getUser_id().equals(userId)) {
                         throw new IllegalArgumentException("Invalid credentials");

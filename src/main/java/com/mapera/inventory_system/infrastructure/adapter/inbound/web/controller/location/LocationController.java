@@ -88,6 +88,15 @@ public class LocationController {
         });
     }
 
+    @PatchMapping("/maximum-stock/{locationId}/{productId}/{quantity}")
+    public Mono<Boolean> setMaximumStorageInLocation(
+            @PathVariable Long locationId, @PathVariable Long productId, @PathVariable int quantity) {
+        return authService.getUserIdFromToken().flatMap(userId -> {
+            return stockRepositoryImpl.setMaximumStorageInLocation(
+                    userId, locationId, productId, quantity);
+        });
+    }
+
     @DeleteMapping("/{id}")
     public Mono<Void> deleteLocation(@PathVariable Long id) {
         return authService.getUserIdFromToken().flatMap(userId -> {

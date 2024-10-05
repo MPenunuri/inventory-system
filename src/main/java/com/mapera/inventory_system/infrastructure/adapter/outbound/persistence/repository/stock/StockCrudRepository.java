@@ -15,6 +15,7 @@ public interface StockCrudRepository extends ReactiveCrudRepository<StockEntity,
     @Query("DELETE FROM stock_list sl WHERE sl.user_id = :userId ")
     Mono<Void> deleteByUserId(Long userId);
 
-    @Query("Select * FROM stock_list sl WHERE sl.product_id = :productId AND sl.location_id = :locationId")
-    Mono<StockEntity> findProductStockInLocation(Long productId, Long locationId);
+    @Query("SELECT * FROM stock_list sl WHERE sl.product_id = :productId AND sl.location_id = :locationId " +
+            "AND sl.user_id = :userId ")
+    Mono<StockEntity> findProductStockInLocation(Long productId, Long locationId, Long userId);
 }

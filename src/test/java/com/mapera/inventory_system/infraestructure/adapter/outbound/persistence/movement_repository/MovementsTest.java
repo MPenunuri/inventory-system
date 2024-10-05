@@ -330,7 +330,7 @@ public class MovementsTest {
 
                 // Verify if stock was correctly transfered
                 Mono<StockEntity> stockOnAlternativeWarehouse = stockRepository.findProductStockInLocation(
-                                productId.get(), location2Id.get());
+                                productId.get(), location2Id.get(), userId.get());
 
                 StepVerifier.create(stockOnAlternativeWarehouse).expectNextMatches(s -> s.getQuantity() == 10)
                                 .verifyComplete();
@@ -340,7 +340,7 @@ public class MovementsTest {
                 StepVerifier.create(addMovements.setCancelations()).verifyComplete();
 
                 Mono<StockEntity> stockOnCentralWarehouse = stockRepository.findProductStockInLocation(
-                                productId.get(), location1Id.get());
+                                productId.get(), location1Id.get(), userId.get());
 
                 StepVerifier.create(stockOnAlternativeWarehouse).expectNextMatches(s -> s.getQuantity() == 0)
                                 .verifyComplete();

@@ -154,7 +154,7 @@ public class StockRepositoryCustomMethods {
 
                 Mono<StockEntity> foundStock = stockRepository
                                 .findProductStockInLocation(
-                                                productIdRef.get(), locationIdRef.get());
+                                                productIdRef.get(), locationIdRef.get(), userIdRef.get());
 
                 Mono<StockEntity> increseStock = foundStock.flatMap(stock -> {
                         return stockRepository.increseQuantityInStock(stock.getId(), 5);
