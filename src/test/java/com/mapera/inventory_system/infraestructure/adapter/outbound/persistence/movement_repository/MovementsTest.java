@@ -203,12 +203,14 @@ public class MovementsTest {
                                 .expectNextMatches(p -> p.getTotalStock() == 181)
                                 .verifyComplete();
 
-                Flux<EntryMovementDTO> entryFound = movementRepository.getEntries(userId.get());
-                Flux<AcquisitionDTO> acquisitionFound = movementRepository.getAcquisitions(userId.get());
-                Flux<CustomerReturnDTO> customerReturnFound = movementRepository.getCustomerReturns(userId.get());
+                Flux<EntryMovementDTO> entryFound = movementRepository.getEntries(userId.get(), productId.get());
+                Flux<AcquisitionDTO> acquisitionFound = movementRepository.getAcquisitions(userId.get(),
+                                productId.get());
+                Flux<CustomerReturnDTO> customerReturnFound = movementRepository.getCustomerReturns(userId.get(),
+                                productId.get());
                 Flux<EntryMovementDTO> entryAdjusmentFound = movementRepository
-                                .getEntryInventoryAdjustments(userId.get());
-                Flux<ProductionDTO> productionFound = movementRepository.getProductions(userId.get());
+                                .getEntryInventoryAdjustments(userId.get(), productId.get());
+                Flux<ProductionDTO> productionFound = movementRepository.getProductions(userId.get(), productId.get());
 
                 StepVerifier.create(entryFound).expectNextCount(10).verifyComplete();
                 StepVerifier.create(acquisitionFound).expectNextCount(4).verifyComplete();
@@ -279,13 +281,14 @@ public class MovementsTest {
                                 .expectNextMatches(p -> p.getTotalStock() == 70)
                                 .verifyComplete();
 
-                Flux<OutputMovementDTO> foundOutput = movementRepository.getOutputs(userId.get());
-                Flux<SaleDTO> foundSale = movementRepository.getSales(userId.get());
-                Flux<SupplierReturnDTO> foundSupplierReturn = movementRepository.getSupplierReturns(userId.get());
+                Flux<OutputMovementDTO> foundOutput = movementRepository.getOutputs(userId.get(), productId.get());
+                Flux<SaleDTO> foundSale = movementRepository.getSales(userId.get(), productId.get());
+                Flux<SupplierReturnDTO> foundSupplierReturn = movementRepository.getSupplierReturns(userId.get(),
+                                productId.get());
                 Flux<OutputMovementDTO> foundOutputAdjustment = movementRepository
-                                .getOutputInventoryAdjustments(userId.get());
+                                .getOutputInventoryAdjustments(userId.get(), productId.get());
                 Flux<OutputMovementDTO> foundInternalConsumption = movementRepository
-                                .getInternalConsumptionMovements(userId.get());
+                                .getInternalConsumptionMovements(userId.get(), productId.get());
 
                 StepVerifier.create(foundOutput).expectNextCount(7).verifyComplete();
                 StepVerifier.create(foundSale).expectNextCount(4).verifyComplete();
@@ -319,7 +322,8 @@ public class MovementsTest {
 
                 StepVerifier.create(addMovements.setTransfers()).verifyComplete();
 
-                Flux<TransferMovementDTO> foundTransfer = movementRepository.getTransfers(userId.get());
+                Flux<TransferMovementDTO> foundTransfer = movementRepository.getTransfers(userId.get(),
+                                productId.get());
 
                 StepVerifier.create(foundTransfer).expectNextCount(1).verifyComplete();
 
@@ -353,16 +357,12 @@ public class MovementsTest {
                                 .expectNextMatches(p -> p.getTotalStock() == 70)
                                 .verifyComplete();
 
-                // Verify number of tests
+                // Verify number of moves
 
-                Flux<StandardMovementDTO> foundMovement = movementRepository.getMovements(userId.get());
+                Flux<StandardMovementDTO> foundMovement = movementRepository.getMovements(userId.get(),
+                                productId.get());
 
                 StepVerifier.create(foundMovement).expectNextCount(17).verifyComplete();
-
-                Flux<StandardMovementDTO> foundMovementsByProduct = movementRepository
-                                .getMovementsByProductId(userId.get(), productId.get());
-
-                StepVerifier.create(foundMovementsByProduct).expectNextCount(17).verifyComplete();
 
         }
 

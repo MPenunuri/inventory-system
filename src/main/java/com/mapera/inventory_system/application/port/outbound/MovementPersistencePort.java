@@ -20,31 +20,29 @@ import java.time.LocalDateTime;
 
 public interface MovementPersistencePort {
 
-        Flux<StandardMovementDTO> getMovements(Long userId);
+        Flux<StandardMovementDTO> getMovements(Long userId, Long productId);
 
-        Flux<EntryMovementDTO> getEntries(Long userId);
+        Flux<EntryMovementDTO> getEntries(Long userId, Long productId);
 
-        Flux<OutputMovementDTO> getOutputs(Long userId);
+        Flux<OutputMovementDTO> getOutputs(Long userId, Long productId);
 
-        Flux<TransferMovementDTO> getTransfers(Long userId);
+        Flux<TransferMovementDTO> getTransfers(Long userId, Long productId);
 
-        Flux<AcquisitionDTO> getAcquisitions(Long userId);
+        Flux<AcquisitionDTO> getAcquisitions(Long userId, Long productId);
 
-        Flux<CustomerReturnDTO> getCustomerReturns(Long userId);
+        Flux<CustomerReturnDTO> getCustomerReturns(Long userId, Long productId);
 
-        Flux<EntryMovementDTO> getEntryInventoryAdjustments(Long userId);
+        Flux<EntryMovementDTO> getEntryInventoryAdjustments(Long userId, Long productId);
 
-        Flux<ProductionDTO> getProductions(Long userId);
+        Flux<ProductionDTO> getProductions(Long userId, Long productId);
 
-        Flux<SaleDTO> getSales(Long userId);
+        Flux<SaleDTO> getSales(Long userId, Long productId);
 
-        Flux<SupplierReturnDTO> getSupplierReturns(Long userId);
+        Flux<SupplierReturnDTO> getSupplierReturns(Long userId, Long productId);
 
-        Flux<OutputMovementDTO> getOutputInventoryAdjustments(Long userId);
+        Flux<OutputMovementDTO> getOutputInventoryAdjustments(Long userId, Long productId);
 
-        Flux<OutputMovementDTO> getInternalConsumptionMovements(Long userId);
-
-        Flux<StandardMovementDTO> getMovementsByProductId(Long userId, Long productId);
+        Flux<OutputMovementDTO> getInternalConsumptionMovements(Long userId, Long productId);
 
         Flux<AcquisitionDTO> getAcquisitionsBySupplierId(Long userId, Long supplierId);
 

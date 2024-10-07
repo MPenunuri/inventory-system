@@ -30,31 +30,31 @@ public class EntryGetController {
     @Autowired
     private AuthenticationService authService;
 
-    @GetMapping("/acquisition")
-    public Flux<AcquisitionDTO> getAcquisitions() {
+    @GetMapping("/acquisition/{productId}")
+    public Flux<AcquisitionDTO> getAcquisitions(@PathVariable Long productId) {
         return authService.getUserIdFromToken().flatMapMany(userId -> {
-            return movementApplicationService.getAcquisitions(userId);
+            return movementApplicationService.getAcquisitions(userId, productId);
         });
     }
 
-    @GetMapping("/customer-return")
-    public Flux<CustomerReturnDTO> getCustomerReturns() {
+    @GetMapping("/customer-return/{productId}")
+    public Flux<CustomerReturnDTO> getCustomerReturns(@PathVariable Long productId) {
         return authService.getUserIdFromToken().flatMapMany(userId -> {
-            return movementApplicationService.getCustomerReturns(userId);
+            return movementApplicationService.getCustomerReturns(userId, productId);
         });
     }
 
-    @GetMapping("/entry-adjustment")
-    public Flux<EntryMovementDTO> getEntryInventoryAdjustments() {
+    @GetMapping("/entry-adjustment/{productId}")
+    public Flux<EntryMovementDTO> getEntryInventoryAdjustments(@PathVariable Long productId) {
         return authService.getUserIdFromToken().flatMapMany(userId -> {
-            return movementApplicationService.getEntryInventoryAdjustments(userId);
+            return movementApplicationService.getEntryInventoryAdjustments(userId, productId);
         });
     }
 
-    @GetMapping("/production")
-    public Flux<ProductionDTO> getProductions() {
+    @GetMapping("/production/{productId}")
+    public Flux<ProductionDTO> getProductions(@PathVariable Long productId) {
         return authService.getUserIdFromToken().flatMapMany(userId -> {
-            return movementApplicationService.getProductions(userId);
+            return movementApplicationService.getProductions(userId, productId);
         });
     }
 

@@ -18,7 +18,8 @@ public class MovementQuery {
 
         public static final String ALL_QUERY = STANDARD_SELECTION +
                         STANDARD_QUERY +
-                        "WHERE m.user_id = :userId ";
+                        "WHERE p.id = :productId " +
+                        "AND m.user_id = :userId ";
 
         public static final String ENTRY_QUERY = STANDARD_SELECTION +
                         ", m.to_location_id AS to_location_id, " +
@@ -123,10 +124,7 @@ public class MovementQuery {
         public static final String INTERNAL_CONSUMPTION_QUERY = OUTPUT_QUERY +
                         "AND m.subtype = 'Internal Consumption' ";
 
-        public static final String PRODUCT_QUERY = STANDARD_SELECTION +
-                        STANDARD_QUERY +
-                        "WHERE p.id = :productId " +
-                        "AND m.user_id = :userId ";
+        ;
 
         public static final String SUPPLIER_QUERY = ACQUISITION_QUERY +
                         "AND m.supplier_id = :supplierId ";

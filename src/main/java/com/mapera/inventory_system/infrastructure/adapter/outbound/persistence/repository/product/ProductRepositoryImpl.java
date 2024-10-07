@@ -236,7 +236,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
                                     .delete(productSupplierRelation))
                             .thenMany(stockCrudRepository.findProductStock(productId, userId)
                                     .flatMap(stock -> stockCrudRepository.delete(stock)))
-                            .thenMany(movementCrudRepository.getMovementsByProductId(userId, productId)
+                            .thenMany(movementCrudRepository.getMovements(userId, productId)
                                     .flatMap(movement -> movementCrudRepository.deleteById(
                                             movement.getMovementId())))
                             .then(productCrudRepository.delete(p))

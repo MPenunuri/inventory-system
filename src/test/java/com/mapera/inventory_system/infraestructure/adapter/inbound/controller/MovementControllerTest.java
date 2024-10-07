@@ -434,7 +434,8 @@ public class MovementControllerTest {
                 // Test general get methods
 
                 webTestClient.get()
-                                .uri("/api/secure/movement")
+                                .uri("/api/secure/movement/" + product.get()
+                                                .getId())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.get())
                                 .exchange()
                                 .expectStatus().isOk()
@@ -442,7 +443,8 @@ public class MovementControllerTest {
                                 .hasSize(9);
 
                 webTestClient.get()
-                                .uri("/api/secure/movement/entry")
+                                .uri("/api/secure/movement/entry/" + product.get()
+                                                .getId())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.get())
                                 .exchange()
                                 .expectStatus().isOk()
@@ -450,7 +452,8 @@ public class MovementControllerTest {
                                 .hasSize(4);
 
                 webTestClient.get()
-                                .uri("/api/secure/movement/output")
+                                .uri("/api/secure/movement/output/" + product.get()
+                                                .getId())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.get())
                                 .exchange()
                                 .expectStatus().isOk()
@@ -458,24 +461,18 @@ public class MovementControllerTest {
                                 .hasSize(4);
 
                 webTestClient.get()
-                                .uri("/api/secure/movement/transfer")
+                                .uri("/api/secure/movement/transfer/" + product.get()
+                                                .getId())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.get())
                                 .exchange()
                                 .expectStatus().isOk()
                                 .expectBodyList(TransferMovementDTO.class).hasSize(1);
 
-                webTestClient.get()
-                                .uri("/api/secure/movement/product/" + product.get().getId())
-                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.get())
-                                .exchange()
-                                .expectStatus().isOk()
-                                .expectBodyList(StandardMovementDTO.class)
-                                .hasSize(9);
-
                 // Test entry get methods
 
                 webTestClient.get()
-                                .uri("/api/secure/movement/acquisition")
+                                .uri("/api/secure/movement/acquisition/" + product.get()
+                                                .getId())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.get())
                                 .exchange()
                                 .expectStatus().isOk()
@@ -483,7 +480,8 @@ public class MovementControllerTest {
                                 .hasSize(1);
 
                 webTestClient.get()
-                                .uri("/api/secure/movement/customer-return")
+                                .uri("/api/secure/movement/customer-return/" + product.get()
+                                                .getId())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.get())
                                 .exchange()
                                 .expectStatus().isOk()
@@ -491,7 +489,8 @@ public class MovementControllerTest {
                                 .hasSize(1);
 
                 webTestClient.get()
-                                .uri("/api/secure/movement/entry-adjustment")
+                                .uri("/api/secure/movement/entry-adjustment/" + product.get()
+                                                .getId())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.get())
                                 .exchange()
                                 .expectStatus().isOk()
@@ -499,7 +498,8 @@ public class MovementControllerTest {
                                 .hasSize(1);
 
                 webTestClient.get()
-                                .uri("/api/secure/movement/production")
+                                .uri("/api/secure/movement/production/" + product.get()
+                                                .getId())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.get())
                                 .exchange()
                                 .expectStatus().isOk()
@@ -589,7 +589,8 @@ public class MovementControllerTest {
                 // Test output get methods
 
                 webTestClient.get()
-                                .uri("/api/secure/movement/sale")
+                                .uri("/api/secure/movement/sale/" + product.get()
+                                                .getId())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.get())
                                 .exchange()
                                 .expectStatus().isOk()
@@ -597,7 +598,8 @@ public class MovementControllerTest {
                                 .hasSize(1);
 
                 webTestClient.get()
-                                .uri("/api/secure/movement/supplier-return")
+                                .uri("/api/secure/movement/supplier-return/" + product.get()
+                                                .getId())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.get())
                                 .exchange()
                                 .expectStatus().isOk()
@@ -605,7 +607,8 @@ public class MovementControllerTest {
                                 .hasSize(1);
 
                 webTestClient.get()
-                                .uri("/api/secure/movement/output-adjusment")
+                                .uri("/api/secure/movement/output-adjusment/" + product.get()
+                                                .getId())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.get())
                                 .exchange()
                                 .expectStatus().isOk()
@@ -613,7 +616,8 @@ public class MovementControllerTest {
                                 .hasSize(1);
 
                 webTestClient.get()
-                                .uri("/api/secure/movement/internal-consumption")
+                                .uri("/api/secure/movement/internal-consumption/" + product.get()
+                                                .getId())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.get())
                                 .exchange()
                                 .expectStatus().isOk()

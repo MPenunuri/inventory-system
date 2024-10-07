@@ -153,92 +153,97 @@ public class MovementRepositoryImpl implements MovementRepositoryCustom, Movemen
         }
 
         @Override
-        public Flux<StandardMovementDTO> getMovements(Long userId) {
-                return movementCrudRepository.getMovements(userId)
+        public Flux<StandardMovementDTO> getMovements(Long userId, Long productId) {
+                return movementCrudRepository.getMovements(userId,
+                                productId)
                                 .switchIfEmpty(Mono.error(
                                                 new RuntimeException("No movements found")));
         }
 
         @Override
-        public Flux<EntryMovementDTO> getEntries(Long userId) {
-                return movementCrudRepository.getEntries(userId)
+        public Flux<EntryMovementDTO> getEntries(Long userId, Long productId) {
+                return movementCrudRepository.getEntries(userId,
+                                productId)
                                 .switchIfEmpty(Mono.error(
                                                 new RuntimeException("No movements found")));
         }
 
         @Override
-        public Flux<OutputMovementDTO> getOutputs(Long userId) {
-                return movementCrudRepository.getOutputs(userId)
+        public Flux<OutputMovementDTO> getOutputs(Long userId, Long productId) {
+                return movementCrudRepository.getOutputs(userId,
+                                productId)
                                 .switchIfEmpty(Mono.error(
                                                 new RuntimeException("No movements found")));
         }
 
         @Override
-        public Flux<TransferMovementDTO> getTransfers(Long userId) {
-                return movementCrudRepository.getTransfers(userId)
+        public Flux<TransferMovementDTO> getTransfers(Long userId, Long productId) {
+                return movementCrudRepository.getTransfers(userId,
+                                productId)
                                 .switchIfEmpty(Mono.error(
                                                 new RuntimeException("No movements found")));
         }
 
         @Override
-        public Flux<AcquisitionDTO> getAcquisitions(Long userId) {
-                return movementCrudRepository.getAcquisitions(userId)
+        public Flux<AcquisitionDTO> getAcquisitions(Long userId, Long productId) {
+                return movementCrudRepository.getAcquisitions(userId,
+                                productId)
                                 .switchIfEmpty(Mono.error(
                                                 new RuntimeException("No movements found")));
         }
 
         @Override
-        public Flux<CustomerReturnDTO> getCustomerReturns(Long userId) {
-                return movementCrudRepository.getCustomerReturns(userId)
+        public Flux<CustomerReturnDTO> getCustomerReturns(Long userId, Long productId) {
+                return movementCrudRepository.getCustomerReturns(userId,
+                                productId)
                                 .switchIfEmpty(Mono.error(
                                                 new RuntimeException("No movements found")));
         }
 
         @Override
-        public Flux<EntryMovementDTO> getEntryInventoryAdjustments(Long userId) {
-                return movementCrudRepository.getEntryInventoryAdjustments(userId)
+        public Flux<EntryMovementDTO> getEntryInventoryAdjustments(Long userId, Long productId) {
+                return movementCrudRepository.getEntryInventoryAdjustments(userId,
+                                productId)
                                 .switchIfEmpty(Mono.error(
                                                 new RuntimeException("No movements found")));
         }
 
         @Override
-        public Flux<ProductionDTO> getProductions(Long userId) {
-                return movementCrudRepository.getProductions(userId)
+        public Flux<ProductionDTO> getProductions(Long userId, Long productId) {
+                return movementCrudRepository.getProductions(userId,
+                                productId)
                                 .switchIfEmpty(Mono.error(
                                                 new RuntimeException("No movements found")));
         }
 
         @Override
-        public Flux<SaleDTO> getSales(Long userId) {
-                return movementCrudRepository.getSales(userId)
+        public Flux<SaleDTO> getSales(Long userId, Long productId) {
+                return movementCrudRepository.getSales(userId,
+                                productId)
                                 .switchIfEmpty(Mono.error(
                                                 new RuntimeException("No movements found")));
         }
 
         @Override
-        public Flux<SupplierReturnDTO> getSupplierReturns(Long userId) {
-                return movementCrudRepository.getSupplierReturns(userId)
+        public Flux<SupplierReturnDTO> getSupplierReturns(Long userId, Long productId) {
+                return movementCrudRepository.getSupplierReturns(userId,
+                                productId)
                                 .switchIfEmpty(Mono.error(
                                                 new RuntimeException("No movements found")));
         }
 
         @Override
-        public Flux<OutputMovementDTO> getOutputInventoryAdjustments(Long userId) {
-                return movementCrudRepository.getOutputInventoryAdjustments(userId)
+        public Flux<OutputMovementDTO> getOutputInventoryAdjustments(Long userId, Long productId) {
+                return movementCrudRepository.getOutputInventoryAdjustments(userId,
+                                productId)
                                 .switchIfEmpty(Mono.error(
                                                 new RuntimeException("No movements found")));
         }
 
         @Override
-        public Flux<OutputMovementDTO> getInternalConsumptionMovements(Long userId) {
-                return movementCrudRepository.getInternalConsumptionMovements(userId)
-                                .switchIfEmpty(Mono.error(
-                                                new RuntimeException("No movements found")));
-        }
-
-        @Override
-        public Flux<StandardMovementDTO> getMovementsByProductId(Long userId, Long productId) {
-                return movementCrudRepository.getMovementsByProductId(userId, productId)
+        public Flux<OutputMovementDTO> getInternalConsumptionMovements(Long userId, Long productId) {
+                return movementCrudRepository.getInternalConsumptionMovements(userId,
+                                productId)
                                 .switchIfEmpty(Mono.error(
                                                 new RuntimeException("No movements found")));
         }

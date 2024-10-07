@@ -28,43 +28,40 @@ public interface MovementCrudRepository extends ReactiveCrudRepository<MovementE
         Mono<Void> deleteByUserId(Long userId);
 
         @Query(MovementQuery.ALL_QUERY)
-        Flux<StandardMovementDTO> getMovements(Long userId);
+        Flux<StandardMovementDTO> getMovements(Long userId, Long productId);
 
-        @Query(MovementQuery.ENTRY_QUERY)
-        Flux<EntryMovementDTO> getEntries(Long userId);
+        @Query(MovementQuery.ENTRY_QUERY + " AND p.id = :productId")
+        Flux<EntryMovementDTO> getEntries(Long userId, Long productId);
 
-        @Query(MovementQuery.OUTPUT_QUERY)
-        Flux<OutputMovementDTO> getOutputs(Long userId);
+        @Query(MovementQuery.OUTPUT_QUERY + " AND p.id = :productId")
+        Flux<OutputMovementDTO> getOutputs(Long userId, Long productId);
 
-        @Query(MovementQuery.TRANSFER_QUERY)
-        Flux<TransferMovementDTO> getTransfers(Long userId);
+        @Query(MovementQuery.TRANSFER_QUERY + " AND p.id = :productId")
+        Flux<TransferMovementDTO> getTransfers(Long userId, Long productId);
 
-        @Query(MovementQuery.ACQUISITION_QUERY)
-        Flux<AcquisitionDTO> getAcquisitions(Long userId);
+        @Query(MovementQuery.ACQUISITION_QUERY + " AND p.id = :productId")
+        Flux<AcquisitionDTO> getAcquisitions(Long userId, Long productId);
 
-        @Query(MovementQuery.CUSTOMER_RETURN_QUERY)
-        Flux<CustomerReturnDTO> getCustomerReturns(Long userId);
+        @Query(MovementQuery.CUSTOMER_RETURN_QUERY + " AND p.id = :productId")
+        Flux<CustomerReturnDTO> getCustomerReturns(Long userId, Long productId);
 
-        @Query(MovementQuery.ENTRY_ADJUSMENT_QUERY)
-        Flux<EntryMovementDTO> getEntryInventoryAdjustments(Long userId);
+        @Query(MovementQuery.ENTRY_ADJUSMENT_QUERY + " AND p.id = :productId")
+        Flux<EntryMovementDTO> getEntryInventoryAdjustments(Long userId, Long productId);
 
-        @Query(MovementQuery.PRODUCTION_QUERY)
-        Flux<ProductionDTO> getProductions(Long userId);
+        @Query(MovementQuery.PRODUCTION_QUERY + " AND p.id = :productId")
+        Flux<ProductionDTO> getProductions(Long userId, Long productId);
 
-        @Query(MovementQuery.SALES_QUERY)
-        Flux<SaleDTO> getSales(Long userId);
+        @Query(MovementQuery.SALES_QUERY + " AND p.id = :productId")
+        Flux<SaleDTO> getSales(Long userId, Long productId);
 
-        @Query(MovementQuery.SUPPLIER_RETURN_QUERY)
-        Flux<SupplierReturnDTO> getSupplierReturns(Long userId);
+        @Query(MovementQuery.SUPPLIER_RETURN_QUERY + " AND p.id = :productId")
+        Flux<SupplierReturnDTO> getSupplierReturns(Long userId, Long productId);
 
-        @Query(MovementQuery.OUTPUT_ADJUSMENT_QUERY)
-        Flux<OutputMovementDTO> getOutputInventoryAdjustments(Long userId);
+        @Query(MovementQuery.OUTPUT_ADJUSMENT_QUERY + " AND p.id = :productId")
+        Flux<OutputMovementDTO> getOutputInventoryAdjustments(Long userId, Long productId);
 
-        @Query(MovementQuery.INTERNAL_CONSUMPTION_QUERY)
-        Flux<OutputMovementDTO> getInternalConsumptionMovements(Long userId);
-
-        @Query(MovementQuery.PRODUCT_QUERY)
-        Flux<StandardMovementDTO> getMovementsByProductId(Long userId, Long productId);
+        @Query(MovementQuery.INTERNAL_CONSUMPTION_QUERY + " AND p.id = :productId")
+        Flux<OutputMovementDTO> getInternalConsumptionMovements(Long userId, Long productId);
 
         @Query(MovementQuery.SUPPLIER_QUERY)
         Flux<AcquisitionDTO> getAcquisitionsBySupplierId(Long userId, Long supplierId);

@@ -55,56 +55,52 @@ public class MovementApplicationService {
         this.currencyPersistencePort = currencyPersistencePort;
     }
 
-    public Flux<StandardMovementDTO> getMovements(Long userId) {
-        return movementPersistencePort.getMovements(userId);
+    public Flux<StandardMovementDTO> getMovements(Long userId, Long productId) {
+        return movementPersistencePort.getMovements(userId, productId);
     }
 
-    public Flux<EntryMovementDTO> getEntries(Long userId) {
-        return movementPersistencePort.getEntries(userId);
+    public Flux<EntryMovementDTO> getEntries(Long userId, Long productId) {
+        return movementPersistencePort.getEntries(userId, productId);
     }
 
-    public Flux<OutputMovementDTO> getOutputs(Long userId) {
-        return movementPersistencePort.getOutputs(userId);
+    public Flux<OutputMovementDTO> getOutputs(Long userId, Long productId) {
+        return movementPersistencePort.getOutputs(userId, productId);
     }
 
-    public Flux<TransferMovementDTO> getTransfers(Long userId) {
-        return movementPersistencePort.getTransfers(userId);
+    public Flux<TransferMovementDTO> getTransfers(Long userId, Long productId) {
+        return movementPersistencePort.getTransfers(userId, productId);
     }
 
-    public Flux<AcquisitionDTO> getAcquisitions(Long userId) {
-        return movementPersistencePort.getAcquisitions(userId);
+    public Flux<AcquisitionDTO> getAcquisitions(Long userId, Long productId) {
+        return movementPersistencePort.getAcquisitions(userId, productId);
     }
 
-    public Flux<CustomerReturnDTO> getCustomerReturns(Long userId) {
-        return movementPersistencePort.getCustomerReturns(userId);
+    public Flux<CustomerReturnDTO> getCustomerReturns(Long userId, Long productId) {
+        return movementPersistencePort.getCustomerReturns(userId, productId);
     }
 
-    public Flux<EntryMovementDTO> getEntryInventoryAdjustments(Long userId) {
-        return movementPersistencePort.getEntryInventoryAdjustments(userId);
+    public Flux<EntryMovementDTO> getEntryInventoryAdjustments(Long userId, Long productId) {
+        return movementPersistencePort.getEntryInventoryAdjustments(userId, productId);
     }
 
-    public Flux<ProductionDTO> getProductions(Long userId) {
-        return movementPersistencePort.getProductions(userId);
+    public Flux<ProductionDTO> getProductions(Long userId, Long productId) {
+        return movementPersistencePort.getProductions(userId, productId);
     }
 
-    public Flux<SaleDTO> getSales(Long userId) {
-        return movementPersistencePort.getSales(userId);
+    public Flux<SaleDTO> getSales(Long userId, Long productId) {
+        return movementPersistencePort.getSales(userId, productId);
     }
 
-    public Flux<SupplierReturnDTO> getSupplierReturns(Long userId) {
-        return movementPersistencePort.getSupplierReturns(userId);
+    public Flux<SupplierReturnDTO> getSupplierReturns(Long userId, Long productId) {
+        return movementPersistencePort.getSupplierReturns(userId, productId);
     }
 
-    public Flux<OutputMovementDTO> getOutputInventoryAdjustments(Long userId) {
-        return movementPersistencePort.getOutputInventoryAdjustments(userId);
+    public Flux<OutputMovementDTO> getOutputInventoryAdjustments(Long userId, Long productId) {
+        return movementPersistencePort.getOutputInventoryAdjustments(userId, productId);
     }
 
-    public Flux<OutputMovementDTO> getInternalConsumptionMovements(Long userId) {
-        return movementPersistencePort.getInternalConsumptionMovements(userId);
-    }
-
-    public Flux<StandardMovementDTO> getMovementsByProductId(Long userId, Long productId) {
-        return movementPersistencePort.getMovementsByProductId(userId, productId);
+    public Flux<OutputMovementDTO> getInternalConsumptionMovements(Long userId, Long productId) {
+        return movementPersistencePort.getInternalConsumptionMovements(userId, productId);
     }
 
     public Flux<AcquisitionDTO> getAcquisitionsBySupplierId(Long userId, Long supplierId) {

@@ -28,31 +28,31 @@ public class OutputGetController {
     @Autowired
     private AuthenticationService authService;
 
-    @GetMapping("/sale")
-    public Flux<SaleDTO> getSales() {
+    @GetMapping("/sale/{productId}")
+    public Flux<SaleDTO> getSales(@PathVariable Long productId) {
         return authService.getUserIdFromToken().flatMapMany(userId -> {
-            return movementApplicationService.getSales(userId);
+            return movementApplicationService.getSales(userId, productId);
         });
     }
 
-    @GetMapping("/supplier-return")
-    public Flux<SupplierReturnDTO> getSupplierReturns() {
+    @GetMapping("/supplier-return/{productId}")
+    public Flux<SupplierReturnDTO> getSupplierReturns(@PathVariable Long productId) {
         return authService.getUserIdFromToken().flatMapMany(userId -> {
-            return movementApplicationService.getSupplierReturns(userId);
+            return movementApplicationService.getSupplierReturns(userId, productId);
         });
     }
 
-    @GetMapping("/output-adjusment")
-    public Flux<OutputMovementDTO> getOutputInventoryAdjustments() {
+    @GetMapping("/output-adjusment/{productId}")
+    public Flux<OutputMovementDTO> getOutputInventoryAdjustments(@PathVariable Long productId) {
         return authService.getUserIdFromToken().flatMapMany(userId -> {
-            return movementApplicationService.getOutputInventoryAdjustments(userId);
+            return movementApplicationService.getOutputInventoryAdjustments(userId, productId);
         });
     }
 
-    @GetMapping("/internal-consumption")
-    public Flux<OutputMovementDTO> getInternalConsumptionMovements() {
+    @GetMapping("/internal-consumption/{productId}")
+    public Flux<OutputMovementDTO> getInternalConsumptionMovements(@PathVariable Long productId) {
         return authService.getUserIdFromToken().flatMapMany(userId -> {
-            return movementApplicationService.getInternalConsumptionMovements(userId);
+            return movementApplicationService.getInternalConsumptionMovements(userId, productId);
         });
     }
 

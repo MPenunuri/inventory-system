@@ -27,41 +27,31 @@ public class MovementGetController {
     @Autowired
     private AuthenticationService authService;
 
-    @GetMapping
-    public Flux<StandardMovementDTO> getMovements() {
+    @GetMapping("/{productId}")
+    public Flux<StandardMovementDTO> getMovements(@PathVariable Long productId) {
         return authService.getUserIdFromToken().flatMapMany(userId -> {
-            return movementApplicationService.getMovements(userId);
+            return movementApplicationService.getMovements(userId, productId);
         });
     }
 
-    @GetMapping("/entry")
-    public Flux<EntryMovementDTO> getEntries() {
+    @GetMapping("/entry/{productId}")
+    public Flux<EntryMovementDTO> getEntries(@PathVariable Long productId) {
         return authService.getUserIdFromToken().flatMapMany(userId -> {
-            return movementApplicationService.getEntries(userId);
+            return movementApplicationService.getEntries(userId, productId);
         });
     }
 
-    @GetMapping("/output")
-    public Flux<OutputMovementDTO> getOutputs() {
+    @GetMapping("/output/{productId}")
+    public Flux<OutputMovementDTO> getOutputs(@PathVariable Long productId) {
         return authService.getUserIdFromToken().flatMapMany(userId -> {
-            return movementApplicationService.getOutputs(userId);
+            return movementApplicationService.getOutputs(userId, productId);
         });
     }
 
-    @GetMapping("/transfer")
-    public Flux<TransferMovementDTO> getTransfers() {
+    @GetMapping("/transfer/{productId}")
+    public Flux<TransferMovementDTO> getTransfers(@PathVariable Long productId) {
         return authService.getUserIdFromToken().flatMapMany(userId -> {
-            return movementApplicationService.getTransfers(userId);
+            return movementApplicationService.getTransfers(userId, productId);
         });
     }
-
-    @GetMapping("/product/{productId}")
-    public Flux<StandardMovementDTO> getMovementsByProductId(
-            @PathVariable Long productId) {
-        return authService.getUserIdFromToken().flatMapMany(userId -> {
-            return movementApplicationService.getMovementsByProductId(
-                    userId, productId);
-        });
-    }
-
 }
