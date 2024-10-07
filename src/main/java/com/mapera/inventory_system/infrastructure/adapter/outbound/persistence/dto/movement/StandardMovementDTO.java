@@ -1,6 +1,6 @@
 package com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.movement;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -13,7 +13,7 @@ public class StandardMovementDTO {
     private String productName;
     private String productPresentation;
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDateTime dateTime;
+    private LocalDate dateTime;
     private String type;
     private String subtype;
     private String reason;

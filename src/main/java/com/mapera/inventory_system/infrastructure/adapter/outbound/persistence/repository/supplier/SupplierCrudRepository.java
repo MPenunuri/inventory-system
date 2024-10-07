@@ -32,6 +32,18 @@ public interface SupplierCrudRepository extends ReactiveCrudRepository<SupplierE
                         "s.name AS name " +
                         "FROM suppliers s " +
                         "WHERE s.user_id = :userId " +
+                        "AND EXISTS ( " +
+                        "    SELECT 1 " +
+                        "    FROM product_supplier ps " +
+                        "    WHERE ps.supplier_id = s.id " +
+                        "    AND ps.product_id = :productId " +
+                        ")")
+        Flux<SupplierEntity> getSuppliersWithProductRelation(Long userId, Long productId);
+
+        @Query("SELECT DISTINCT s.id AS id, " +
+                        "s.name AS name " +
+                        "FROM suppliers s " +
+                        "WHERE s.user_id = :userId " +
                         "AND NOT EXISTS ( " +
                         "    SELECT 1 " +
                         "    FROM product_supplier ps " +

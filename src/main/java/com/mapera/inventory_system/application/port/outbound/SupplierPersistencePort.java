@@ -12,6 +12,8 @@ public interface SupplierPersistencePort {
 
     public Flux<SupplierDTO> getSuppliers(Long userId);
 
+    public Flux<SupplierEntity> getSuppliersWithProductRelation(Long userId, Long productId);
+
     public Flux<SupplierEntity> getSuppliersWithNoProductRelation(Long userId, Long productId);
 
     public Mono<SupplierEntity> renameSupplier(Long userId, Long supplierId, String name);

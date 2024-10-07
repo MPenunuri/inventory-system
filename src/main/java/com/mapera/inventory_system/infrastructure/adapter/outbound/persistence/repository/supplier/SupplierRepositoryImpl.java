@@ -32,6 +32,11 @@ public class SupplierRepositoryImpl
                 .switchIfEmpty(Mono.error(new RuntimeException("Not suppliers found")));
     }
 
+    public Flux<SupplierEntity> getSuppliersWithProductRelation(Long userId, Long productId) {
+        return supplierCrudRepository.getSuppliersWithProductRelation(userId, productId)
+                .switchIfEmpty(Mono.error(new RuntimeException("Not suppliers found")));
+    }
+
     @Override
     public Flux<SupplierEntity> getSuppliersWithNoProductRelation(Long userId, Long productId) {
         return supplierCrudRepository.getSuppliersWithNoProductRelation(userId, productId)
