@@ -5,6 +5,7 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.ProductSupplierEntity;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ProductSupplierCrudRepository extends ReactiveCrudRepository<ProductSupplierEntity, Long> {
@@ -17,5 +18,9 @@ public interface ProductSupplierCrudRepository extends ReactiveCrudRepository<Pr
 
     @Query("SELECT * FROM product_supplier ps WHERE ps.product_id = :productId AND ps.supplier_id = :supplierId")
     public Mono<ProductSupplierEntity> findRelation(Long productId, Long supplierId);
+
+    @Query("SELECT * FROM product_supplier ps WHERE ps.product_id = :productId " +
+            "AND ps.user_id = :userId ")
+    public Flux<ProductSupplierEntity> findProductRelations(Long productId, Long userId);
 
 }

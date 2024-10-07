@@ -13,6 +13,9 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.d
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.product.SupplierProductDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.ProductEntity;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.mapper.ProductMapper;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.movement.MovementCrudRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.product_supplier.ProductSupplierCrudRepository;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.stock.StockCrudRepository;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -22,6 +25,15 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
 
     @Autowired
     private ProductCrudRepository productCrudRepository;
+
+    @Autowired
+    private StockCrudRepository stockCrudRepository;
+
+    @Autowired
+    private ProductSupplierCrudRepository productSupplierCrudRepository;
+
+    @Autowired
+    private MovementCrudRepository movementCrudRepository;
 
     private ProductMapper productMapper = new ProductMapper();
 
@@ -212,25 +224,34 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
     }
 
     @Override
-    public Mono<Void> deleteProductById(
-            Long userId, Long productId) {
+    public Mono<Void> deleteProductById(Long userId, Long productId) {
         return productCrudRepository.findById(productId)
                 .switchIfEmpty(Mono.error(new RuntimeException("No product found")))
                 .flatMap(p -> {
                     if (!p.getUser_id().equals(userId)) {
                         throw new IllegalArgumentException("Invalid credentials");
                     }
-                    return productCrudRepository.delete(p);
-                }).onErrorMap(error -> {
-                    if (error instanceof DataIntegrityViolationException) {
-                        return new IllegalStateException(
-                                "Failed to delete product with ID: " + productId + ". " +
-                                        "The product is associated with other records and cannot be deleted. "
-                                        +
-                                        "Please remove any related registry before attempting to delete this product.");
-                    }
-                    return new IllegalArgumentException(
-                            "Failed to delete product with ID: " + productId + ". Unexpected error occurred.");
+                    return productSupplierCrudRepository.findProductRelations(productId, userId)
+                            .flatMap(productSupplierRelation -> productSupplierCrudRepository
+                                    .delete(productSupplierRelation))
+                            .thenMany(stockCrudRepository.findProductStock(productId, userId)
+                                    .flatMap(stock -> stockCrudRepository.delete(stock)))
+                            .thenMany(movementCrudRepository.getMovementsByProductId(userId, productId)
+                                    .flatMap(movement -> movementCrudRepository.deleteById(
+                                            movement.getMovementId())))
+                            .then(productCrudRepository.delete(p))
+                            .onErrorMap(error -> {
+                                if (error instanceof DataIntegrityViolationException) {
+                                    return new IllegalStateException(
+                                            "Failed to delete product with ID: " + productId + ". " +
+                                                    "The product is associated with other records and cannot be deleted. "
+                                                    +
+                                                    "Please remove any related registry before attempting to delete this product.");
+                                }
+                                return new IllegalArgumentException(
+                                        "Failed to delete product with ID: " + productId
+                                                + ". Unexpected error occurred.");
+                            });
                 });
     }
 

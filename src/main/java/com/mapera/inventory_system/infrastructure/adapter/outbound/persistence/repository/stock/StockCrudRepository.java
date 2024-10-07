@@ -5,6 +5,7 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.StockEntity;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface StockCrudRepository extends ReactiveCrudRepository<StockEntity, Long> {
@@ -18,4 +19,8 @@ public interface StockCrudRepository extends ReactiveCrudRepository<StockEntity,
     @Query("SELECT * FROM stock_list sl WHERE sl.product_id = :productId AND sl.location_id = :locationId " +
             "AND sl.user_id = :userId ")
     Mono<StockEntity> findProductStockInLocation(Long productId, Long locationId, Long userId);
+
+    @Query("SELECT * FROM stock_list sl WHERE sl.product_id = :productId " +
+            "AND sl.user_id = :userId ")
+    Flux<StockEntity> findProductStock(Long productId, Long userId);
 }

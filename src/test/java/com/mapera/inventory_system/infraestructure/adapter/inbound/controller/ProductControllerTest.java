@@ -443,7 +443,7 @@ public class ProductControllerTest {
                                 .uri("/api/secure/product/" + productId.get())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.get())
                                 .exchange()
-                                .expectStatus().is4xxClientError();
+                                .expectStatus().isOk();
 
         }
 
