@@ -317,8 +317,6 @@ public class MovementControllerTest {
                 saleReq.setQuantity(18);
                 saleReq.setFromLocationId(location1Id.get());
                 saleReq.setTransactionSubtype("RETAIL");
-                saleReq.setTransactionValue(1);
-                saleReq.setTransactionCurrencyId(product.get().getPrice_currency_id());
 
                 RegisterMovementRequest supplierReturnReq = new RegisterMovementRequest();
                 supplierReturnReq.setProductId(product.get().getId());

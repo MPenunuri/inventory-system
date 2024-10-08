@@ -36,9 +36,7 @@ public class OutputPostController {
                                         request.getProductId(), request.getDateTime(),
                                         request.getReason(), request.getComment(),
                                         request.getQuantity(),
-                                        request.getFromLocationId(), request.getTransactionSubtype(),
-                                        request.getTransactionValue(),
-                                        request.getTransactionCurrencyId());
+                                        request.getFromLocationId(), request.getTransactionSubtype());
                 });
 
         }

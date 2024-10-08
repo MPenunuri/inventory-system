@@ -197,8 +197,7 @@ public class MovementApplicationServiceTest {
                                 .addSalesOutputMovement(userId.get(),
                                                 productId.get(), LocalDateTime.now(), "Regular production",
                                                 "No comment", 20, location1Id.get(),
-                                                "WHOLESALE", productEntity.getWholesale_price(),
-                                                currencyId.get())
+                                                "WHOLESALE")
                                 .then();
 
                 StepVerifier.create(executeSale).verifyComplete();

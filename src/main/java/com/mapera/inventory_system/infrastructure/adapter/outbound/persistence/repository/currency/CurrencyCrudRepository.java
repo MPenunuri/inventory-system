@@ -17,6 +17,9 @@ public interface CurrencyCrudRepository extends ReactiveCrudRepository<CurrencyE
     @Query("DELETE FROM currencies c WHERE c.user_id = :userId ")
     Mono<Void> deleteByUserId(Long userId);
 
+    @Query("SELECT * FROM currencies c WHERE c.user_id = :userId AND c.name = :name ")
+    Mono<CurrencyEntity> getCurrencyByName(Long userId, String name);
+
     @Query("SELECT c.id AS currency_id, " +
             "c.name AS currency_name, " +
             "COUNT(DISTINCT p.id) AS products, " +

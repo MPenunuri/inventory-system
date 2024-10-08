@@ -1,7 +1,7 @@
 package com.mapera.inventory_system.application.service;
 
 import java.time.LocalDateTime;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mapera.inventory_system.application.port.outbound.CurrencyPersistencePort;
@@ -32,6 +32,7 @@ import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.d
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.movement.SupplierReturnDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.dto.movement.TransferMovementDTO;
 import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.entity.MovementEntity;
+import com.mapera.inventory_system.infrastructure.adapter.outbound.persistence.repository.currency.CurrencyCrudRepository;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -54,6 +55,9 @@ public class MovementApplicationService {
         this.locationPersistencePort = locationPersistencePort;
         this.currencyPersistencePort = currencyPersistencePort;
     }
+
+    @Autowired
+    CurrencyCrudRepository currencyCrudRepository;
 
     public Flux<StandardMovementDTO> getMovements(Long userId, Long productId) {
         return movementPersistencePort.getMovements(userId, productId);
@@ -268,28 +272,32 @@ public class MovementApplicationService {
     public Mono<MovementEntity> addSalesOutputMovement(Long userId,
             Long productId, LocalDateTime dateTime, String reason,
             String comment, int quantity, Long fromLocationId,
-            String transactionSubtype, double transactionValue,
-            Long transactionCurrencyId) {
+            String transactionSubtype) {
         Mono<InventoryProduct> findProduct = productPersistencePort.findProductById(userId, productId);
         Mono<Location> findLocation = locationPersistencePort.findLocationById(userId, fromLocationId);
-        Mono<String> getCurrencyName = currencyPersistencePort.getCurrencyNameById(userId, transactionCurrencyId);
-        Mono<Void> checkDomainLogic = findProduct.flatMap(product -> {
-            return getCurrencyName.flatMap(currency -> {
-                return findLocation.map(location -> {
-                    InventoryOutputMovement movement = new InventoryOutputMovement(
-                            0, product, dateTime, OutputType.SALES,
-                            reason, quantity, location,
-                            new Sell(transactionValue, currency,
-                                    SellType.fromString(transactionSubtype)));
-                    return Mono.just(movement.execute());
-                });
-            }).then();
-        }).then();
-        return checkDomainLogic.then(movementPersistencePort.addSalesOutputMovement(
-                userId,
-                productId, dateTime, reason, comment, quantity,
-                fromLocationId, transactionSubtype, transactionValue,
-                transactionCurrencyId));
+        return findProduct.flatMap(product -> {
+
+            return currencyCrudRepository.getCurrencyByName(userId, product.getSellingPrice().getCurrency())
+                    .flatMap(currency -> {
+                        return findLocation.flatMap(location -> {
+                            Double sellValue = transactionSubtype.equals("RETAIL")
+                                    ? product.getSellingPrice().getRetail()
+                                    : product.getSellingPrice().getWholesale();
+
+                            InventoryOutputMovement movement = new InventoryOutputMovement(
+                                    0, product, dateTime, OutputType.SALES,
+                                    reason, quantity, location,
+                                    new Sell(sellValue, currency.getName(),
+                                            SellType.fromString(transactionSubtype)));
+
+                            movement.execute();
+
+                            return movementPersistencePort.addSalesOutputMovement(
+                                    userId, productId, dateTime, reason, comment, quantity,
+                                    fromLocationId, transactionSubtype, sellValue, currency.getId());
+                        });
+                    });
+        });
     }
 
     public Mono<MovementEntity> addSupplierReturnOutputMovement(Long userId,
