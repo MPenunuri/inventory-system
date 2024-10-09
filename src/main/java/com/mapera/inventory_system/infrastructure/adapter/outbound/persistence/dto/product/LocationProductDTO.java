@@ -14,6 +14,7 @@ public class LocationProductDTO {
     private int minimumStock;
     private double retailPrice;
     private double wholesalePrice;
+    private Long priceCurrencyId;
     private String priceCurrency;
     private Long stockLocationId;
     private String stockLocationName;
