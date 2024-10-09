@@ -14,6 +14,7 @@ public class SupplierProductDTO {
     private int minimumStock;
     private double retailPrice;
     private double wholesalePrice;
+    private Long priceCurrencyId;
     private String priceCurrency;
     private Long supplierId;
     private String supplierName;
