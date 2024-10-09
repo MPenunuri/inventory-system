@@ -31,7 +31,7 @@ public interface ProductCrudRepository extends ReactiveCrudRepository<ProductEnt
         @Query(ProductQuery.STANDARD_QUERY + "HAVING c.id = :categoryId AND p.user_id = :userId")
         Flux<StandardProductDTO> findProductsByCategoryId(Long userId, long categoryId);
 
-        @Query(ProductQuery.STANDARD_QUERY + "HAVING s.id = :subcategoryId AND p.user_id = :userId")
+        @Query(ProductQuery.STANDARD_QUERY + "HAVING p.subcategory_id = :subcategoryId AND p.user_id = :userId")
         Flux<StandardProductDTO> findProductsBySubcategoryId(Long userId, Long subcategoryId);
 
         @Query(ProductQuery.SUPPLIER_QUERY + "WHERE su.id = :supplierId AND p.user_id = :userId")
