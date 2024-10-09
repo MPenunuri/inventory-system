@@ -64,6 +64,11 @@ public class ProductApplicationService {
         return productPersistencePort.getProductStockById(userId, productId);
     };
 
+    public Flux<StandardProductDTO> getProductsByPriceCurrency(
+            Long userId, Long currencyId) {
+        return productPersistencePort.getProductsByPriceCurrency(userId, currencyId);
+    }
+
     public Flux<StandardProductDTO> findProductsBySellingRetailPrice(
             Long userId, Long currencyId, Double min, Double max) {
         return productPersistencePort.findProductsBySellingRetailPrice(userId, currencyId, min, max);

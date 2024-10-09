@@ -36,6 +36,9 @@ public interface MovementCrudRepository extends ReactiveCrudRepository<MovementE
         @Query(MovementQuery.ALL_QUERY + "AND m.supplier_id = :supplierId ")
         Flux<StandardMovementDTO> getSupplierRelatedMovements(Long userId, Long supplierId);
 
+        @Query(MovementQuery.ALL_QUERY + "AND m.transaction_currency_id = :currencyId ")
+        Flux<StandardMovementDTO> getCurrencyRelatedMovements(Long userId, Long currencyId);
+
         @Query(MovementQuery.ENTRY_QUERY + " AND p.id = :productId")
         Flux<EntryMovementDTO> getEntries(Long userId, Long productId);
 

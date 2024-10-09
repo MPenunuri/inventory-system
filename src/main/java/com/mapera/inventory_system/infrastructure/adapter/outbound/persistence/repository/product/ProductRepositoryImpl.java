@@ -106,6 +106,12 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom, ProductPe
     }
 
     @Override
+    public Flux<StandardProductDTO> getProductsByPriceCurrency(Long userId, Long currencyId) {
+        return productCrudRepository.getProductsByPriceCurrency(userId, currencyId)
+                .switchIfEmpty(Mono.error(new RuntimeException("No product found")));
+    }
+
+    @Override
     public Flux<StandardProductDTO> findProductsBySellingRetailPrice(
             Long userId, Long currencyId, Double min, Double max) {
         return productCrudRepository.findProductsBySellingRetailPrice(userId, currencyId, min, max)

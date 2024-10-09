@@ -26,6 +26,8 @@ public interface MovementPersistencePort {
 
         Flux<StandardMovementDTO> getSupplierRelatedMovements(Long userId, Long supplierId);
 
+        Flux<StandardMovementDTO> getCurrencyRelatedMovements(Long userId, Long currencyId);
+
         Flux<EntryMovementDTO> getEntries(Long userId, Long productId);
 
         Flux<OutputMovementDTO> getOutputs(Long userId, Long productId);

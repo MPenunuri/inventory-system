@@ -33,6 +33,8 @@ public interface ProductPersistencePort {
 
     Mono<StockProductDTO> getProductStockById(Long userId, Long productId);
 
+    Flux<StandardProductDTO> getProductsByPriceCurrency(Long userId, Long currencyId);
+
     Flux<StandardProductDTO> findProductsBySellingRetailPrice(Long userId, Long currencyId, Double min, Double max);
 
     Flux<StandardProductDTO> findProductsBySellingWholesalePrice(Long userId, Long currencyId, Double min, Double max);

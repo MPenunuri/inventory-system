@@ -49,6 +49,9 @@ public interface ProductCrudRepository extends ReactiveCrudRepository<ProductEnt
         @Query(ProductQuery.STOCK_QUERY)
         Mono<StockProductDTO> getProductStockById(Long userId, Long productId);
 
+        @Query(ProductQuery.STANDARD_QUERY + "HAVING pc.id = :currencyId AND p.user_id = :userId")
+        Flux<StandardProductDTO> getProductsByPriceCurrency(Long userId, Long currencyId);
+
         @Query(ProductQuery.STANDARD_QUERY + "HAVING p.price_currency_id = :currencyId AND " +
                         "p.retail_price >= :min AND p.retail_price <= :max " +
                         "AND p.user_id = :userId ")

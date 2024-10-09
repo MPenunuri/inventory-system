@@ -71,6 +71,10 @@ public class MovementApplicationService {
         return movementPersistencePort.getSupplierRelatedMovements(userId, supplierId);
     }
 
+    public Flux<StandardMovementDTO> getCurrencyRelatedMovements(Long userId, Long currencyId) {
+        return movementPersistencePort.getCurrencyRelatedMovements(userId, currencyId);
+    }
+
     public Flux<EntryMovementDTO> getEntries(Long userId, Long productId) {
         return movementPersistencePort.getEntries(userId, productId);
     }

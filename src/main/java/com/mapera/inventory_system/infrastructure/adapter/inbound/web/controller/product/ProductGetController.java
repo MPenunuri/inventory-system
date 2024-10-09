@@ -92,6 +92,14 @@ public class ProductGetController {
         });
     }
 
+    @GetMapping("/currency/{currencyId}")
+    public Flux<StandardProductDTO> getProductsByPriceCurrency(
+            @PathVariable Long currencyId) {
+        return authService.getUserIdFromToken().flatMapMany(userId -> {
+            return productApplicationService.getProductsByPriceCurrency(userId, currencyId);
+        });
+    }
+
     @GetMapping("/price/retail")
     public Flux<StandardProductDTO> getProductsBySellingRetailPrice(
             @RequestParam Long currencyId,
