@@ -27,8 +27,11 @@ public interface MovementCrudRepository extends ReactiveCrudRepository<MovementE
         @Query("DELETE FROM movements m WHERE m.user_id = :userId ")
         Mono<Void> deleteByUserId(Long userId);
 
-        @Query(MovementQuery.ALL_QUERY)
+        @Query(MovementQuery.ALL_QUERY + "AND p.id = :productId")
         Flux<StandardMovementDTO> getMovements(Long userId, Long productId);
+
+        @Query(MovementQuery.ALL_QUERY + "AND (m.from_location_id = :locationId OR m.to_location_id = :locationId) ")
+        Flux<StandardMovementDTO> getMovementsOnLocation(Long userId, Long locationId);
 
         @Query(MovementQuery.ENTRY_QUERY + " AND p.id = :productId")
         Flux<EntryMovementDTO> getEntries(Long userId, Long productId);

@@ -63,6 +63,10 @@ public class MovementApplicationService {
         return movementPersistencePort.getMovements(userId, productId);
     }
 
+    public Flux<StandardMovementDTO> getMovementsOnLocation(Long userId, Long locationId) {
+        return movementPersistencePort.getMovementsOnLocation(userId, locationId);
+    }
+
     public Flux<EntryMovementDTO> getEntries(Long userId, Long productId) {
         return movementPersistencePort.getEntries(userId, productId);
     }
