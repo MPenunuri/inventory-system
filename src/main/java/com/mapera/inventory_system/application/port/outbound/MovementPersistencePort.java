@@ -24,6 +24,8 @@ public interface MovementPersistencePort {
 
         Flux<StandardMovementDTO> getMovementsOnLocation(Long userId, Long locationId);
 
+        Flux<StandardMovementDTO> getSupplierRelatedMovements(Long userId, Long supplierId);
+
         Flux<EntryMovementDTO> getEntries(Long userId, Long productId);
 
         Flux<OutputMovementDTO> getOutputs(Long userId, Long productId);

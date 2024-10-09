@@ -169,6 +169,14 @@ public class MovementRepositoryImpl implements MovementRepositoryCustom, Movemen
         }
 
         @Override
+        public Flux<StandardMovementDTO> getSupplierRelatedMovements(Long userId, Long supplierId) {
+                return movementCrudRepository.getSupplierRelatedMovements(userId,
+                                supplierId)
+                                .switchIfEmpty(Mono.error(
+                                                new RuntimeException("No movements found")));
+        }
+
+        @Override
         public Flux<EntryMovementDTO> getEntries(Long userId, Long productId) {
                 return movementCrudRepository.getEntries(userId,
                                 productId)

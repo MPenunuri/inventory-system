@@ -41,6 +41,13 @@ public class MovementGetController {
         });
     }
 
+    @GetMapping("/supplier/{id}")
+    public Flux<StandardMovementDTO> getSupplierRelatedMovements(@PathVariable Long id) {
+        return authService.getUserIdFromToken().flatMapMany(userId -> {
+            return movementApplicationService.getSupplierRelatedMovements(userId, id);
+        });
+    }
+
     @GetMapping("/entry/{productId}")
     public Flux<EntryMovementDTO> getEntries(@PathVariable Long productId) {
         return authService.getUserIdFromToken().flatMapMany(userId -> {

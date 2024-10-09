@@ -33,6 +33,9 @@ public interface MovementCrudRepository extends ReactiveCrudRepository<MovementE
         @Query(MovementQuery.ALL_QUERY + "AND (m.from_location_id = :locationId OR m.to_location_id = :locationId) ")
         Flux<StandardMovementDTO> getMovementsOnLocation(Long userId, Long locationId);
 
+        @Query(MovementQuery.ALL_QUERY + "AND m.supplier_id = :supplierId ")
+        Flux<StandardMovementDTO> getSupplierRelatedMovements(Long userId, Long supplierId);
+
         @Query(MovementQuery.ENTRY_QUERY + " AND p.id = :productId")
         Flux<EntryMovementDTO> getEntries(Long userId, Long productId);
 
