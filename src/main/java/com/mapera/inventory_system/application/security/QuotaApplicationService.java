@@ -54,36 +54,34 @@ public class QuotaApplicationService {
     @Autowired
     StockCrudRepository stockCrudRepository;
 
-    private int USER_RECORD_LIMIT = 1000;
+    private final int PRODUCT_LIMIT = 100;
+    private final int MOVEMENT_LIMIT = 2000;
+    private final int OTHER_LIMIT = 50;
 
-    @Scheduled(cron = "0 0 0 * * ?") // Execute on midnight
+    @Scheduled(cron = "0 0 0 * * ?") // Midnight execution
     public void scheduledCheckUserQuotas() {
-        checkUserQuotas(USER_RECORD_LIMIT);
-    }
-
-    public void checkUserQuotas(int limit) {
         userCrudRepository.findAll()
                 .filter(user -> user.getRoles().contains("USER"))
-                .flatMap(user -> processUser(user, limit))
+                .flatMap(this::processUser)
                 .subscribe();
     }
 
-    private Mono<Void> processUser(UserEntity user, int limit) {
-        List<Mono<Integer>> counts = List.of(
-                categoryCrudRepository.countByUserId(user.getId()),
-                productCrudRepository.countByUserId(user.getId()),
-                subcategoryCrudRepository.countByUserId(user.getId()),
-                supplierCrudRepository.countByUserId(user.getId()),
-                productSupplierCrudRepository.countByUserId(user.getId()),
-                locationCrudRepository.countByUserId(user.getId()),
-                currencyCrudRepository.countByUserId(user.getId()),
-                movementCrudRepository.countByUserId(user.getId()),
-                stockCrudRepository.countByUserId(user.getId()));
+    private Mono<Void> processUser(UserEntity user) {
+        List<Mono<Boolean>> checks = List.of(
+                productCrudRepository.countByUserId(user.getId()).map(count -> count <= PRODUCT_LIMIT),
+                movementCrudRepository.countByUserId(user.getId()).map(count -> count <= MOVEMENT_LIMIT),
+                categoryCrudRepository.countByUserId(user.getId()).map(count -> count <= OTHER_LIMIT),
+                subcategoryCrudRepository.countByUserId(user.getId()).map(count -> count <= OTHER_LIMIT),
+                supplierCrudRepository.countByUserId(user.getId()).map(count -> count <= OTHER_LIMIT),
+                productSupplierCrudRepository.countByUserId(user.getId()).map(count -> count <= OTHER_LIMIT),
+                locationCrudRepository.countByUserId(user.getId()).map(count -> count <= OTHER_LIMIT),
+                currencyCrudRepository.countByUserId(user.getId()).map(count -> count <= OTHER_LIMIT),
+                stockCrudRepository.countByUserId(user.getId()).map(count -> count <= OTHER_LIMIT));
 
-        return Flux.merge(counts)
-                .reduce(0, Integer::sum)
-                .flatMap(totalRecords -> {
-                    if (totalRecords > limit) {
+        return Flux.merge(checks)
+                .all(passed -> passed)
+                .flatMap(allWithinLimit -> {
+                    if (!allWithinLimit) {
                         String roles = user.getRoles();
                         if (roles.contains("USER")) {
                             roles = roles.replace("USER", "")

@@ -102,14 +102,14 @@ public class QuotasApplicationServiceTest {
 
         StepVerifier.create(savedUser).verifyComplete();
 
-        for (int i = 1; i <= 20; i++) {
+        for (int i = 1; i <= 102; i++) {
             ProductEntity product = new ProductEntity();
             product.setUser_id(user.getId());
             product.setName("Product" + i);
             productRepository.save(product).block();
         }
 
-        quotaApplicationService.checkUserQuotas(10);
+        quotaApplicationService.scheduledCheckUserQuotas();
 
         UserEntity updatedUser = userRepository.findById(user.getId()).block();
         assertEquals("", updatedUser.getRoles());
