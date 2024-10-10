@@ -14,8 +14,7 @@ public class WebConfig implements WebFluxConfigurer {
     public void addCorsMappings(@NonNull CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins(
-                        "http://localhost:4200",
-                        "https://localhost:8080")
+                        "https://free-inventory-manager.netlify.app/")
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(false);
