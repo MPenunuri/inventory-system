@@ -18,15 +18,15 @@ public interface UserCrudRepository extends ReactiveCrudRepository<UserEntity, L
                     u.username,
                     u.email,
                     u.password,
-                    (SELECT COUNT(*) FROM categories c WHERE c.user_id = u.id) AS registeredCategories,
-                    (SELECT COUNT(*) FROM subcategories s WHERE s.user_id = u.id) AS registeredSubcategories,
-                    (SELECT COUNT(*) FROM products p WHERE p.user_id = u.id) AS registeredProducts,
-                    (SELECT COUNT(*) FROM movements m WHERE m.user_id = u.id) AS registeredMovements,
-                    (SELECT COUNT(*) FROM locations l WHERE l.user_id = u.id) AS registeredLocations,
-                    (SELECT COUNT(*) FROM stock_list sl WHERE sl.user_id = u.id) AS registeredStocks,
-                    (SELECT COUNT(*) FROM suppliers sp WHERE sp.user_id = u.id) AS registeredSuppliers,
-                    (SELECT COUNT(*) FROM product_supplier ps WHERE ps.user_id = u.id) AS registeredProductSupplierRelations,
-                    (SELECT COUNT(*) FROM currencies c WHERE c.user_id = u.id) AS registeredCurrencies
+                    (SELECT COUNT(*) FROM categories c WHERE c.user_id = u.id) AS registered_categories,
+                    (SELECT COUNT(*) FROM subcategories s WHERE s.user_id = u.id) AS registered_subcategories,
+                    (SELECT COUNT(*) FROM products p WHERE p.user_id = u.id) AS registered_products,
+                    (SELECT COUNT(*) FROM movements m WHERE m.user_id = u.id) AS registered_movements,
+                    (SELECT COUNT(*) FROM locations l WHERE l.user_id = u.id) AS registered_locations,
+                    (SELECT COUNT(*) FROM stock_list sl WHERE sl.user_id = u.id) AS registered_stocks,
+                    (SELECT COUNT(*) FROM suppliers sp WHERE sp.user_id = u.id) AS registered_suppliers,
+                    (SELECT COUNT(*) FROM product_supplier ps WHERE ps.user_id = u.id) AS registered_product_supplier_relations,
+                    (SELECT COUNT(*) FROM currencies cur WHERE cur.user_id = u.id) AS registered_currencies
                 FROM users u
                 WHERE u.id = :userId
             """)
